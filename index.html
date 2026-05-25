@@ -509,17 +509,17 @@
       autocomplete="off"
       spellcheck="false"
     />
-    <button class="search-btn" id="search-btn" onclick="handleSearch()">
+    <button class="search-btn" id="search-btn" >
       <span id="txt-btn">Discover →</span>
     </button>
   </div>
 
   <div class="examples" id="examples-row">
-    <button class="example-chip" onclick="fillAndSearch('Eiffel Tower')">Eiffel Tower</button>
-    <button class="example-chip" onclick="fillAndSearch('Colosseum')">Colosseum</button>
-    <button class="example-chip" onclick="fillAndSearch('Sagrada Família')">Sagrada Família</button>
-    <button class="example-chip" onclick="fillAndSearch('Trevi Fountain')">Trevi Fountain</button>
-    <button class="example-chip" onclick="fillAndSearch('Big Ben')">Big Ben</button>
+    <button class="example-chip" data-place="Eiffel Tower">Eiffel Tower</button>
+    <button class="example-chip" data-place="Colosseum">Colosseum</button>
+    <button class="example-chip" data-place="Sagrada Família">Sagrada Família</button>
+    <button class="example-chip" data-place="Trevi Fountain">Trevi Fountain</button>
+    <button class="example-chip" data-place="Big Ben">Big Ben</button>
   </div>
 </div>
 
@@ -905,6 +905,11 @@ function esc(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+document.getElementById('search-btn').addEventListener('click', handleSearch);
+document.getElementById('examples-row').addEventListener('click', e => {
+  const chip = e.target.closest('.example-chip');
+  if (chip) fillAndSearch(chip.dataset.place);
+});
 document.getElementById('place-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') handleSearch();
 });
