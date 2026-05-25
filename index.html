@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Elsewhere — Discover the road less travelled</title>
+<meta name="description" content="Enter a famous tourist spot. We suggest a hidden gem nearby." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #1a1a18;
+    --paper: #f5f2eb;
+    --paper-dark: #ede9df;
+    --sage: #7a9e87;
+    --sage-light: #b8d4c0;
+    --rust: #b85c3a;
+    --muted: #8a8578;
+    --border: rgba(26,26,24,0.12);
+    --radius: 4px;
+    --radius-lg: 10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2.5rem;
+    background: rgba(245,242,235,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .logo span { color: var(--sage); }
+
+  .lang-selector {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .lang-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    padding: 4px 8px;
+    border-radius: var(--radius);
+    transition: color 0.2s, background 0.2s;
+    text-transform: uppercase;
+  }
+  .lang-btn:hover, .lang-btn.active {
+    color: var(--ink);
+    background: var(--paper-dark);
+  }
+  .lang-btn.active { color: var(--ink); font-weight: 500; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8rem 2rem 4rem;
+    text-align: center;
+    z-index: 1;
+  }
+
+  /* Decorative compass rose */
+  .compass-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    opacity: 0.035;
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 9vw, 96px);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--sage);
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 400px;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+    font-weight: 300;
+  }
+
+  /* ── SEARCH ── */
+  .search-wrap {
+    width: 100%;
+    max-width: 560px;
+    position: relative;
+  }
+
+  .search-field {
+    width: 100%;
+    background: #fff;
+    border: 0.5px solid var(--border);
+    border-radius: 60px;
+    padding: 0 140px 0 28px;
+    height: 60px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 20px rgba(26,26,24,0.06);
+  }
+  .search-field::placeholder { color: var(--muted); }
+  .search-field:focus {
+    border-color: var(--sage);
+    box-shadow: 0 4px 30px rgba(122,158,135,0.15);
+  }
+
+  .search-btn {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    height: 48px;
+    padding: 0 24px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    white-space: nowrap;
+  }
+  .search-btn:hover { background: var(--sage); }
+  .search-btn:active { transform: scale(0.97); }
+  .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .examples {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .example-chip {
+    background: none;
+    border: 0.5px solid var(--border);
+    border-radius: 50px;
+    padding: 5px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 300;
+  }
+  .example-chip:hover { border-color: var(--sage); color: var(--sage); background: rgba(122,158,135,0.05); }
+
+  /* ── RESULTS SECTION ── */
+  #results {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 1.5rem 6rem;
+    display: none;
+  }
+
+  .results-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .results-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .results-query {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink);
+  }
+
+  /* MAIN CARD */
+  .main-card {
+    background: #fff;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 40px rgba(26,26,24,0.07);
+    animation: rise 0.5s ease both;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .main-img-wrap { position: relative; height: 340px; overflow: hidden; background: var(--paper-dark); }
+  .main-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+  .main-card:hover .main-img { transform: scale(1.02); }
+  .main-img-placeholder {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: var(--muted);
+  }
+
+  .card-badge {
+    position: absolute;
+    top: 16px; left: 16px;
+    background: var(--sage);
+    color: #fff;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-weight: 400;
+  }
+
+  .main-card-body { padding: 2rem; }
+  .card-location {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 400;
+  }
+  .card-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 1rem;
+  }
+  .card-why {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 1.25rem;
+    border-top: 0.5px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .like-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 0.5px solid var(--border);
+    border-radius: 50px;
+    padding: 8px 18px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .like-btn:hover { border-color: var(--rust); color: var(--rust); }
+  .like-btn.liked { background: var(--rust); border-color: var(--rust); color: #fff; }
+  .like-btn svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
+
+  .more-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    font-size: 13px;
+    color: var(--muted);
+    transition: color 0.2s;
+    font-weight: 300;
+  }
+  .more-btn:hover { color: var(--ink); }
+
+  /* YOU MIGHT ALSO LIKE */
+  .also-section { margin-top: 0.5rem; }
+  .also-title {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    font-weight: 400;
+  }
+  .also-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .also-card {
+    background: #fff;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    animation: rise 0.4s ease both;
+    transition: box-shadow 0.2s;
+  }
+  .also-card:hover { box-shadow: 0 4px 20px rgba(26,26,24,0.09); }
+  .also-img-wrap { height: 130px; overflow: hidden; background: var(--paper-dark); }
+  .also-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; }
+  .also-card:hover .also-img { transform: scale(1.05); }
+  .also-img-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--muted); }
+  .also-body { padding: 12px; }
+  .also-loc { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; font-weight: 400; }
+  .also-name { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 400; color: var(--ink); margin-bottom: 4px; line-height: 1.2; }
+  .also-likes { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+  .also-likes svg { width: 10px; height: 10px; fill: var(--rust); }
+
+  /* LOADING */
+  .loading-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 0;
+    gap: 1rem;
+  }
+  .loader {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--border);
+    border-top-color: var(--sage);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-txt {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+  }
+
+  /* ERROR */
+  .error-wrap {
+    background: rgba(184,92,58,0.06);
+    border: 0.5px solid rgba(184,92,58,0.25);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    font-size: 14px;
+    color: var(--rust);
+    text-align: center;
+  }
+
+  /* FOOTER */
+  footer {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 2rem;
+    border-top: 0.5px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    header { padding: 1rem 1.25rem; }
+    h1 { font-size: 48px; }
+    .main-img-wrap { height: 220px; }
+    .main-card-body { padding: 1.25rem; }
+    .card-name { font-size: 28px; }
+    .also-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">Else<span>where</span></a>
+  <div class="lang-selector" id="lang-selector">
+    <button class="lang-btn active" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="fr">FR</button>
+    <button class="lang-btn" data-lang="es">ES</button>
+    <button class="lang-btn" data-lang="de">DE</button>
+    <button class="lang-btn" data-lang="it">IT</button>
+    <button class="lang-btn" data-lang="pt">PT</button>
+    <button class="lang-btn" data-lang="ja">JA</button>
+    <button class="lang-btn" data-lang="zh">ZH</button>
+    <button class="lang-btn" data-lang="ar">AR</button>
+    <button class="lang-btn" data-lang="nl">NL</button>
+  </div>
+</header>
+
+<!-- SVG Compass rose background -->
+<div class="hero" id="hero">
+  <svg class="compass-bg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="95" stroke="#1a1a18" stroke-width="0.5"/>
+    <circle cx="100" cy="100" r="70" stroke="#1a1a18" stroke-width="0.3"/>
+    <circle cx="100" cy="100" r="45" stroke="#1a1a18" stroke-width="0.3"/>
+    <circle cx="100" cy="100" r="4" fill="#1a1a18"/>
+    <line x1="100" y1="5" x2="100" y2="195" stroke="#1a1a18" stroke-width="0.3"/>
+    <line x1="5" y1="100" x2="195" y2="100" stroke="#1a1a18" stroke-width="0.3"/>
+    <line x1="29" y1="29" x2="171" y2="171" stroke="#1a1a18" stroke-width="0.2"/>
+    <line x1="171" y1="29" x2="29" y2="171" stroke="#1a1a18" stroke-width="0.2"/>
+    <polygon points="100,8 104,32 100,28 96,32" fill="#1a1a18"/>
+    <polygon points="100,192 104,168 100,172 96,168" fill="#1a1a18" opacity="0.4"/>
+    <polygon points="8,100 32,96 28,100 32,104" fill="#1a1a18" opacity="0.4"/>
+    <polygon points="192,100 168,96 172,100 168,104" fill="#1a1a18" opacity="0.4"/>
+    <text x="100" y="18" text-anchor="middle" font-size="7" fill="#1a1a18" font-family="serif">N</text>
+    <text x="100" y="188" text-anchor="middle" font-size="5" fill="#1a1a18" font-family="serif" opacity="0.5">S</text>
+    <text x="185" y="103" text-anchor="middle" font-size="5" fill="#1a1a18" font-family="serif" opacity="0.5">E</text>
+    <text x="15" y="103" text-anchor="middle" font-size="5" fill="#1a1a18" font-family="serif" opacity="0.5">W</text>
+  </svg>
+
+  <p class="hero-eyebrow" id="txt-eyebrow">Slow travel · Hidden gems</p>
+  <h1 id="txt-h1">The road<br/><em>less travelled</em></h1>
+  <p class="hero-sub" id="txt-sub">Enter a famous landmark. Discover a hidden gem nearby — just as beautiful, without the crowds.</p>
+
+  <div class="search-wrap">
+    <input
+      type="text"
+      id="place-input"
+      class="search-field"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button class="search-btn" id="search-btn" onclick="handleSearch()">
+      <span id="txt-btn">Discover →</span>
+    </button>
+  </div>
+
+  <div class="examples" id="examples-row">
+    <button class="example-chip" onclick="fillAndSearch('Eiffel Tower')">Eiffel Tower</button>
+    <button class="example-chip" onclick="fillAndSearch('Colosseum')">Colosseum</button>
+    <button class="example-chip" onclick="fillAndSearch('Sagrada Família')">Sagrada Família</button>
+    <button class="example-chip" onclick="fillAndSearch('Trevi Fountain')">Trevi Fountain</button>
+    <button class="example-chip" onclick="fillAndSearch('Big Ben')">Big Ben</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div id="results-inner"></div>
+</section>
+
+<footer>
+  <span id="txt-footer">Elsewhere — Discover the road less travelled. Fighting overtourism, one hidden gem at a time.</span>
+</footer>
+
+<script>
+// ── i18n ──────────────────────────────────────────────────────────────────
+const I18N = {
+  en: {
+    eyebrow: 'Slow travel · Hidden gems',
+    h1: 'The road<br/><em>less travelled</em>',
+    sub: 'Enter a famous landmark. Discover a hidden gem nearby — just as beautiful, without the crowds.',
+    placeholder: 'Eiffel Tower, Colosseum, Machu Picchu…',
+    btn: 'Discover →',
+    loading: 'Finding your hidden gem…',
+    altFor: 'Alternative to',
+    badge: 'Hidden gem',
+    alsoTitle: 'You might also like',
+    likes: 'likes',
+    learnMore: 'Learn more',
+    footer: 'Elsewhere — Discover the road less travelled. Fighting overtourism, one hidden gem at a time.',
+    errorMsg: 'Something went wrong. Please try again.',
+  },
+  fr: {
+    eyebrow: 'Slow travel · Lieux secrets',
+    h1: 'Là où<br/><em>personne ne va</em>',
+    sub: 'Entrez un lieu touristique connu. Découvrez une alternative cachée à proximité — aussi belle, sans la foule.',
+    placeholder: 'Tour Eiffel, Colisée, Mont-Saint-Michel…',
+    btn: 'Découvrir →',
+    loading: 'Recherche de votre pépite cachée…',
+    altFor: 'Alternative à',
+    badge: 'Lieu secret',
+    alsoTitle: 'Vous pourriez aussi aimer',
+    likes: 'j'aime',
+    learnMore: 'En savoir plus',
+    footer: 'Elsewhere — Découvrez les chemins de traverse. Contre le surtourisme, un lieu secret à la fois.',
+    errorMsg: 'Une erreur est survenue. Réessayez.',
+  },
+  es: {
+    eyebrow: 'Viaje lento · Joyas ocultas',
+    h1: 'El camino<br/><em>menos transitado</em>',
+    sub: 'Introduce un lugar turístico famoso. Descubre una joya oculta cercana — igual de hermosa, sin las multitudes.',
+    placeholder: 'Torre Eiffel, Coliseo, Sagrada Família…',
+    btn: 'Descubrir →',
+    loading: 'Buscando tu joya oculta…',
+    altFor: 'Alternativa a',
+    badge: 'Joya oculta',
+    alsoTitle: 'También te puede gustar',
+    likes: 'me gusta',
+    learnMore: 'Saber más',
+    footer: 'Elsewhere — Descubre el camino menos transitado. Luchando contra el turismo masivo.',
+    errorMsg: 'Algo salió mal. Por favor, inténtalo de nuevo.',
+  },
+  de: {
+    eyebrow: 'Langsames Reisen · Versteckte Schätze',
+    h1: 'Der Weg<br/><em>abseits der Massen</em>',
+    sub: 'Gib ein bekanntes Touristenziel ein. Entdecke einen versteckten Geheimtipp in der Nähe — genauso schön, ohne den Ansturm.',
+    placeholder: 'Eiffelturm, Kolosseum, Neuschwanstein…',
+    btn: 'Entdecken →',
+    loading: 'Dein versteckter Schatz wird gesucht…',
+    altFor: 'Alternative zu',
+    badge: 'Geheimtipp',
+    alsoTitle: 'Das könnte dir auch gefallen',
+    likes: 'Gefällt mir',
+    learnMore: 'Mehr erfahren',
+    footer: 'Elsewhere — Entdecke abseits der ausgetretenen Pfade. Gegen den Massentourismus.',
+    errorMsg: 'Etwas ist schiefgelaufen. Bitte versuche es erneut.',
+  },
+  it: {
+    eyebrow: 'Viaggio lento · Luoghi nascosti',
+    h1: 'La strada<br/><em>meno battuta</em>',
+    sub: 'Inserisci un luogo turistico famoso. Scopri una gemma nascosta nelle vicinanze — altrettanto bella, senza la folla.',
+    placeholder: 'Torre Eiffel, Colosseo, Fontana di Trevi…',
+    btn: 'Scopri →',
+    loading: 'Cerco la tua gemma nascosta…',
+    altFor: 'Alternativa a',
+    badge: 'Gemma nascosta',
+    alsoTitle: 'Potrebbe piacerti anche',
+    likes: 'mi piace',
+    learnMore: 'Scopri di più',
+    footer: 'Elsewhere — Scopri la strada meno battuta. Contro il sovraturismo.',
+    errorMsg: 'Qualcosa è andato storto. Riprova.',
+  },
+  pt: {
+    eyebrow: 'Viagem lenta · Tesouros escondidos',
+    h1: 'O caminho<br/><em>menos percorrido</em>',
+    sub: 'Insira um ponto turístico famoso. Descubra uma joia escondida por perto — tão bonita quanto, sem as multidões.',
+    placeholder: 'Torre Eiffel, Coliseu, Cristo Redentor…',
+    btn: 'Descobrir →',
+    loading: 'A procurar a sua joia escondida…',
+    altFor: 'Alternativa a',
+    badge: 'Tesouro escondido',
+    alsoTitle: 'Também pode gostar',
+    likes: 'gosto',
+    learnMore: 'Saber mais',
+    footer: 'Elsewhere — Descubra o caminho menos percorrido. Contra o sobreturismo.',
+    errorMsg: 'Algo correu mal. Por favor tente novamente.',
+  },
+  ja: {
+    eyebrow: 'スローな旅 · 隠れた名所',
+    h1: '人混みを<br/><em>離れた道へ</em>',
+    sub: '有名な観光地を入力してください。近くの隠れた名所を発見しましょう — 同じくらい美しく、混雑なし。',
+    placeholder: 'エッフェル塔、コロッセオ、清水寺…',
+    btn: '発見する →',
+    loading: '隠れた名所を探しています…',
+    altFor: 'の代替案',
+    badge: '隠れた名所',
+    alsoTitle: 'こちらもおすすめ',
+    likes: 'いいね',
+    learnMore: '詳しく見る',
+    footer: 'Elsewhere — 人混みを離れた旅へ。オーバーツーリズムと戦う、一つの秘所から。',
+    errorMsg: 'エラーが発生しました。もう一度お試しください。',
+  },
+  zh: {
+    eyebrow: '慢旅行 · 隐藏宝地',
+    h1: '走那条<br/><em>少有人走的路</em>',
+    sub: '输入一个著名景点，发现附近的隐藏宝地——同样美丽，没有人群。',
+    placeholder: '埃菲尔铁塔、斗兽场、长城…',
+    btn: '发现 →',
+    loading: '正在寻找您的隐藏宝地…',
+    altFor: '的替代选择',
+    badge: '隐藏宝地',
+    alsoTitle: '您也可能喜欢',
+    likes: '点赞',
+    learnMore: '了解更多',
+    footer: 'Elsewhere — 走那条少有人走的路。一次一个隐藏宝地，对抗过度旅游。',
+    errorMsg: '出了点问题，请重试。',
+  },
+  ar: {
+    eyebrow: 'السفر الهادئ · الجواهر الخفية',
+    h1: 'الطريق<br/><em>الأقل سلوكاً</em>',
+    sub: 'أدخل معلماً سياحياً شهيراً. اكتشف جوهرة خفية قريبة — بنفس الجمال، بدون الازدحام.',
+    placeholder: 'برج إيفل، الكولوسيوم، الأهرامات…',
+    btn: 'اكتشف →',
+    loading: 'نبحث عن جوهرتك الخفية…',
+    altFor: 'بديل عن',
+    badge: 'جوهرة خفية',
+    alsoTitle: 'قد يعجبك أيضاً',
+    likes: 'إعجاب',
+    learnMore: 'اعرف المزيد',
+    footer: '.Elsewhere — اكتشف الطريق الأقل سلوكاً. نكافح السياحة الزائدة، جوهرة خفية في كل مرة',
+    errorMsg: 'حدث خطأ ما. يرجى المحاولة مرة أخرى.',
+  },
+  nl: {
+    eyebrow: 'Langzaam reizen · Verborgen schatten',
+    h1: 'Het pad<br/><em>minder bewandeld</em>',
+    sub: 'Voer een bekende toeristische bestemming in. Ontdek een verborgen parel in de buurt — even mooi, zonder de drukte.',
+    placeholder: 'Eiffeltoren, Colosseum, Anne Frankhuis…',
+    btn: 'Ontdekken →',
+    loading: 'Jouw verborgen parel wordt gezocht…',
+    altFor: 'Alternatief voor',
+    badge: 'Verborgen parel',
+    alsoTitle: 'Misschien vind je dit ook leuk',
+    likes: 'vind ik leuk',
+    learnMore: 'Meer weten',
+    footer: 'Elsewhere — Ontdek het pad minder bewandeld. Strijd tegen overtoerisme, één verborgen parel tegelijk.',
+    errorMsg: 'Er is iets misgegaan. Probeer het opnieuw.',
+  },
+};
+
+let currentLang = 'en';
+
+function t(key) { return I18N[currentLang]?.[key] ?? I18N['en'][key]; }
+
+function applyLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  document.getElementById('txt-eyebrow').textContent = t('eyebrow');
+  document.getElementById('txt-h1').innerHTML = t('h1');
+  document.getElementById('txt-sub').textContent = t('sub');
+  document.getElementById('place-input').placeholder = t('placeholder');
+  document.getElementById('txt-btn').textContent = t('btn');
+  document.getElementById('txt-footer').textContent = t('footer');
+  if (lang === 'ar') document.body.setAttribute('dir', 'rtl');
+  else document.body.removeAttribute('dir');
+}
+
+document.getElementById('lang-selector').addEventListener('click', e => {
+  const btn = e.target.closest('.lang-btn');
+  if (btn) applyLang(btn.dataset.lang);
+});
+
+// Detect browser language on load
+const browserLang = navigator.language?.slice(0,2);
+if (I18N[browserLang]) applyLang(browserLang);
+else applyLang('en');
+
+// ── IN-MEMORY STORE (replace with Google Sheets API in production) ─────────
+// Structure: { normalizedQuery: [ { name, city, why, image, google, likes } ] }
+const STORE = {};
+
+function normalizeQuery(q) { return q.trim().toLowerCase(); }
+
+function getStored(query) { return STORE[normalizeQuery(query)] || []; }
+
+function upsertSuggestion(query, suggestion) {
+  const key = normalizeQuery(query);
+  if (!STORE[key]) STORE[key] = [];
+  const existing = STORE[key].find(s => s.name.toLowerCase() === suggestion.name.toLowerCase());
+  if (existing) return existing;
+  const entry = { ...suggestion, likes: 0, liked: false };
+  STORE[key].push(entry);
+  return entry;
+}
+
+function sortByLikes(arr) { return [...arr].sort((a, b) => b.likes - a.likes); }
+
+// ── CLAUDE API ────────────────────────────────────────────────────────────
+const SYSTEM_PROMPT = `You are an expert in alternative and sustainable tourism. When given a famous tourist spot, suggest ONE hidden gem alternative that is lesser-known, off the beaten path, and genuinely special.
+
+Rules:
+- ONLY suggest truly hidden, secret, or uncrowded places.
+- NEVER suggest famous or crowded places.
+- Stay in the same city, region, or country as the input.
+- Match the experience type (viewpoint, nature, architecture, history, etc).
+- The image must be a real, direct URL to an image on Unsplash (https://images.unsplash.com/photo-XXXXXXX?w=800&q=80) or Wikimedia Commons (direct file URL). Use real photo IDs.
+- The google link must be: https://www.google.com/search?q=PLACE+NAME+CITY
+
+Respond ONLY with valid JSON, no markdown, no backticks, no preamble:
+{
+  "name": "Place name",
+  "city": "City or region",
+  "why": "2-3 sentence explanation of why this is a great alternative and what makes it special",
+  "image": "Direct image URL from Unsplash or Wikimedia",
+  "google": "https://www.google.com/search?q=..."
+}`;
+
+async function fetchSuggestion(query) {
+  const existing = getStored(query);
+  // If we have highly-liked suggestions, sometimes use them as context
+  const contextHint = existing.length > 0
+    ? `\n\nAlready suggested for this place: ${existing.map(s => s.name).join(', ')}. Suggest a DIFFERENT hidden gem.`
+    : '';
+
+  const res = await fetch('/api/suggest', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, contextHint, lang: currentLang })
+  });
+
+  if (!res.ok) {
+    if (res.status === 429) {
+      const data = await res.json().catch(() => ({}));
+      const wait = data.retryAfter
+        ? (data.reason === 'minute' ? `${data.retryAfter}s` : `${Math.ceil(data.retryAfter/60)} min`)
+        : 'a moment';
+      const err = new Error(`Too many searches. Please wait ${wait} before trying again.`);
+      err.rateLimited = true;
+      throw err;
+    }
+    throw new Error('API error ' + res.status);
+  }
+  return res.json();
+}
+
+// ── UI ────────────────────────────────────────────────────────────────────
+function fillAndSearch(place) {
+  document.getElementById('place-input').value = place;
+  handleSearch();
+}
+
+async function handleSearch() {
+  const input = document.getElementById('place-input');
+  const btn = document.getElementById('search-btn');
+  const query = input.value.trim();
+  if (!query) { input.focus(); return; }
+
+  const resultsEl = document.getElementById('results');
+  const inner = document.getElementById('results-inner');
+
+  resultsEl.style.display = 'block';
+  inner.innerHTML = `<div class="loading-wrap"><div class="loader"></div><p class="loading-txt">${t('loading')}</p></div>`;
+  window.scrollTo({ top: document.getElementById('hero').offsetHeight - 80, behavior: 'smooth' });
+
+  btn.disabled = true;
+
+  try {
+    // Check store for top liked suggestion first
+    const stored = sortByLikes(getStored(query));
+    let mainSuggestion;
+
+    if (stored.length > 0 && stored[0].likes > 0) {
+      // Use top liked as primary, fetch new one too
+      mainSuggestion = stored[0];
+      fetchSuggestion(query).then(s => upsertSuggestion(query, s)).catch(() => {});
+    } else {
+      // Fetch fresh suggestion from Claude
+      const fetched = await fetchSuggestion(query);
+      mainSuggestion = upsertSuggestion(query, fetched);
+    }
+
+    renderResults(query, mainSuggestion);
+  } catch(err) {
+    const msg = err.rateLimited
+      ? err.message
+      : t('errorMsg') + `<br/><small style="opacity:0.7">${err.message}</small>`;
+    inner.innerHTML = `<div class="error-wrap">${msg}</div>`;
+  }
+
+  btn.disabled = false;
+}
+
+function renderResults(query, main) {
+  const inner = document.getElementById('results-inner');
+  const others = sortByLikes(getStored(query)).filter(s => s.name !== main.name).slice(0, 4);
+
+  const heartSvg = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+  const extSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>`;
+
+  const mainId = 'main-' + Date.now();
+
+  const imgHtml = main.image
+    ? `<img class="main-img" src="${esc(main.image)}" alt="${esc(main.name)}" loading="lazy" onerror="this.style.display='none'">`
+    : `<div class="main-img-placeholder">No image available</div>`;
+
+  let alsoHtml = '';
+  if (others.length > 0) {
+    const cards = others.map(s => `
+      <div class="also-card">
+        <div class="also-img-wrap">
+          ${s.image ? `<img class="also-img" src="${esc(s.image)}" alt="${esc(s.name)}" loading="lazy" onerror="this.style.display='none'">` : `<div class="also-img-ph">No image</div>`}
+        </div>
+        <div class="also-body">
+          <p class="also-loc">${esc(s.city)}</p>
+          <p class="also-name">${esc(s.name)}</p>
+          <p class="also-likes">${heartSvg} ${s.likes} ${t('likes')}</p>
+        </div>
+      </div>`).join('');
+    alsoHtml = `<div class="also-section"><p class="also-title">${t('alsoTitle')}</p><div class="also-grid">${cards}</div></div>`;
+  }
+
+  inner.innerHTML = `
+    <div class="results-header">
+      <span class="results-label">${t('altFor')}</span>
+      <span class="results-query">${esc(query)}</span>
+    </div>
+    <div class="main-card">
+      <div class="main-img-wrap">
+        ${imgHtml}
+        <span class="card-badge">${t('badge')}</span>
+      </div>
+      <div class="main-card-body">
+        <p class="card-location">${esc(main.city)}</p>
+        <h2 class="card-name">${esc(main.name)}</h2>
+        <p class="card-why">${esc(main.why)}</p>
+        <div class="card-actions">
+          <button class="like-btn ${main.liked ? 'liked' : ''}" id="${mainId}-like" onclick="handleLike('${mainId}', '${encodeURIComponent(query)}', '${encodeURIComponent(main.name)}')">
+            ${heartSvg} <span id="${mainId}-count">${main.likes}</span> ${t('likes')}
+          </button>
+          <a class="more-btn" href="${esc(main.google)}" target="_blank" rel="noopener">
+            ${t('learnMore')} <span style="display:inline-flex;width:14px;height:14px;vertical-align:middle">${extSvg}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    ${alsoHtml}`;
+}
+
+function handleLike(cardId, queryEnc, nameEnc) {
+  const query = decodeURIComponent(queryEnc);
+  const name = decodeURIComponent(nameEnc);
+  const key = normalizeQuery(query);
+  const entry = STORE[key]?.find(s => s.name === name);
+  if (!entry || entry.liked) return;
+  entry.liked = true;
+  entry.likes++;
+
+  const btn = document.getElementById(cardId + '-like');
+  const count = document.getElementById(cardId + '-count');
+  if (btn) btn.classList.add('liked');
+  if (count) count.textContent = entry.likes;
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('place-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleSearch();
+});
+</script>
+</body>
+</html>
