@@ -105,48 +105,77 @@ function isGoodPlaceImage(url, width, height) {
 
 // Wikidata P18 image lookup — most reliable for named institutions
 
-async function getWikidataImage(name, city) {
+// Get Wikidata entity ID from a Wikipedia article title
+async function getWikidataIdFromWikipedia(title, lang) {
   try {
-    const searchQuery = name + ' ' + (city || '');
-    console.log('[Wikidata] searching:', searchQuery);
-    const searchRes = await fetch(
-      'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' +
-      encodeURIComponent(searchQuery) +
-      '&language=en&limit=5&format=json&origin=*'
+    const res = await fetch(
+      'https://' + lang + '.wikipedia.org/w/api.php?action=query&titles=' +
+      encodeURIComponent(title) +
+      '&prop=pageprops&ppprop=wikibase_item&format=json&origin=*'
     );
-    if (!searchRes.ok) { console.log('[Wikidata] search failed:', searchRes.status); return null; }
-    const searchData = await searchRes.json();
-    const entities = searchData.search || [];
-    console.log('[Wikidata] entities found:', entities.map(function(e) { return e.id + ':' + e.label; }));
-    if (!entities.length) return null;
+    if (!res.ok) return null;
+    const data = await res.json();
+    const pages = (data.query && data.query.pages) || {};
+    const page = Object.values(pages)[0];
+    return (page && page.pageprops && page.pageprops.wikibase_item) || null;
+  } catch (e) { return null; }
+}
 
-    for (let i = 0; i < Math.min(entities.length, 5); i++) {
-      const entityId = entities[i].id;
-      const entityRes = await fetch(
-        'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' +
-        entityId + '&props=claims&format=json&origin=*'
-      );
-      if (!entityRes.ok) continue;
-      const entityData = await entityRes.json();
-      const claims = entityData.entities &&
-        entityData.entities[entityId] &&
-        entityData.entities[entityId].claims;
-      if (!claims) { console.log('[Wikidata]', entityId, 'no claims'); continue; }
-      if (!claims.P18) { console.log('[Wikidata]', entityId, 'no P18 image'); continue; }
+// Get P18 image from a Wikidata entity ID
+async function getP18Image(entityId) {
+  try {
+    const res = await fetch(
+      'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' +
+      entityId + '&props=claims&format=json&origin=*'
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const entity = data.entities && data.entities[entityId];
+    if (!entity || !entity.claims || !entity.claims.P18) return null;
+    const filename = entity.claims.P18[0] &&
+      entity.claims.P18[0].mainsnak &&
+      entity.claims.P18[0].mainsnak.datavalue &&
+      entity.claims.P18[0].mainsnak.datavalue.value;
+    if (!filename) return null;
+    return await getWikimediaFileUrl(filename);
+  } catch (e) { return null; }
+}
 
-      const filename = claims.P18[0] &&
-        claims.P18[0].mainsnak &&
-        claims.P18[0].mainsnak.datavalue &&
-        claims.P18[0].mainsnak.datavalue.value;
-      if (!filename) continue;
-      console.log('[Wikidata]', entityId, 'P18 filename:', filename);
+async function getWikidataImage(name, city, country) {
+  try {
+    // Strategy: find the Wikipedia article first (reliable), then get its Wikidata ID, then P18
+    const queries = buildWikiQueries(name, city, country);
+    const langs = detectWikiLangs(city, country);
 
-      const url = await getWikimediaFileUrl(filename);
-      console.log('[Wikidata] resolved URL:', url);
-      if (url && isGoodPlaceImage(url, 800, 500)) return url;
+    for (let li = 0; li < langs.length; li++) {
+      const lang = langs[li];
+      const base = 'https://' + lang + '.wikipedia.org/w/api.php';
+
+      for (let qi = 0; qi < Math.min(queries.length, 4); qi++) {
+        // Step 1: find the article
+        const searchRes = await fetch(
+          base + '?action=query&list=search&srsearch=' +
+          encodeURIComponent(queries[qi]) +
+          '&format=json&origin=*&srnamespace=0&srlimit=3'
+        );
+        if (!searchRes.ok) continue;
+        const searchData = await searchRes.json();
+        const results = (searchData.query && searchData.query.search) || [];
+        if (!results.length) continue;
+
+        const title = results[0].title;
+
+        // Step 2: get Wikidata ID from this article
+        const entityId = await getWikidataIdFromWikipedia(title, lang);
+        if (!entityId) continue;
+
+        // Step 3: get P18 image from Wikidata
+        const img = await getP18Image(entityId);
+        if (img && isGoodPlaceImage(img, 800, 500)) return img;
+      }
     }
     return null;
-  } catch (e) { console.log('[Wikidata] error:', e.message); return null; }
+  } catch (e) { return null; }
 }
 
 async function getUnsplashImage(query, category) {
@@ -316,7 +345,7 @@ async function findImage(name, city, country) {
   country = country || '';
 
   // Step 1: Wikidata P18 — most reliable for named institutions (museums, châteaux, etc.)
-  const wikidata = await getWikidataImage(name, city);
+  const wikidata = await getWikidataImage(name, city, country);
   if (wikidata) return wikidata;
 
   // Step 2: Wikimedia/Wikipedia article image
