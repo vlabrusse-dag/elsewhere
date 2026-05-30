@@ -350,26 +350,20 @@ function isUnsplashSafe(name) {
   });
 }
 
-async function findImage(name, city, country) {
+async function findImage(name, city, country, wikimediaFilename) {
   country = country || '';
 
-  // Step 1: Wikidata P18 — most reliable for named institutions (museums, châteaux, etc.)
-  const wikidata = await getWikidataImage(name, city, country);
-  if (wikidata) return wikidata;
+  // Step 1: Use Claude-provided Wikimedia filename (single fast API call)
+  if (wikimediaFilename && typeof wikimediaFilename === 'string' && wikimediaFilename.length > 4) {
+    const url = await getWikimediaFileUrl(wikimediaFilename);
+    if (url && isGoodPlaceImage(url, 800, 500)) return url;
+  }
 
-  // Step 2: Wikimedia/Wikipedia article image
-  const wiki = await getWikimediaImage(name, city, country);
-  if (wiki) return wiki;
-
-  // Step 3: Unsplash — skip for museums/galleries (too generic)
+  // Step 2: Unsplash — only for non-museums with specific multi-word names
   if (!isUnsplashSafe(name)) return null;
-
   const words = name.trim().split(' ').filter(function(w) { return w.length > 2; });
-  if (words.length >= 3) {
-    const img = await getUnsplashImage(name + ' ' + city, 'architecture landmark');
-    if (img) return img;
-  } else if (words.length >= 2) {
-    const img = await getUnsplashImage(name, 'architecture historic landmark');
+  if (words.length >= 2) {
+    const img = await getUnsplashImage(name + ' ' + city, 'architecture landmark historic');
     if (img) return img;
   }
 
@@ -500,7 +494,7 @@ export default async function handler(req, res) {
       parsed.google = 'https://www.google.com/search?q=' + encodeURIComponent((parsed.name || '') + ' ' + (parsed.city || '') + ' ' + (parsed.country || ''));
     }
 
-    parsed.image = await findImage(parsed.name, parsed.city, parsed.country || '');
+    parsed.image = await findImage(parsed.name, parsed.city, parsed.country || '', parsed.wikimedia || null);
 
     res.setHeader('Cache-Control', 'no-store');
     return res.status(200).json(parsed);
