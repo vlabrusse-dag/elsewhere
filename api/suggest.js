@@ -404,8 +404,10 @@ async function findWikipediaTitle(name, city, country) {
 
 async function findImage(name, city, country) {
   country = country || '';
+  console.log('[A] findImage called for:', name);
 
   const found = await findWikipediaTitle(name, city, country);
+  console.log('[A] title:', found ? found.lang+':'+found.title : 'none');
   if (found) {
     const img = await getPageImage(found.title, found.lang);
     if (img) return img;
