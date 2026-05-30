@@ -96,7 +96,7 @@ function isGoodPlaceImage(url, width, height) {
   if (!url) return false;
   if (width && width < 300) return false;
   // Reject portrait-oriented images (taller than wide = likely a person photo)
-  if (width && height && height > width * 1.2) return false;
+  if (width && height && height > width * 1.8) return false; // block only extreme portraits (people), not building facades
   const lower = url.toLowerCase();
   return !IMG_BLOCKLIST.some(function(bad) { return lower.includes(bad); });
 }
@@ -367,7 +367,6 @@ async function getPageImage(title, lang) {
     const src = (page.original && page.original.source) || (page.thumbnail && page.thumbnail.source);
     const w = (page.original && page.original.width) || (page.thumbnail && page.thumbnail.width);
     const h = (page.original && page.original.height) || (page.thumbnail && page.thumbnail.height);
-    console.log('[PAGE] src:', src ? src.slice(0,80) : 'none', '| w:', w, '| h:', h, '| ratio:', w && h ? (h/w).toFixed(2) : 'n/a');
     return isGoodPlaceImage(src, w, h) ? src : null;
   } catch (e) { console.log('[PAGE] error:', e.message); return null; }
 }
@@ -407,10 +406,8 @@ async function findImage(name, city, country) {
   country = country || '';
 
   const found = await findWikipediaTitle(name, city, country);
-  console.log('[IMG] title found:', found ? (found.lang + ':' + found.title) : 'none');
   if (found) {
     const img = await getPageImage(found.title, found.lang);
-    console.log('[IMG] pageimage:', img ? img.slice(0, 80) : 'none');
     if (img) return img;
   }
 
