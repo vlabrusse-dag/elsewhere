@@ -350,23 +350,74 @@ function isUnsplashSafe(name) {
   });
 }
 
-async function findImage(name, city, country, wikimediaFilename) {
+// Single fast Wikipedia pageimages lookup by exact title
+async function getPageImage(title, lang) {
+  try {
+    const res = await fetch(
+      'https://' + lang + '.wikipedia.org/w/api.php?action=query' +
+      '&titles=' + encodeURIComponent(title) +
+      '&prop=pageimages&piprop=original|thumbnail&pithumbsize=1000' +
+      '&format=json&origin=*'
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const pages = (data.query && data.query.pages) || {};
+    const page = Object.values(pages)[0];
+    if (!page || page.missing) return null;
+    const src = (page.original && page.original.source) || (page.thumbnail && page.thumbnail.source);
+    const w = (page.original && page.original.width) || (page.thumbnail && page.thumbnail.width);
+    const h = (page.original && page.original.height) || (page.thumbnail && page.thumbnail.height);
+    return isGoodPlaceImage(src, w, h) ? src : null;
+  } catch (e) { return null; }
+}
+
+// Find best Wikipedia article title for a place name
+async function findWikipediaTitle(name, city, country) {
+  const langs = detectWikiLangs(city, country);
+  const queries = [name, name + ' ' + city, stripAccents(name)];
+
+  for (let li = 0; li < langs.length; li++) {
+    const lang = langs[li];
+    for (let qi = 0; qi < queries.length; qi++) {
+      try {
+        const res = await fetch(
+          'https://' + lang + '.wikipedia.org/w/api.php?action=query&list=search' +
+          '&srsearch=' + encodeURIComponent(queries[qi]) +
+          '&format=json&origin=*&srnamespace=0&srlimit=3'
+        );
+        if (!res.ok) continue;
+        const data = await res.json();
+        const hits = (data.query && data.query.search) || [];
+        // Find first hit that looks like our place (not disambiguation, not a person)
+        const hit = hits.find(function(h) {
+          const t = h.title.toLowerCase();
+          return !t.includes('disambiguation') && !t.includes('homonymie') &&
+                 !t.includes('list of') && !t.includes('canton') &&
+                 !t.includes('arrondissement');
+        });
+        if (hit) return { title: hit.title, lang: lang };
+      } catch (e) { continue; }
+    }
+  }
+  return null;
+}
+
+async function findImage(name, city, country) {
   country = country || '';
 
-  // Step 1: Use Claude-provided Wikimedia filename (single fast API call)
-  if (wikimediaFilename && typeof wikimediaFilename === 'string' && wikimediaFilename.length > 4) {
-    const url = await getWikimediaFileUrl(wikimediaFilename);
-    if (url && isGoodPlaceImage(url, 800, 500)) return url;
-  }
-
-  // Step 2: Unsplash — only for non-museums with specific multi-word names
-  if (!isUnsplashSafe(name)) return null;
-  const words = name.trim().split(' ').filter(function(w) { return w.length > 2; });
-  if (words.length >= 2) {
-    const img = await getUnsplashImage(name + ' ' + city, 'architecture landmark historic');
+  // Single optimized pipeline: find Wikipedia title → get pageimage (2 fast calls)
+  const found = await findWikipediaTitle(name, city, country);
+  if (found) {
+    const img = await getPageImage(found.title, found.lang);
     if (img) return img;
   }
 
+  // Fallback: Unsplash only for non-museums with multi-word names
+  if (!isUnsplashSafe(name)) return null;
+  const words = name.trim().split(' ').filter(function(w) { return w.length > 2; });
+  if (words.length >= 2) {
+    return await getUnsplashImage(name + ' ' + city, 'architecture landmark historic');
+  }
   return null;
 }
 
@@ -482,7 +533,6 @@ export default async function handler(req, res) {
       return res.status(502).json({ error: 'Invalid JSON from model' });
     }
 
-    console.log('[RAW] Claude response:', JSON.stringify(parsed));
     if (parsed.error === 'not_a_place') {
       return res.status(422).json(parsed);
     }
@@ -495,7 +545,7 @@ export default async function handler(req, res) {
       parsed.google = 'https://www.google.com/search?q=' + encodeURIComponent((parsed.name || '') + ' ' + (parsed.city || '') + ' ' + (parsed.country || ''));
     }
 
-    parsed.image = await findImage(parsed.name, parsed.city, parsed.country || '', parsed.wikimedia || null);
+    parsed.image = await findImage(parsed.name, parsed.city, parsed.country || '');
 
     res.setHeader('Cache-Control', 'no-store');
     return res.status(200).json(parsed);
