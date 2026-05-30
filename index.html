@@ -283,8 +283,10 @@
   .main-card:hover .main-img { transform: scale(1.02); }
   .main-img-placeholder {
     width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
     font-size: 13px; color: var(--muted);
+    background: linear-gradient(135deg, #ede9df 0%, #e0dbd0 100%);
+    letter-spacing: 0.05em;
   }
 
   .card-badge {
@@ -530,7 +532,7 @@
 
 <footer>
   <span id="txt-footer">Elsewhere — Discover the road less travelled. Fighting overtourism, one hidden gem at a time.</span>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.4;letter-spacing:0.08em;">v1.6.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.4;letter-spacing:0.08em;">v1.7.0</span>
 </footer>
 
 <script>
@@ -859,8 +861,14 @@ function renderResults(query, main) {
   const mainId = 'main-' + Date.now();
 
   const imgHtml = main.image
-    ? `<img class="main-img" src="${esc(main.image)}" alt="${esc(main.name)}" loading="lazy" onerror="this.style.display='none'">`
-    : `<div class="main-img-placeholder">No image available</div>`;
+    ? `<img class="main-img" src="${esc(main.image)}" alt="${esc(main.name)}" loading="lazy"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+      + `<div class="main-img-placeholder" style="display:none">`
+      + `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/><path d="M12 2c-2.5 3-4 6.5-4 10s1.5 7 4 10"/><path d="M12 2c2.5 3 4 6.5 4 10s-1.5 7-4 10"/></svg>`
+      + `<span style="margin-top:8px;font-size:12px;color:var(--muted)">${esc(main.city)}</span></div>`
+    : `<div class="main-img-placeholder">`
+      + `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/><path d="M12 2c-2.5 3-4 6.5-4 10s1.5 7 4 10"/><path d="M12 2c2.5 3 4 6.5 4 10s-1.5 7-4 10"/></svg>`
+      + `<span style="margin-top:8px;font-size:12px;color:var(--muted)">${esc(main.city)}</span></div>`;
 
   let alsoHtml = '';
   if (others.length > 0) {
