@@ -199,19 +199,22 @@ async function getWikimediaImage(name, city, country) {
 
 async function findImage(name, city, country) {
   country = country || '';
-  const location = [city, country].filter(Boolean).join(', ');
 
-  const img1 = await getWikimediaImage(name, city, country);
-  if (img1) return img1;
+  // Step 1: Wikimedia — only source we trust for place-specific photos
+  const wiki = await getWikimediaImage(name, city, country);
+  if (wiki) return wiki;
 
-  const img2 = await getUnsplashImage(name + ' ' + location, 'landmark travel');
-  if (img2) return img2;
+  // Step 2: Unsplash with very specific query (name only, no city fallback)
+  // We only accept this if the query is specific enough (more than one word)
+  // to avoid generic "France" or "Paris" shots
+  const nameWords = name.trim().split(/\s+/);
+  if (nameWords.length >= 2) {
+    const specific = await getUnsplashImage(name, 'historic site architecture');
+    if (specific) return specific;
+  }
 
-  const img3 = await getUnsplashImage(name + ' ' + location);
-  if (img3) return img3;
-
-  const img4 = await getUnsplashImage(city + ' ' + country + ' landmark architecture');
-  return img4 || null;
+  // No image found — return null and let the frontend show a styled placeholder
+  return null;
 }
 
 // ── PROMPT v3 ─────────────────────────────────────────────────────────────────
