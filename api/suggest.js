@@ -38,49 +38,72 @@ function getIP(req) {
 }
 
 // ── IMAGE SEARCH ─────────────────────────────────────────────────────────────
-async function getUnsplashImage(query) {
+async function getUnsplashImage(query, category = '') {
   const key = process.env.UNSPLASH_ACCESS_KEY;
   if (!key) return null;
   try {
+    // Add "travel landmark" to bias toward architectural/place photos
+    const searchQuery = category ? `${query} ${category}` : query;
     const res = await fetch(
-      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=3&orientation=landscape`,
+      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(searchQuery)}&per_page=5&orientation=landscape&content_filter=high`,
       { headers: { Authorization: `Client-ID ${key}` } }
     );
     if (!res.ok) return null;
     const data = await res.json();
-    const photo = data.results?.[0];
-    if (!photo) return null;
+    if (!data.results?.length) return null;
+    // Pick photo with highest relevance score if available, otherwise first
+    const photo = data.results[0];
     return photo.urls?.regular || null;
   } catch { return null; }
 }
 
-async function getWikimediaImage(query) {
+async function getWikimediaImage(name, city) {
   try {
-    const searchRes = await fetch(
-      `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`
-    );
-    if (!searchRes.ok) return null;
-    const searchData = await searchRes.json();
-    const title = searchData.query?.search?.[0]?.title;
-    if (!title) return null;
+    // Try name + city first, then just name
+    const queries = [`${name} ${city}`, name];
+    for (const q of queries) {
+      const searchRes = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&origin=*&srnamespace=0&srlimit=3`
+      );
+      if (!searchRes.ok) continue;
+      const searchData = await searchRes.json();
+      const results = searchData.query?.search || [];
+      // Filter out disambiguation pages and generic articles
+      const title = results.find(r => !r.title.includes('(disambiguation)') && !r.title.includes('List of'))?.title;
+      if (!title) continue;
 
-    const imgRes = await fetch(
-      `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&pithumbsize=800&format=json&origin=*`
-    );
-    if (!imgRes.ok) return null;
-    const imgData = await imgRes.json();
-    const pages = imgData.query?.pages || {};
-    const page = Object.values(pages)[0];
-    return page?.thumbnail?.source || null;
+      const imgRes = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&pithumbsize=1000&format=json&origin=*`
+      );
+      if (!imgRes.ok) continue;
+      const imgData = await imgRes.json();
+      const pages = imgData.query?.pages || {};
+      const page = Object.values(pages)[0];
+      const src = page?.thumbnail?.source;
+      if (src) return src;
+    }
+    return null;
   } catch { return null; }
 }
 
 async function findImage(name, city) {
-  // Try Unsplash first with specific query, then broader, then Wikimedia
-  const unsplash = await getUnsplashImage(`${name} ${city}`)
-    || await getUnsplashImage(name);
-  if (unsplash) return unsplash;
-  return await getWikimediaImage(`${name} ${city}`) || null;
+  // Strategy:
+  // 1. Unsplash: "name city travel" (biased toward travel/landmark photos)
+  // 2. Unsplash: "name city" (plain)
+  // 3. Unsplash: "city landmark architecture" (city-level fallback)
+  // 4. Wikimedia: Wikipedia article image (most accurate for specific places)
+  const img1 = await getUnsplashImage(`${name} ${city}`, 'landmark travel');
+  if (img1) return img1;
+
+  const img2 = await getUnsplashImage(`${name} ${city}`);
+  if (img2) return img2;
+
+  const img3 = await getWikimediaImage(name, city);
+  if (img3) return img3;
+
+  // Last resort: city-level photo
+  const img4 = await getUnsplashImage(`${city} architecture landmark travel`);
+  return img4 || null;
 }
 
 // ── CLAUDE PROMPT v2 ──────────────────────────────────────────────────────────
