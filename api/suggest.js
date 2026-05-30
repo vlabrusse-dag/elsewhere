@@ -97,9 +97,9 @@ const COUNTRY_LANG_MAP = {
   'usa': 'en', 'united states': 'en', 'australia': 'en',
 };
 
-function detectWikiLangs(city) {
+function detectWikiLangs(city, country = '') {
   // city can be "Chauvigny, Vienne" or "Kyoto" or "Rome, Italy"
-  const lower = (city || '').toLowerCase();
+  const lower = [(city || ''), (country || '')].join(' ').toLowerCase();
   // Check each known country keyword
   for (const [keyword, lang] of Object.entries(COUNTRY_LANG_MAP)) {
     if (lower.includes(keyword)) {
@@ -195,10 +195,10 @@ async function searchWikiLang(lang, q, blocklist) {
   } catch { return null; }
 }
 
-async function getWikimediaImage(name, city) {
-  const queries = [`${name} ${city}`, name];
+async function getWikimediaImage(name, location) {
+  const queries = [`${name} ${location}`, name];
   // Detect the best Wikipedia languages for this location
-  const langs = detectWikiLangs(city);
+  const langs = detectWikiLangs(location);
   for (const lang of langs) {
     for (const q of queries) {
       const result = await searchWikiLang(lang, q, IMG_BLOCKLIST);
@@ -208,23 +208,24 @@ async function getWikimediaImage(name, city) {
   return null;
 }
 
-async function findImage(name, city) {
-  // Strategy:
-  // 1. Unsplash: "name city travel" (biased toward travel/landmark photos)
-  // 2. Unsplash: "name city" (plain)
-  // 3. Unsplash: "city landmark architecture" (city-level fallback)
-  // 4. Wikimedia: Wikipedia article image (most accurate for specific places)
-  const img1 = await getUnsplashImage(`${name} ${city}`, 'landmark travel');
+
+async function findImage(name, city, country = '') {
+  const location = [city, country].filter(Boolean).join(', ');
+
+  // 1. Wikimedia first — most accurate for specific named places
+  const img1 = await getWikimediaImage(name, location);
   if (img1) return img1;
 
-  const img2 = await getUnsplashImage(`${name} ${city}`);
+  // 2. Unsplash: name + full location + "landmark travel"
+  const img2 = await getUnsplashImage(`${name} ${location}`, 'landmark travel');
   if (img2) return img2;
 
-  const img3 = await getWikimediaImage(name, city);
+  // 3. Unsplash: plain name + location
+  const img3 = await getUnsplashImage(`${name} ${location}`);
   if (img3) return img3;
 
-  // Last resort: city-level photo
-  const img4 = await getUnsplashImage(`${city} architecture landmark travel`);
+  // 4. Last resort: city-level Unsplash
+  const img4 = await getUnsplashImage(`${city} ${country} landmark architecture`);
   return img4 || null;
 }
 
@@ -353,7 +354,7 @@ export default async function handler(req, res) {
     }
 
     // Fetch real image in parallel
-    parsed.image = await findImage(parsed.name, parsed.city);
+    parsed.image = await findImage(parsed.name, parsed.city, parsed.country || '');
 
     res.setHeader('Cache-Control', 'no-store');
     return res.status(200).json(parsed);
