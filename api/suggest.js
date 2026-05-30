@@ -224,7 +224,9 @@ export default async function handler(req, res) {
       parsed.google = 'https://www.google.com/search?q=' + encodeURIComponent((parsed.name || '') + ' ' + (parsed.city || '') + ' ' + (parsed.country || ''));
     }
 
+    console.log('[IMG] Claude image field:', parsed.image);
     parsed.image = await findImage(parsed.name, parsed.city, parsed.country || '', parsed.image || null);
+    console.log('[IMG] final image:', parsed.image ? 'found' : 'null');
 
     res.setHeader('Cache-Control', 'no-store');
     return res.status(200).json(parsed);
