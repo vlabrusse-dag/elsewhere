@@ -143,39 +143,39 @@ async function getP18Image(entityId) {
 
 async function getWikidataImage(name, city, country) {
   try {
-    // Strategy: find the Wikipedia article first (reliable), then get its Wikidata ID, then P18
     const queries = buildWikiQueries(name, city, country);
     const langs = detectWikiLangs(city, country);
+    console.log('[WD] name:', name, '| queries:', queries.slice(0,3), '| langs:', langs);
 
     for (let li = 0; li < langs.length; li++) {
       const lang = langs[li];
       const base = 'https://' + lang + '.wikipedia.org/w/api.php';
 
       for (let qi = 0; qi < Math.min(queries.length, 4); qi++) {
-        // Step 1: find the article
         const searchRes = await fetch(
           base + '?action=query&list=search&srsearch=' +
           encodeURIComponent(queries[qi]) +
           '&format=json&origin=*&srnamespace=0&srlimit=3'
         );
-        if (!searchRes.ok) continue;
+        if (!searchRes.ok) { console.log('[WD] search HTTP error', searchRes.status); continue; }
         const searchData = await searchRes.json();
         const results = (searchData.query && searchData.query.search) || [];
+        console.log('[WD] lang=' + lang + ' q=' + queries[qi] + ' results:', results.map(function(r){return r.title;}));
         if (!results.length) continue;
 
         const title = results[0].title;
-
-        // Step 2: get Wikidata ID from this article
         const entityId = await getWikidataIdFromWikipedia(title, lang);
+        console.log('[WD] title:', title, '| entityId:', entityId);
         if (!entityId) continue;
 
-        // Step 3: get P18 image from Wikidata
         const img = await getP18Image(entityId);
+        console.log('[WD] entityId:', entityId, '| img:', img ? img.slice(0,80) : null);
         if (img && isGoodPlaceImage(img, 800, 500)) return img;
       }
     }
+    console.log('[WD] no image found for:', name);
     return null;
-  } catch (e) { return null; }
+  } catch (e) { console.log('[WD] error:', e.message); return null; }
 }
 
 async function getUnsplashImage(query, category) {
