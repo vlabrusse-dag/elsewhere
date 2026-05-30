@@ -482,6 +482,7 @@ export default async function handler(req, res) {
       return res.status(502).json({ error: 'Invalid JSON from model' });
     }
 
+    console.log('[IMG] wikimedia field:', parsed.wikimedia, '| name:', parsed.name);
     if (parsed.error === 'not_a_place') {
       return res.status(422).json(parsed);
     }
