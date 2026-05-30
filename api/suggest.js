@@ -184,9 +184,54 @@ async function searchWikiLang(lang, q) {
   } catch (e) { return null; }
 }
 
-async function getWikimediaImage(name, city, country) {
+// Detect category keywords in place name to improve Wikipedia search
+function buildWikiQueries(name, city, country) {
+  const lower = name.toLowerCase();
   const location = [city, country].filter(Boolean).join(', ');
-  const queries = [name + ' ' + location, name];
+  const queries = [];
+
+  // If name contains a category word, also search with it explicitly
+  const categoryPrefixes = {
+    'mus': 'museum',      // musée, museo, museum, museu
+    'château': 'castle',
+    'castle': 'castle',
+    'abbaye': 'abbey',
+    'abbey': 'abbey',
+    'cathédrale': 'cathedral',
+    'cathedral': 'cathedral',
+    'église': 'church',
+    'church': 'church',
+    'jardin': 'garden',
+    'garden': 'garden',
+    'parc': 'park',
+    'park': 'park',
+    'fort': 'fortification',
+    'citadelle': 'citadel',
+  };
+
+  let categoryHint = '';
+  for (const [key] of Object.entries(categoryPrefixes)) {
+    if (lower.includes(key)) { categoryHint = key; break; }
+  }
+
+  // Always try full name + location first (most specific)
+  queries.push(name + ' ' + location);
+  // Then name + location without country
+  if (city) queries.push(name + ' ' + city);
+  // Then just the name
+  queries.push(name);
+  // If name contains a person-like word (de, von, di = possibly named after person)
+  // add category hint to disambiguate
+  if (categoryHint && (lower.includes(' de ') || lower.includes(' di ') || lower.includes(' von '))) {
+    queries.unshift(name + ' ' + location + ' ' + categoryHint);
+    queries.unshift(name + ' ' + categoryHint);
+  }
+
+  return queries;
+}
+
+async function getWikimediaImage(name, city, country) {
+  const queries = buildWikiQueries(name, city, country);
   const langs = detectWikiLangs(city, country);
   for (let i = 0; i < langs.length; i++) {
     for (let j = 0; j < queries.length; j++) {
@@ -200,20 +245,21 @@ async function getWikimediaImage(name, city, country) {
 async function findImage(name, city, country) {
   country = country || '';
 
-  // Step 1: Wikimedia — only source we trust for place-specific photos
+  // Step 1: Wikimedia — most accurate for named places
   const wiki = await getWikimediaImage(name, city, country);
   if (wiki) return wiki;
 
-  // Step 2: Unsplash with very specific query (name only, no city fallback)
-  // We only accept this if the query is specific enough (more than one word)
-  // to avoid generic "France" or "Paris" shots
-  const nameWords = name.trim().split(/\s+/);
-  if (nameWords.length >= 2) {
-    const specific = await getUnsplashImage(name, 'historic site architecture');
-    if (specific) return specific;
+  // Step 2: Unsplash — only for multi-word names (avoids generic city shots)
+  // e.g. "Musée Cognacq-Jay" is fine, "Brouage" would return random France photo
+  const words = name.trim().split(' ').filter(function(w) { return w.length > 2; });
+  if (words.length >= 3) {
+    const img = await getUnsplashImage(name + ' ' + city, 'architecture interior');
+    if (img) return img;
+  } else if (words.length >= 2) {
+    const img = await getUnsplashImage(name, 'architecture historic');
+    if (img) return img;
   }
 
-  // No image found — return null and let the frontend show a styled placeholder
   return null;
 }
 
