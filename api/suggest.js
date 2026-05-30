@@ -57,30 +57,88 @@ async function getUnsplashImage(query, category = '') {
   } catch { return null; }
 }
 
+// Blocklist of image filename patterns that are never good place photos
+const IMG_BLOCKLIST = [
+  'logo', 'icon', 'flag', 'coat', 'arms', 'portrait', 'map', 'locator',
+  'restaurant', 'menu', 'food', 'dish', 'cuisine', 'chef',
+  'person', 'people', 'face', 'headshot',
+  'symbol', 'emblem', 'stamp', 'seal',
+  '.svg', 'commons-logo', 'wikidata',
+];
+
+function isGoodPlaceImage(url, width) {
+  if (!url) return false;
+  if (width && width < 300) return false; // too small = likely icon/logo
+  const lower = url.toLowerCase();
+  return !IMG_BLOCKLIST.some(bad => lower.includes(bad));
+}
+
 async function getWikimediaImage(name, city) {
   try {
-    // Try name + city first, then just name
-    const queries = [`${name} ${city}`, name];
+    const queries = [`${name} ${city}`, name, `${name} France`];
     for (const q of queries) {
+      // Step 1: find the Wikipedia article
       const searchRes = await fetch(
-        `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&origin=*&srnamespace=0&srlimit=3`
+        `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&origin=*&srnamespace=0&srlimit=5`
       );
       if (!searchRes.ok) continue;
       const searchData = await searchRes.json();
       const results = searchData.query?.search || [];
-      // Filter out disambiguation pages and generic articles
-      const title = results.find(r => !r.title.includes('(disambiguation)') && !r.title.includes('List of'))?.title;
+      const title = results.find(r =>
+        !r.title.includes('(disambiguation)') &&
+        !r.title.includes('List of') &&
+        !r.title.toLowerCase().includes('restaurant') &&
+        !r.title.toLowerCase().includes('cuisine')
+      )?.title;
       if (!title) continue;
 
+      // Step 2: get the infobox image (most reliable — it's the main photo of the article)
       const imgRes = await fetch(
-        `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&pithumbsize=1000&format=json&origin=*`
+        `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&piprop=original|thumbnail&pithumbsize=1000&format=json&origin=*`
       );
       if (!imgRes.ok) continue;
       const imgData = await imgRes.json();
       const pages = imgData.query?.pages || {};
       const page = Object.values(pages)[0];
-      const src = page?.thumbnail?.source;
-      if (src) return src;
+
+      const src = page?.original?.source || page?.thumbnail?.source;
+      const width = page?.original?.width || page?.thumbnail?.width;
+
+      if (isGoodPlaceImage(src, width)) return src;
+
+      // Step 3: fallback — scan all images in the article and pick the best one
+      const allImgRes = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=images&imlimit=20&format=json&origin=*`
+      );
+      if (!allImgRes.ok) continue;
+      const allImgData = await allImgRes.json();
+      const allPages = allImgData.query?.pages || {};
+      const images = Object.values(allPages)[0]?.images || [];
+
+      // Filter candidate image filenames
+      const candidates = images
+        .map(i => i.title)
+        .filter(t => {
+          const lower = t.toLowerCase();
+          return !IMG_BLOCKLIST.some(bad => lower.includes(bad)) &&
+            (lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.png'));
+        });
+
+      if (!candidates.length) continue;
+
+      // Fetch size info for top candidates and pick the largest (most likely a real photo)
+      for (const candidate of candidates.slice(0, 5)) {
+        const infoRes = await fetch(
+          `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(candidate)}&prop=imageinfo&iiprop=url|size&iiurlwidth=1000&format=json&origin=*`
+        );
+        if (!infoRes.ok) continue;
+        const infoData = await infoRes.json();
+        const infoPages = infoData.query?.pages || {};
+        const info = Object.values(infoPages)[0]?.imageinfo?.[0];
+        if (info?.thumburl && isGoodPlaceImage(info.thumburl, info.thumbwidth)) {
+          return info.thumburl;
+        }
+      }
     }
     return null;
   } catch { return null; }
