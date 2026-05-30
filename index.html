@@ -549,6 +549,7 @@ const I18N = {
     learnMore: 'Learn more',
     footer: 'Elsewhere — Discover the road less travelled. Fighting overtourism, one hidden gem at a time.',
     errorMsg: 'Something went wrong. Please try again.',
+    notAPlace: 'Hmm, we searched high and low… but that doesn\'t seem to be a place. Try a landmark, a city, or anywhere humans actually go.',
   },
   fr: {
     eyebrow: 'Slow travel · Lieux secrets',
@@ -564,6 +565,7 @@ const I18N = {
     learnMore: 'En savoir plus',
     footer: 'Elsewhere — Découvrez les chemins de traverse. Contre le surtourisme, un lieu secret à la fois.',
     errorMsg: 'Une erreur est survenue. Réessayez.',
+    notAPlace: 'Hm… on a cherché partout, mais ça ne ressemble pas vraiment à un lieu. Essayez un monument, une ville, ou n\'importe où où les humains se rendent.',
   },
   es: {
     eyebrow: 'Viaje lento · Joyas ocultas',
@@ -579,6 +581,7 @@ const I18N = {
     learnMore: 'Saber más',
     footer: 'Elsewhere — Descubre el camino menos transitado. Luchando contra el turismo masivo.',
     errorMsg: 'Algo salió mal. Por favor, inténtalo de nuevo.',
+    notAPlace: 'Mmm… hemos buscado por todas partes, pero eso no parece un lugar. Prueba con un monumento, una ciudad, o cualquier sitio donde vaya la gente.',
   },
   de: {
     eyebrow: 'Langsames Reisen · Versteckte Schätze',
@@ -594,6 +597,7 @@ const I18N = {
     learnMore: 'Mehr erfahren',
     footer: 'Elsewhere — Entdecke abseits der ausgetretenen Pfade. Gegen den Massentourismus.',
     errorMsg: 'Etwas ist schiefgelaufen. Bitte versuche es erneut.',
+    notAPlace: 'Hm… wir haben überall gesucht, aber das scheint kein Ort zu sein. Versuch es mit einem Denkmal, einer Stadt oder irgendwo, wo Menschen hingehen.',
   },
   it: {
     eyebrow: 'Viaggio lento · Luoghi nascosti',
@@ -609,6 +613,7 @@ const I18N = {
     learnMore: 'Scopri di più',
     footer: 'Elsewhere — Scopri la strada meno battuta. Contro il sovraturismo.',
     errorMsg: 'Qualcosa è andato storto. Riprova.',
+    notAPlace: 'Hmm… abbiamo cercato ovunque, ma questo non sembra un luogo. Prova con un monumento, una città, o qualsiasi posto frequentato dagli umani.',
   },
   pt: {
     eyebrow: 'Viagem lenta · Tesouros escondidos',
@@ -624,6 +629,7 @@ const I18N = {
     learnMore: 'Saber mais',
     footer: 'Elsewhere — Descubra o caminho menos percorrido. Contra o sobreturismo.',
     errorMsg: 'Algo correu mal. Por favor tente novamente.',
+    notAPlace: 'Hmm… procurámos em todo o lado, mas isso não parece um lugar. Tente um monumento, uma cidade, ou qualquer sítio onde as pessoas vão.',
   },
   ja: {
     eyebrow: 'スローな旅 · 隠れた名所',
@@ -639,6 +645,7 @@ const I18N = {
     learnMore: '詳しく見る',
     footer: 'Elsewhere — 人混みを離れた旅へ。オーバーツーリズムと戦う、一つの秘所から。',
     errorMsg: 'エラーが発生しました。もう一度お試しください。',
+    notAPlace: 'うーん…どこを探しても見つかりませんでした。それは場所ではないようです。観光地、都市名、または人が訪れる場所を入力してください。',
   },
   zh: {
     eyebrow: '慢旅行 · 隐藏宝地',
@@ -654,6 +661,7 @@ const I18N = {
     learnMore: '了解更多',
     footer: 'Elsewhere — 走那条少有人走的路。一次一个隐藏宝地，对抗过度旅游。',
     errorMsg: '出了点问题，请重试。',
+    notAPlace: '嗯……我们找遍了每个角落，但这似乎不是一个地方。请输入景点、城市或任何人们会去的地方。',
   },
   ar: {
     eyebrow: 'السفر الهادئ · الجواهر الخفية',
@@ -669,6 +677,7 @@ const I18N = {
     learnMore: 'اعرف المزيد',
     footer: '.Elsewhere — اكتشف الطريق الأقل سلوكاً. نكافح السياحة الزائدة، جوهرة خفية في كل مرة',
     errorMsg: 'حدث خطأ ما. يرجى المحاولة مرة أخرى.',
+    notAPlace: 'همم… بحثنا في كل مكان، لكن هذا لا يبدو مكاناً. جرّب معلماً سياحياً أو مدينة أو أي مكان يزوره البشر.',
   },
   nl: {
     eyebrow: 'Langzaam reizen · Verborgen schatten',
@@ -684,6 +693,7 @@ const I18N = {
     learnMore: 'Meer weten',
     footer: 'Elsewhere — Ontdek het pad minder bewandeld. Strijd tegen overtoerisme, één verborgen parel tegelijk.',
     errorMsg: 'Er is iets misgegaan. Probeer het opnieuw.',
+    notAPlace: 'Hmm… we hebben overal gezocht, maar dit lijkt geen plek te zijn. Probeer een bezienswaardigheid, een stad, of ergens waar mensen naartoe gaan.',
   },
 };
 
@@ -827,9 +837,11 @@ async function handleSearch() {
 
     renderResults(query, mainSuggestion);
   } catch(err) {
-    const msg = (err.rateLimited || err.notAPlace)
+    const msg = err.rateLimited
       ? err.message
-      : t('errorMsg') + `<br/><small style="opacity:0.7">${err.message}</small>`;
+      : err.notAPlace
+        ? t('notAPlace')
+        : t('errorMsg') + `<br/><small style="opacity:0.7">${err.message}</small>`;
     inner.innerHTML = `<div class="error-wrap">${msg}</div>`;
   }
 
