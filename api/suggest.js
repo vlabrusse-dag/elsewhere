@@ -102,6 +102,48 @@ function isGoodPlaceImage(url, width, height) {
 }
 
 // ── IMAGE SEARCH ─────────────────────────────────────────────────────────────
+
+// Wikidata P18 image lookup — most reliable for named institutions
+
+async function getWikidataImage(name, city) {
+  try {
+    const searchQuery = name + ' ' + (city || '');
+    const searchRes = await fetch(
+      'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' +
+      encodeURIComponent(searchQuery) +
+      '&language=en&limit=5&format=json&origin=*'
+    );
+    if (!searchRes.ok) return null;
+    const searchData = await searchRes.json();
+    const entities = searchData.search || [];
+    if (!entities.length) return null;
+
+    for (let i = 0; i < Math.min(entities.length, 5); i++) {
+      const entityId = entities[i].id;
+      const entityRes = await fetch(
+        'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' +
+        entityId + '&props=claims&format=json&origin=*'
+      );
+      if (!entityRes.ok) continue;
+      const entityData = await entityRes.json();
+      const claims = entityData.entities &&
+        entityData.entities[entityId] &&
+        entityData.entities[entityId].claims;
+      if (!claims || !claims.P18) continue;
+
+      const filename = claims.P18[0] &&
+        claims.P18[0].mainsnak &&
+        claims.P18[0].mainsnak.datavalue &&
+        claims.P18[0].mainsnak.datavalue.value;
+      if (!filename) continue;
+
+      const url = await getWikimediaFileUrl(filename);
+      if (url && isGoodPlaceImage(url, 800, 500)) return url;
+    }
+    return null;
+  } catch (e) { return null; }
+}
+
 async function getUnsplashImage(query, category) {
   const key = process.env.UNSPLASH_ACCESS_KEY;
   if (!key) return null;
@@ -268,12 +310,15 @@ function isUnsplashSafe(name) {
 async function findImage(name, city, country) {
   country = country || '';
 
-  // Step 1: Wikimedia — most accurate, always try first
+  // Step 1: Wikidata P18 — most reliable for named institutions (museums, châteaux, etc.)
+  const wikidata = await getWikidataImage(name, city);
+  if (wikidata) return wikidata;
+
+  // Step 2: Wikimedia/Wikipedia article image
   const wiki = await getWikimediaImage(name, city, country);
   if (wiki) return wiki;
 
-  // Step 2: Unsplash — skip for museums and galleries (too generic)
-  // Only use for specific architectural/natural sites with unique names
+  // Step 3: Unsplash — skip for museums/galleries (too generic)
   if (!isUnsplashSafe(name)) return null;
 
   const words = name.trim().split(' ').filter(function(w) { return w.length > 2; });
