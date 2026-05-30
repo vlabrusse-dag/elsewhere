@@ -560,7 +560,7 @@ const I18N = {
     altFor: 'Alternative à',
     badge: 'Lieu secret',
     alsoTitle: 'Vous pourriez aussi aimer',
-    likes: 'j\u2019aime',
+    likes: "j'aime",
     learnMore: 'En savoir plus',
     footer: 'Elsewhere — Découvrez les chemins de traverse. Contre le surtourisme, un lieu secret à la fois.',
     errorMsg: 'Une erreur est survenue. Réessayez.',
@@ -778,6 +778,12 @@ async function fetchSuggestion(query) {
       err.rateLimited = true;
       throw err;
     }
+    if (res.status === 422) {
+      const data = await res.json().catch(() => ({}));
+      const err = new Error(data.message || 'This does not seem to be a tourist destination.');
+      err.notAPlace = true;
+      throw err;
+    }
     throw new Error('API error ' + res.status);
   }
   return res.json();
@@ -821,7 +827,7 @@ async function handleSearch() {
 
     renderResults(query, mainSuggestion);
   } catch(err) {
-    const msg = err.rateLimited
+    const msg = (err.rateLimited || err.notAPlace)
       ? err.message
       : t('errorMsg') + `<br/><small style="opacity:0.7">${err.message}</small>`;
     inner.innerHTML = `<div class="error-wrap">${msg}</div>`;
