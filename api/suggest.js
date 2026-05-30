@@ -353,10 +353,8 @@ function isUnsplashSafe(name) {
 // Single fast Wikipedia pageimages lookup by exact title
 async function getPageImage(title, lang) {
   try {
-    // Try EN first (more reliable on Vercel), then fall back to detected lang
-    const wikiLang = 'en';
     const res = await fetch(
-      'https://' + wikiLang + '.wikipedia.org/w/api.php?action=query' +
+      'https://' + lang + '.wikipedia.org/w/api.php?action=query' +
       '&titles=' + encodeURIComponent(title) +
       '&prop=pageimages&piprop=original|thumbnail&pithumbsize=1000' +
       '&format=json&origin=*'
@@ -376,7 +374,9 @@ async function getPageImage(title, lang) {
 // Find best Wikipedia article title for a place name
 async function findWikipediaTitle(name, city, country) {
   const langs = detectWikiLangs(city, country);
-  const queries = [name, name + ' ' + city, stripAccents(name)];
+  // Always try EN too since our image fetch uses EN
+  if (langs.indexOf('en') === -1) langs.push('en');
+  const queries = [name, stripAccents(name), name + ' ' + city];
 
   for (let li = 0; li < langs.length; li++) {
     const lang = langs[li];
@@ -385,20 +385,23 @@ async function findWikipediaTitle(name, city, country) {
         const res = await fetch(
           'https://' + lang + '.wikipedia.org/w/api.php?action=query&list=search' +
           '&srsearch=' + encodeURIComponent(queries[qi]) +
-          '&format=json&origin=*&srnamespace=0&srlimit=3'
+          '&format=json&origin=*&srnamespace=0&srlimit=5',
+          { signal: AbortSignal.timeout(4000) }
         );
         if (!res.ok) continue;
         const data = await res.json();
         const hits = (data.query && data.query.search) || [];
-        // Find first hit that looks like our place (not disambiguation, not a person)
         const hit = hits.find(function(h) {
           const t = h.title.toLowerCase();
           return !t.includes('disambiguation') && !t.includes('homonymie') &&
                  !t.includes('list of') && !t.includes('canton') &&
                  !t.includes('arrondissement');
         });
-        if (hit) return { title: hit.title, lang: lang };
-      } catch (e) { continue; }
+        if (hit) {
+          console.log('[T] found:', lang, hit.title);
+          return { title: hit.title, lang: lang };
+        }
+      } catch (e) { console.log('[T] timeout/err:', lang, queries[qi]); continue; }
     }
   }
   return null;
