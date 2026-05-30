@@ -108,14 +108,16 @@ function isGoodPlaceImage(url, width, height) {
 async function getWikidataImage(name, city) {
   try {
     const searchQuery = name + ' ' + (city || '');
+    console.log('[Wikidata] searching:', searchQuery);
     const searchRes = await fetch(
       'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' +
       encodeURIComponent(searchQuery) +
       '&language=en&limit=5&format=json&origin=*'
     );
-    if (!searchRes.ok) return null;
+    if (!searchRes.ok) { console.log('[Wikidata] search failed:', searchRes.status); return null; }
     const searchData = await searchRes.json();
     const entities = searchData.search || [];
+    console.log('[Wikidata] entities found:', entities.map(function(e) { return e.id + ':' + e.label; }));
     if (!entities.length) return null;
 
     for (let i = 0; i < Math.min(entities.length, 5); i++) {
@@ -129,19 +131,22 @@ async function getWikidataImage(name, city) {
       const claims = entityData.entities &&
         entityData.entities[entityId] &&
         entityData.entities[entityId].claims;
-      if (!claims || !claims.P18) continue;
+      if (!claims) { console.log('[Wikidata]', entityId, 'no claims'); continue; }
+      if (!claims.P18) { console.log('[Wikidata]', entityId, 'no P18 image'); continue; }
 
       const filename = claims.P18[0] &&
         claims.P18[0].mainsnak &&
         claims.P18[0].mainsnak.datavalue &&
         claims.P18[0].mainsnak.datavalue.value;
       if (!filename) continue;
+      console.log('[Wikidata]', entityId, 'P18 filename:', filename);
 
       const url = await getWikimediaFileUrl(filename);
+      console.log('[Wikidata] resolved URL:', url);
       if (url && isGoodPlaceImage(url, 800, 500)) return url;
     }
     return null;
-  } catch (e) { return null; }
+  } catch (e) { console.log('[Wikidata] error:', e.message); return null; }
 }
 
 async function getUnsplashImage(query, category) {
