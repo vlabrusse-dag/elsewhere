@@ -405,14 +405,14 @@ async function findWikipediaTitle(name, city, country) {
 async function findImage(name, city, country) {
   country = country || '';
 
-  // Single optimized pipeline: find Wikipedia title → get pageimage (2 fast calls)
   const found = await findWikipediaTitle(name, city, country);
+  console.log('[IMG] title found:', found ? (found.lang + ':' + found.title) : 'none');
   if (found) {
     const img = await getPageImage(found.title, found.lang);
+    console.log('[IMG] pageimage:', img ? img.slice(0, 80) : 'none');
     if (img) return img;
   }
 
-  // Fallback: Unsplash only for non-museums with multi-word names
   if (!isUnsplashSafe(name)) return null;
   const words = name.trim().split(' ').filter(function(w) { return w.length > 2; });
   if (words.length >= 2) {
