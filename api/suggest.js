@@ -367,8 +367,9 @@ async function getPageImage(title, lang) {
     const src = (page.original && page.original.source) || (page.thumbnail && page.thumbnail.source);
     const w = (page.original && page.original.width) || (page.thumbnail && page.thumbnail.width);
     const h = (page.original && page.original.height) || (page.thumbnail && page.thumbnail.height);
+    console.log('[PAGE] src:', src ? src.slice(0,80) : 'none', '| w:', w, '| h:', h, '| ratio:', w && h ? (h/w).toFixed(2) : 'n/a');
     return isGoodPlaceImage(src, w, h) ? src : null;
-  } catch (e) { return null; }
+  } catch (e) { console.log('[PAGE] error:', e.message); return null; }
 }
 
 // Find best Wikipedia article title for a place name
