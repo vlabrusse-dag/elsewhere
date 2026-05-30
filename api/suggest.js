@@ -353,8 +353,10 @@ function isUnsplashSafe(name) {
 // Single fast Wikipedia pageimages lookup by exact title
 async function getPageImage(title, lang) {
   try {
+    // Try EN first (more reliable on Vercel), then fall back to detected lang
+    const wikiLang = 'en';
     const res = await fetch(
-      'https://' + lang + '.wikipedia.org/w/api.php?action=query' +
+      'https://' + wikiLang + '.wikipedia.org/w/api.php?action=query' +
       '&titles=' + encodeURIComponent(title) +
       '&prop=pageimages&piprop=original|thumbnail&pithumbsize=1000' +
       '&format=json&origin=*'
