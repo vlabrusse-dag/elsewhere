@@ -85,16 +85,20 @@ function detectWikiLangs(city, country) {
 const IMG_BLOCKLIST = [
   'logo', 'icon', 'flag', 'coat', 'arms', 'portrait', 'map', 'locator',
   'restaurant', 'menu', 'food', 'dish', 'cuisine', 'chef',
-  'person', 'people', 'face', 'headshot',
-  'symbol', 'emblem', 'stamp', 'seal',
-  '.svg', 'commons-logo', 'wikidata',
+  'person', 'people', 'face', 'headshot', 'biography', 'actor', 'actress',
+  'politician', 'minister', 'president', 'mayor', 'singer', 'writer',
+  'symbol', 'emblem', 'stamp', 'seal', 'signature',
+  '.svg', 'commons-logo', 'wikidata', 'wikimedia',
+  'photo_de', 'photo_du', 'photo_of',
 ];
 
-function isGoodPlaceImage(url, width) {
+function isGoodPlaceImage(url, width, height) {
   if (!url) return false;
   if (width && width < 300) return false;
+  // Reject portrait-oriented images (taller than wide = likely a person photo)
+  if (width && height && height > width * 1.2) return false;
   const lower = url.toLowerCase();
-  return !IMG_BLOCKLIST.some(bad => lower.includes(bad));
+  return !IMG_BLOCKLIST.some(function(bad) { return lower.includes(bad); });
 }
 
 // ── IMAGE SEARCH ─────────────────────────────────────────────────────────────
@@ -146,7 +150,8 @@ async function searchWikiLang(lang, q) {
     const page = Object.values(pages)[0];
     const src = (page && page.original && page.original.source) || (page && page.thumbnail && page.thumbnail.source);
     const width = (page && page.original && page.original.width) || (page && page.thumbnail && page.thumbnail.width);
-    if (isGoodPlaceImage(src, width)) return src;
+    const height = (page && page.original && page.original.height) || (page && page.thumbnail && page.thumbnail.height);
+    if (isGoodPlaceImage(src, width, height)) return src;
 
     // Scan all article images
     const allImgRes = await fetch(
@@ -164,14 +169,14 @@ async function searchWikiLang(lang, q) {
 
     for (let i = 0; i < Math.min(candidates.length, 5); i++) {
       const infoRes = await fetch(
-        'https://en.wikipedia.org/w/api.php?action=query&titles=' + encodeURIComponent(candidates[i]) + '&prop=imageinfo&iiprop=url|size&iiurlwidth=1000&format=json&origin=*'
+        'https://en.wikipedia.org/w/api.php?action=query&titles=' + encodeURIComponent(candidates[i]) + '&prop=imageinfo&iiprop=url|size|dimensions&iiurlwidth=1000&format=json&origin=*'
       );
       if (!infoRes.ok) continue;
       const infoData = await infoRes.json();
       const infoPages = (infoData.query && infoData.query.pages) || {};
       const info = Object.values(infoPages)[0];
       const imageinfo = info && info.imageinfo && info.imageinfo[0];
-      if (imageinfo && imageinfo.thumburl && isGoodPlaceImage(imageinfo.thumburl, imageinfo.thumbwidth)) {
+      if (imageinfo && imageinfo.thumburl && isGoodPlaceImage(imageinfo.thumburl, imageinfo.thumbwidth, imageinfo.thumbheight)) {
         return imageinfo.thumburl;
       }
     }
