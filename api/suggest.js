@@ -143,39 +143,48 @@ async function getP18Image(entityId) {
 
 async function getWikidataImage(name, city, country) {
   try {
-    const queries = buildWikiQueries(name, city, country);
-    const langs = detectWikiLangs(city, country);
-    console.log('[WD] name:', name, '| queries:', queries.slice(0,3), '| langs:', langs);
+    // Try FR then EN wikipedia, name alone then name+city
+    const attempts = [
+      { lang: 'fr', q: name },
+      { lang: 'en', q: name },
+      { lang: 'fr', q: name + ' ' + (city || '') },
+      { lang: 'en', q: name + ' ' + (city || '') },
+      { lang: 'fr', q: stripAccents(name) },
+    ];
 
-    for (let li = 0; li < langs.length; li++) {
-      const lang = langs[li];
-      const base = 'https://' + lang + '.wikipedia.org/w/api.php';
+    for (let i = 0; i < attempts.length; i++) {
+      const lang = attempts[i].lang;
+      const q = attempts[i].q.trim();
+      if (!q) continue;
 
-      for (let qi = 0; qi < Math.min(queries.length, 4); qi++) {
-        const searchRes = await fetch(
-          base + '?action=query&list=search&srsearch=' +
-          encodeURIComponent(queries[qi]) +
-          '&format=json&origin=*&srnamespace=0&srlimit=3'
-        );
-        if (!searchRes.ok) { console.log('[WD] search HTTP error', searchRes.status); continue; }
-        const searchData = await searchRes.json();
-        const results = (searchData.query && searchData.query.search) || [];
-        console.log('[WD] lang=' + lang + ' q=' + queries[qi] + ' results:', results.map(function(r){return r.title;}));
-        if (!results.length) continue;
+      console.log('[WD] attempt', i, lang, q);
 
-        const title = results[0].title;
-        const entityId = await getWikidataIdFromWikipedia(title, lang);
-        console.log('[WD] title:', title, '| entityId:', entityId);
-        if (!entityId) continue;
+      const r1 = await fetch(
+        'https://' + lang + '.wikipedia.org/w/api.php?action=query&list=search' +
+        '&srsearch=' + encodeURIComponent(q) +
+        '&format=json&origin=*&srnamespace=0&srlimit=3'
+      );
+      if (!r1.ok) { console.log('[WD] search fail', r1.status); continue; }
+      const d1 = await r1.json();
+      const hits = (d1.query && d1.query.search) || [];
+      console.log('[WD] hits:', hits.map(function(h){return h.title;}));
+      if (!hits.length) continue;
 
-        const img = await getP18Image(entityId);
-        console.log('[WD] entityId:', entityId, '| img:', img ? img.slice(0,80) : null);
-        if (img && isGoodPlaceImage(img, 800, 500)) return img;
-      }
+      const title = hits[0].title;
+      const entityId = await getWikidataIdFromWikipedia(title, lang);
+      console.log('[WD] entityId:', entityId);
+      if (!entityId) continue;
+
+      const img = await getP18Image(entityId);
+      console.log('[WD] img:', img ? img.slice(0, 60) : null);
+      if (img && isGoodPlaceImage(img, 800, 500)) return img;
     }
     console.log('[WD] no image found for:', name);
     return null;
-  } catch (e) { console.log('[WD] error:', e.message); return null; }
+  } catch (e) {
+    console.log('[WD] exception:', e.message);
+    return null;
+  }
 }
 
 async function getUnsplashImage(query, category) {
