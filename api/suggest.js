@@ -185,49 +185,57 @@ async function searchWikiLang(lang, q) {
 }
 
 // Detect category keywords in place name to improve Wikipedia search
+// Normalize accents for search fallback
+function stripAccents(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 function buildWikiQueries(name, city, country) {
   const lower = name.toLowerCase();
   const location = [city, country].filter(Boolean).join(', ');
   const queries = [];
 
-  // If name contains a category word, also search with it explicitly
-  const categoryPrefixes = {
-    'mus': 'museum',      // musée, museo, museum, museu
-    'château': 'castle',
+  const categoryMap = {
+    'mus': 'museum',
+    'château': 'castle', 'chateau': 'castle',
     'castle': 'castle',
-    'abbaye': 'abbey',
-    'abbey': 'abbey',
-    'cathédrale': 'cathedral',
-    'cathedral': 'cathedral',
-    'église': 'church',
-    'church': 'church',
-    'jardin': 'garden',
-    'garden': 'garden',
-    'parc': 'park',
-    'park': 'park',
+    'abbaye': 'abbey', 'abbey': 'abbey',
+    'cathédrale': 'cathedral', 'cathedrale': 'cathedral', 'cathedral': 'cathedral',
+    'église': 'church', 'eglise': 'church', 'church': 'church',
+    'jardin': 'garden', 'garden': 'garden',
+    'parc': 'park', 'park': 'park',
     'fort': 'fortification',
     'citadelle': 'citadel',
+    'palais': 'palace', 'palace': 'palace',
+    'tour': 'tower', 'tower': 'tower',
   };
 
+  const lowerStripped = stripAccents(lower);
   let categoryHint = '';
-  for (const [key] of Object.entries(categoryPrefixes)) {
-    if (lower.includes(key)) { categoryHint = key; break; }
+  for (const [key, val] of Object.entries(categoryMap)) {
+    if (lowerStripped.includes(key)) { categoryHint = val; break; }
   }
 
-  // Always try full name + location first (most specific)
+  // 1. Full name + full location (most specific)
   queries.push(name + ' ' + location);
-  // Then name + location without country
+  // 2. Full name + city only
   if (city) queries.push(name + ' ' + city);
-  // Then just the name
+  // 3. Name alone
   queries.push(name);
-  // If name contains a person-like word (de, von, di = possibly named after person)
-  // add category hint to disambiguate
+  // 4. Accent-stripped name + location (helps with Wikipedia search for French names)
+  const nameStripped = stripAccents(name);
+  if (nameStripped !== name) {
+    queries.push(nameStripped + ' ' + location);
+    queries.push(nameStripped);
+  }
+  // 5. Disambiguate person-named places by prepending category
   if (categoryHint && (lower.includes(' de ') || lower.includes(' di ') || lower.includes(' von '))) {
-    queries.unshift(name + ' ' + location + ' ' + categoryHint);
+    queries.unshift(name + ' ' + categoryHint + ' ' + location);
     queries.unshift(name + ' ' + categoryHint);
   }
 
-  return queries;
+  // Deduplicate while preserving order
+  return queries.filter(function(q, i, arr) { return arr.indexOf(q) === i; });
 }
 
 async function getWikimediaImage(name, city, country) {
@@ -242,21 +250,38 @@ async function getWikimediaImage(name, city, country) {
   return null;
 }
 
+// Categories where Unsplash returns generic shots instead of specific places
+// For these, we trust Wikimedia only
+const UNSPLASH_BLOCKLIST_CATEGORIES = [
+  'mus', 'museum', 'musée', 'museo', 'museu',  // museums always get generic shots
+  'galerie', 'gallery', 'galleria',
+  'louvre', 'orsay', 'pompidou',  // famous Paris museums used as generic shots
+];
+
+function isUnsplashSafe(name) {
+  const lower = name.toLowerCase();
+  return !UNSPLASH_BLOCKLIST_CATEGORIES.some(function(cat) {
+    return lower.startsWith(cat) || lower.includes(' ' + cat);
+  });
+}
+
 async function findImage(name, city, country) {
   country = country || '';
 
-  // Step 1: Wikimedia — most accurate for named places
+  // Step 1: Wikimedia — most accurate, always try first
   const wiki = await getWikimediaImage(name, city, country);
   if (wiki) return wiki;
 
-  // Step 2: Unsplash — only for multi-word names (avoids generic city shots)
-  // e.g. "Musée Cognacq-Jay" is fine, "Brouage" would return random France photo
+  // Step 2: Unsplash — skip for museums and galleries (too generic)
+  // Only use for specific architectural/natural sites with unique names
+  if (!isUnsplashSafe(name)) return null;
+
   const words = name.trim().split(' ').filter(function(w) { return w.length > 2; });
   if (words.length >= 3) {
-    const img = await getUnsplashImage(name + ' ' + city, 'architecture interior');
+    const img = await getUnsplashImage(name + ' ' + city, 'architecture landmark');
     if (img) return img;
   } else if (words.length >= 2) {
-    const img = await getUnsplashImage(name, 'architecture historic');
+    const img = await getUnsplashImage(name, 'architecture historic landmark');
     if (img) return img;
   }
 
