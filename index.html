@@ -475,6 +475,31 @@
     font-weight: 300;
   }
 
+  /* SEASON PILL */
+  .season-pill {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 400; letter-spacing: 0.06em;
+    color: var(--muted); font-family: 'DM Sans', sans-serif;
+  }
+  #season-label {
+    font-size: 11px; color: var(--muted); letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .hemi-btn {
+    background: none; border: 0.5px solid var(--border);
+    border-radius: 50%; width: 22px; height: 22px;
+    font-size: 10px; font-weight: 500; color: var(--muted);
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; letter-spacing: 0;
+  }
+  .hemi-btn:hover {
+    background: var(--sage); color: #fff; border-color: var(--sage);
+  }
+  .hemi-btn.south {
+    background: var(--sage); color: #fff; border-color: var(--sage);
+  }
+
   /* ENRICHED CARD */
   .card-mood {
     position: absolute; bottom: 14px; left: 14px;
@@ -555,6 +580,12 @@
 
 <header>
   <a href="/" class="logo">Else<span>where</span></a>
+  <div class="season-pill" id="season-pill" title="Click to switch hemisphere">
+    <span id="season-label"></span>
+    <button class="hemi-btn" id="hemi-btn" onclick="toggleHemisphere()">
+      <span id="hemi-label">N</span>
+    </button>
+  </div>
   <div class="lang-selector" id="lang-selector">
     <button class="lang-btn active" data-lang="en">EN</button>
     <button class="lang-btn" data-lang="fr">FR</button>
@@ -623,7 +654,7 @@
 
 <footer>
   <span id="txt-footer">Elsewhere — Discover the road less travelled. Fighting overtourism, one hidden gem at a time.</span>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.4;letter-spacing:0.08em;">v3.8.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.4;letter-spacing:0.08em;">v3.9.0</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -832,6 +863,7 @@ function t(key) { return I18N[currentLang]?.[key] ?? I18N['en'][key]; }
 
 function applyLang(lang) {
   currentLang = lang;
+  updateSeasonLabel();
   document.documentElement.lang = lang;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
   document.getElementById('txt-eyebrow').textContent = t('eyebrow');
@@ -851,34 +883,84 @@ document.getElementById('lang-selector').addEventListener('click', e => {
 
 // ── SEASONAL THEMES ──────────────────────────────────────────────────────────
 const SEASONS = [
-  // Jan — Hiver blanc
   { paper:'#f0f3f7', paperDark:'#e2e8f0', accent:'#5b7fa6', accentLight:'#a8c0d8', muted:'#7a8898', badgeBg:'#5b7fa6', badgeText:'#fff', like:'#8b4a6b', ink:'#1a1f2e' },
-  // Fév — Hiver tardif
   { paper:'#f1f0f5', paperDark:'#e4e2ee', accent:'#7b6fa8', accentLight:'#b8b0d4', muted:'#8a8598', badgeBg:'#7b6fa8', badgeText:'#fff', like:'#a05070', ink:'#1e1a2a' },
-  // Mar — Éveil
   { paper:'#f3f5f0', paperDark:'#e6ebe0', accent:'#6a9470', accentLight:'#aecab2', muted:'#7a8a78', badgeBg:'#6a9470', badgeText:'#fff', like:'#c07040', ink:'#1a221a' },
-  // Avr — Printemps
   { paper:'#faf3f3', paperDark:'#f0e6e6', accent:'#b07898', accentLight:'#d4b0c4', muted:'#8a7880', badgeBg:'#b07898', badgeText:'#fff', like:'#d47060', ink:'#221a1e' },
-  // Mai — Plein printemps
   { paper:'#f4f7f0', paperDark:'#e8ede0', accent:'#5a9050', accentLight:'#9ec494', muted:'#728070', badgeBg:'#5a9050', badgeText:'#fff', like:'#c05840', ink:'#182018' },
-  // Juin — Pré-été
   { paper:'#faf7ec', paperDark:'#f0ebda', accent:'#8a9c50', accentLight:'#c0cc90', muted:'#8a8870', badgeBg:'#8a9c50', badgeText:'#fff', like:'#c06840', ink:'#201e10' },
-  // Juil — Été
   { paper:'#faf5ec', paperDark:'#f0e8d8', accent:'#c08040', accentLight:'#dab888', muted:'#8a8070', badgeBg:'#c08040', badgeText:'#fff', like:'#b84030', ink:'#241a10' },
-  // Août — Canicule
   { paper:'#faf2e8', paperDark:'#f0e4d0', accent:'#c06838', accentLight:'#daa882', muted:'#8a7868', badgeBg:'#c06838', badgeText:'#fff', like:'#903030', ink:'#281810' },
-  // Sep — Début automne
   { paper:'#f8f3ec', paperDark:'#ede4d8', accent:'#b87840', accentLight:'#d8b488', muted:'#887868', badgeBg:'#b87840', badgeText:'#fff', like:'#984838', ink:'#22180e' },
-  // Oct — Automne
   { paper:'#f7f0ea', paperDark:'#eae0d2', accent:'#a05838', accentLight:'#c89878', muted:'#887060', badgeBg:'#a05838', badgeText:'#fff', like:'#802838', ink:'#201410' },
-  // Nov — Fin automne
   { paper:'#f2efea', paperDark:'#e4e0d8', accent:'#7a7058', accentLight:'#b0a890', muted:'#807870', badgeBg:'#7a7058', badgeText:'#fff', like:'#804048', ink:'#1c1a16' },
-  // Déc — Hiver
   { paper:'#f0f2f5', paperDark:'#e2e6ec', accent:'#4a6a8a', accentLight:'#8aaac4', muted:'#788090', badgeBg:'#4a6a8a', badgeText:'#fff', like:'#804868', ink:'#161c24' },
 ];
 
+// Season names per lang: [spring, summer, autumn, winter]
+const SEASON_NAMES = {
+  en: ['Spring','Summer','Autumn','Winter'],
+  fr: ['Printemps','Été','Automne','Hiver'],
+  es: ['Primavera','Verano','Otoño','Invierno'],
+  de: ['Frühling','Sommer','Herbst','Winter'],
+  it: ['Primavera','Estate','Autunno','Inverno'],
+  pt: ['Primavera','Verão','Outono','Inverno'],
+  ja: ['春','夏','秋','冬'],
+  zh: ['春','夏','秋','冬'],
+  ar: ['ربيع','صيف','خريف','شتاء'],
+  nl: ['Lente','Zomer','Herfst','Winter'],
+};
+
+const MONTH_SHORT = {
+  en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+  fr: ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'],
+  es: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+  de: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],
+  it: ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'],
+  pt: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+  ja: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+  zh: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+  ar: ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
+  nl: ['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Dec'],
+};
+
+// Northern hemisphere: Mar-May=Spring, Jun-Aug=Summer, Sep-Nov=Autumn, Dec-Feb=Winter
+const SEASON_INDEX_N = [3,3,0,0,0,1,1,1,2,2,2,3]; // by month 0-11
+// Southern: inverted
+const SEASON_INDEX_S = [1,1,2,2,2,3,3,3,0,0,0,1];
+
+let isNorthernHemisphere = true;
+
+function getEffectiveMonth() {
+  const realMonth = new Date().getMonth();
+  // Southern hemisphere: shift palette by 6 months
+  return isNorthernHemisphere ? realMonth : (realMonth + 6) % 12;
+}
+
+function getSeasonName() {
+  const month = new Date().getMonth();
+  const idx = isNorthernHemisphere ? SEASON_INDEX_N[month] : SEASON_INDEX_S[month];
+  const lang = currentLang || 'en';
+  const names = SEASON_NAMES[lang] || SEASON_NAMES['en'];
+  return names[idx];
+}
+
+function updateSeasonLabel() {
+  const month = new Date().getMonth();
+  const lang = currentLang || 'en';
+  const months = MONTH_SHORT[lang] || MONTH_SHORT['en'];
+  const monthName = months[month];
+  const seasonName = getSeasonName();
+  const label = document.getElementById('season-label');
+  const hemiLabel = document.getElementById('hemi-label');
+  const hemiBtn = document.getElementById('hemi-btn');
+  if (label) label.textContent = monthName + ' · ' + seasonName;
+  if (hemiLabel) hemiLabel.textContent = isNorthernHemisphere ? 'N' : 'S';
+  if (hemiBtn) hemiBtn.classList.toggle('south', !isNorthernHemisphere);
+}
+
 function applySeasonTheme() {
-  const month = new Date().getMonth(); // 0-11
+  const month = getEffectiveMonth();
   const s = SEASONS[month];
   const root = document.documentElement;
   root.style.setProperty('--season-paper', s.paper);
@@ -890,13 +972,18 @@ function applySeasonTheme() {
   root.style.setProperty('--season-badge-text', s.badgeText);
   root.style.setProperty('--season-like', s.like);
   root.style.setProperty('--season-ink', s.ink);
-  // Also update paper and paper-dark used throughout
   root.style.setProperty('--paper', s.paper);
   root.style.setProperty('--paper-dark', s.paperDark);
   root.style.setProperty('--sage', s.accent);
   root.style.setProperty('--sage-light', s.accentLight);
   root.style.setProperty('--muted', s.muted);
   root.style.setProperty('--rust', s.like);
+  updateSeasonLabel();
+}
+
+function toggleHemisphere() {
+  isNorthernHemisphere = !isNorthernHemisphere;
+  applySeasonTheme();
 }
 
 applySeasonTheme();
