@@ -1207,7 +1207,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.0.3</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.0.4</span>
 </footer>
 
 <!-- ACTIVITY FEED PANEL -->
@@ -1740,12 +1740,26 @@ async function sbAddVisit(suggestionId, status) {
 
 async function sbGetRecentActivity(limit) {
   limit = limit || 20;
+  // Get recent likes
   const res = await fetch(
-    SB_URL + '/rest/v1/user_likes?select=created_at,suggestion_id,suggestions(name,city,image,id,query),user_id&order=created_at.desc&limit=' + limit,
+    SB_URL + '/rest/v1/user_likes?order=created_at.desc&limit=' + limit,
     { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
   );
   if (!res.ok) return [];
-  return await res.json();
+  const likes = await res.json();
+  if (!likes.length) return [];
+
+  // Fetch suggestions for those IDs
+  const ids = [...new Set(likes.map(l => l.suggestion_id))].join(',');
+  const sRes = await fetch(
+    SB_URL + '/rest/v1/suggestions?id=in.(' + ids + ')&select=id,name,city,image,query',
+    { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
+  );
+  const suggestions = sRes.ok ? await sRes.json() : [];
+  const sMap = {};
+  suggestions.forEach(s => { sMap[s.id] = s; });
+
+  return likes.map(l => ({ ...l, suggestions: sMap[l.suggestion_id] || null }));
 }
 
 async function sbSubmitPlace(data) {
@@ -1759,17 +1773,21 @@ async function sbSubmitPlace(data) {
 }
 
 // ── BADGES ────────────────────────────────────────────────────────────────────
-const BADGES = [
-  { id: 'first_like',    icon: '✦', label: 'First discovery',   check: (likes) => likes >= 1 },
-  { id: 'explorer_5',   icon: '🧭', label: '5 places liked',    check: (likes) => likes >= 5 },
-  { id: 'explorer_20',  icon: '🗺', label: '20 places liked',   check: (likes) => likes >= 20 },
-  { id: 'globetrotter', icon: '🌍', label: '3 countries',       check: (likes, countries) => countries >= 3 },
-  { id: 'seasons',      icon: '🍂', label: 'All 4 seasons',     check: (likes, countries, seasons) => seasons >= 4 },
-  { id: 'unexplored_3', icon: '🔮', label: 'Inexploré × 3',     check: (likes, countries, seasons, unexplored) => unexplored >= 3 },
+const BADGE_DEFS = [
+  { id: 'first_like',    icon: '✦', labelKey: 'badge_first',      check: (l) => l >= 1 },
+  { id: 'explorer_5',   icon: '🧭', labelKey: 'badge_5',          check: (l) => l >= 5 },
+  { id: 'explorer_20',  icon: '🗺', labelKey: 'badge_20',         check: (l) => l >= 20 },
+  { id: 'globetrotter', icon: '🌍', labelKey: 'badge_countries',  check: (l, c) => c >= 3 },
+  { id: 'seasons',      icon: '🍂', labelKey: 'badge_seasons',    check: (l, c, s) => s >= 4 },
+  { id: 'unexplored_3', icon: '🔮', labelKey: 'badge_unexplored', check: (l, c, s, u) => u >= 3 },
 ];
 
 function computeBadges(likes, countries, seasons, unexplored) {
-  return BADGES.map(b => ({ ...b, earned: b.check(likes, countries, seasons, unexplored) }));
+  return BADGE_DEFS.map(b => ({
+    ...b,
+    label: t(b.labelKey) || b.labelKey,
+    earned: b.check(likes, countries, seasons, unexplored)
+  }));
 }
 
 function computeExplorerScore(likes, countries) {
@@ -2084,6 +2102,12 @@ const I18N = {
     explorerScore: 'Explorer score',
     countries: 'countries',
     editProfile: 'Edit profile',
+    badge_first: 'First discovery',
+    badge_5: '5 places liked',
+    badge_20: '20 places liked',
+    badge_countries: '3 countries',
+    badge_seasons: 'All 4 seasons',
+    badge_unexplored: 'Inexploré × 3',
   },
   fr: {
     eyebrow: 'Slow travel · Lieux secrets',
@@ -2149,6 +2173,12 @@ const I18N = {
     explorerScore: 'Score explorateur',
     countries: 'pays',
     editProfile: 'Modifier mon profil',
+    badge_first: 'Premier découvreur',
+    badge_5: '5 lieux likés',
+    badge_20: '20 lieux likés',
+    badge_countries: '3 pays',
+    badge_seasons: '4 saisons',
+    badge_unexplored: 'Inexploré × 3',
   },
   es: {
     eyebrow: 'Viaje lento · Joyas ocultas',
@@ -2214,6 +2244,12 @@ const I18N = {
     explorerScore: 'Puntuación exploradora',
     countries: 'países',
     editProfile: 'Editar perfil',
+    badge_first: 'Primer descubridor',
+    badge_5: '5 lugares',
+    badge_20: '20 lugares',
+    badge_countries: '3 países',
+    badge_seasons: '4 estaciones',
+    badge_unexplored: 'Inexplorado × 3',
   },
   de: {
     eyebrow: 'Langsames Reisen · Versteckte Schätze',
@@ -2279,6 +2315,12 @@ const I18N = {
     explorerScore: 'Entdecker-Score',
     countries: 'Länder',
     editProfile: 'Profil bearbeiten',
+    badge_first: 'Erster Entdecker',
+    badge_5: '5 Orte',
+    badge_20: '20 Orte',
+    badge_countries: '3 Länder',
+    badge_seasons: '4 Jahreszeiten',
+    badge_unexplored: 'Unerforscht × 3',
   },
   it: {
     eyebrow: 'Viaggio lento · Luoghi nascosti',
@@ -2324,6 +2366,12 @@ const I18N = {
     anotherSuggestion: 'Altro suggerimento',
     dotd: 'Luogo del giorno', crowdLabels2: ['Tranquillo', 'Frequentato', 'Molto frequentato', 'Saturo'], surpriseBtn: '✦ Sorprendimi', surpriseLoading: 'Ricerca di un gioiello…', crowdLabel2: 'Affollamento',
     chooseUsername: 'Scegli un nome utente', usernamePlaceholder: 'es. esploratore_roma', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'Ci sono stato ✓', overcrowdedBtn: 'Troppo affollato ✗', discoveredBy: 'Scoperto da', feedTitle: 'Community', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
+    badge_first: 'Primo scopritore',
+    badge_5: '5 luoghi',
+    badge_20: '20 luoghi',
+    badge_countries: '3 paesi',
+    badge_seasons: '4 stagioni',
+    badge_unexplored: 'Inesplorato × 3',
   },
   pt: {
     eyebrow: 'Viagem lenta · Tesouros escondidos',
@@ -2369,6 +2417,12 @@ const I18N = {
     anotherSuggestion: 'Outra sugestão',
     dotd: 'Lugar do dia', crowdLabels2: ['Tranquilo', 'Movimentado', 'Muito movimentado', 'Saturado'], surpriseBtn: '✦ Surpreende-me', surpriseLoading: 'À procura de uma joia…', crowdLabel2: 'Afluência',
     chooseUsername: 'Escolha um nome de utilizador', usernamePlaceholder: 'ex. explorador_lisboa', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'Estive lá ✓', overcrowdedBtn: 'Demasiado cheio ✗', discoveredBy: 'Descoberto por', feedTitle: 'Comunidade', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
+    badge_first: 'Primeiro descobridor',
+    badge_5: '5 lugares',
+    badge_20: '20 lugares',
+    badge_countries: '3 países',
+    badge_seasons: '4 estações',
+    badge_unexplored: 'Inexplorado × 3',
   },
   ja: {
     eyebrow: 'スローな旅 · 隠れた名所',
@@ -2414,6 +2468,12 @@ const I18N = {
     anotherSuggestion: '別の提案',
     dotd: '今日のスポット', crowdLabels2: ['静か', '混雑', '非常に混雑', '飽和'], surpriseBtn: '✦ サプライズ', surpriseLoading: '隠れた名所を探しています…', crowdLabel2: '混雑度',
     chooseUsername: 'ユーザー名を選択', usernamePlaceholder: '例: explorer_tokyo', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: '行ってきた ✓', overcrowdedBtn: '混んでいる ✗', discoveredBy: '発見者', feedTitle: 'コミュニティ', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
+    badge_first: '初発見者',
+    badge_5: '5か所',
+    badge_20: '20か所',
+    badge_countries: '3か国',
+    badge_seasons: '4シーズン',
+    badge_unexplored: '未踏 × 3',
   },
   zh: {
     eyebrow: '慢旅行 · 隐藏宝地',
@@ -2459,6 +2519,12 @@ const I18N = {
     anotherSuggestion: '换一个建议',
     dotd: '今日地点', crowdLabels2: ['安静', '繁忙', '非常繁忙', '饱和'], surpriseBtn: '✦ 给我惊喜', surpriseLoading: '寻找隐藏宝地…', crowdLabel2: '拥挤程度',
     chooseUsername: '选择用户名', usernamePlaceholder: '例如: 探索者_北京', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: '我去过 ✓', overcrowdedBtn: '太拥挤了 ✗', discoveredBy: '发现者', feedTitle: '社区', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
+    badge_first: '首位发现者',
+    badge_5: '5个地方',
+    badge_20: '20个地方',
+    badge_countries: '3个国家',
+    badge_seasons: '4个季节',
+    badge_unexplored: '未探索 × 3',
   },
   ar: {
     eyebrow: 'السفر الهادئ · الجواهر الخفية',
@@ -2504,6 +2570,12 @@ const I18N = {
     anotherSuggestion: 'اقتراح آخر',
     dotd: 'مكان اليوم', crowdLabels2: ['هادئ', 'مزدحم', 'مزدحم جداً', 'مشبع'], surpriseBtn: '✦ فاجئني', surpriseLoading: 'البحث عن جوهرة خفية…', crowdLabel2: 'مستوى الازدحام',
     chooseUsername: 'اختر اسم مستخدم', usernamePlaceholder: 'مثال: مستكشف_القاهرة', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'زرته ✓', overcrowdedBtn: 'مزدحم جداً ✗', discoveredBy: 'اكتشفه', feedTitle: 'المجتمع', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
+    badge_first: 'أول مكتشف',
+    badge_5: '٥ أماكن',
+    badge_20: '٢٠ مكاناً',
+    badge_countries: '٣ دول',
+    badge_seasons: '٤ فصول',
+    badge_unexplored: 'مجهول × ٣',
   },
   nl: {
     eyebrow: 'Langzaam reizen · Verborgen schatten',
@@ -2549,6 +2621,12 @@ const I18N = {
     anotherSuggestion: 'Andere suggestie',
     dotd: 'Plek van de dag', crowdLabels2: ['Rustig', 'Druk', 'Erg druk', 'Verzadigd'], surpriseBtn: '✦ Verras me', surpriseLoading: 'Op zoek naar een verborgen parel…', crowdLabel2: 'Drukte',
     chooseUsername: 'Kies een gebruikersnaam', usernamePlaceholder: 'bijv. ontdekker_amsterdam', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'Ik was er ✓', overcrowdedBtn: 'Te druk nu ✗', discoveredBy: 'Ontdekt door', feedTitle: 'Community', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
+    badge_first: 'Eerste ontdekker',
+    badge_5: '5 plaatsen',
+    badge_20: '20 plaatsen',
+    badge_countries: '3 landen',
+    badge_seasons: '4 seizoenen',
+    badge_unexplored: 'Onontdekt × 3',
   },
 };
 
