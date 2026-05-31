@@ -597,7 +597,7 @@
 
 <footer>
   <span id="txt-footer">Elsewhere — Discover the road less travelled. Fighting overtourism, one hidden gem at a time.</span>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.4;letter-spacing:0.08em;">v3.5.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.4;letter-spacing:0.08em;">v3.6.0</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -953,16 +953,16 @@ async function handleSearch() {
 
 // Category icon map
 const CAT_ICONS = {
-  museum: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h6M3 15h6M15 9h6M15 15h6"/></svg>',
-  garden: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7M9 13l3-10 3 10M6 17l6-4 6 4"/></svg>',
-  castle: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12M6 3l2 7H8l2 11h4l2-11h-2l2-7M9 21h6"/></svg>',
-  church: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V10l9-7 9 7v12M9 22v-6h6v6M12 3V1M10 1h4"/></svg>',
-  viewpoint: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="15" r="4"/><circle cx="17" cy="15" r="4"/><path d="M3 11V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4M17 11V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4M11 15h2"/></svg>',
-  village: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12H3l9-9 9 9h-2M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/><path d="M9 21v-6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6"/></svg>',
-  beach: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2-6 4-6 6 0s4 6 6 0 4-6 6 0"/></svg>',
-  nature: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21c0-7 4-12 14-12M5 21c3-3 5-6 5-9"/></svg>',
-  palace: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l3-9 5 5 4-7 4 11M3 17h18v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-2z"/></svg>',
-  market: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg>',
+  museum:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 10V6l7-3 7 3v4M9 21v-5h6v5"/></svg>',
+  garden:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-8"/><path d="M12 14C12 8 7 5 7 5s0 5 5 9"/><path d="M12 14c0-6 5-9 5-9s0 5-5 9"/></svg>',
+  castle:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9M3 9V5h3v4M21 21V9M21 9V5h-3v4M6 9h12M9 21v-6h6v6M6 9v12M18 9v12"/></svg>',
+  church:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6M9 5h6M5 21V11l7-5 7 5v10M10 21v-5h4v5"/></svg>',
+  viewpoint:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M2 22l4-10h12l4 10"/><path d="M7 22h10"/></svg>',
+  village:  '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V11l5-4 5 4 5-4v10"/><path d="M9 21v-5h4v5"/></svg>',
+  beach:    '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21H7M12 3C8 7 6 11 7 15c1 3 3 5 5 6M12 3c4 4 6 8 5 12-1 3-3 5-5 6"/></svg>',
+  nature:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-9"/><path d="M4 6s0 8 8 7c0 0 8 1 8-7 0 0-4-4-8 0-4-4-8 0z"/></svg>',
+  palace:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V9h16v12M4 9l8-6 8 6M9 21v-5h6v5M2 9h20"/></svg>',
+  market:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18l-2 9H5L3 6zM3 6l-1-3M8 6V4M12 6V3M16 6V4M8 15v6M16 15v6"/></svg>',
 };
 
 const CAT_LABELS = {
