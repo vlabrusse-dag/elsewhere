@@ -86,6 +86,18 @@
     border-bottom: 0.5px solid var(--border);
   }
 
+  header { gap: 12px; }
+  .header-user { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; }
+  .fav-nav-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: none; border: 0.5px solid var(--border);
+    border-radius: 50px; padding: 5px 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 11px;
+    color: var(--muted); cursor: pointer; transition: all 0.2s;
+  }
+  .fav-nav-btn:hover { border-color: var(--rust); color: var(--rust); }
+  .fav-nav-btn svg { width: 12px; height: 12px; fill: var(--rust); stroke: var(--rust); }
+
   .logo {
     font-family: 'Cormorant Garamond', serif;
     font-size: 22px;
@@ -745,14 +757,16 @@
   /* USER BUTTON in header */
   .user-btn {
     display: flex; align-items: center; gap: 6px;
-    background: none; border: 0.5px solid var(--border);
-    border-radius: 50px; padding: 5px 12px;
+    background: var(--ink); border: none;
+    border-radius: 50px; padding: 7px 16px;
     font-family: 'DM Sans', sans-serif; font-size: 11px;
-    color: var(--muted); cursor: pointer; transition: all 0.2s;
+    color: var(--paper); cursor: pointer; transition: all 0.2s;
+    white-space: nowrap;
   }
-  .user-btn:hover { border-color: var(--sage); color: var(--sage); }
-  .user-btn svg { width: 13px; height: 13px; }
-  .user-btn.signed-in { border-color: var(--sage); color: var(--sage); }
+  .user-btn:hover { background: var(--sage); }
+  .user-btn svg { width: 13px; height: 13px; stroke: var(--paper); }
+  .user-btn.signed-in { background: var(--sage); }
+  .user-btn.signed-in svg { stroke: #fff; }
 
   /* FAVORITES PANEL */
   .favorites-panel {
@@ -871,10 +885,6 @@
 
 <header>
   <a href="/" class="logo">Else<span>where</span></a>
-  <button class="user-btn" id="user-btn" onclick="handleUserBtn()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-    <span id="user-btn-label"></span>
-  </button>
   <div class="lang-selector" id="lang-selector">
     <button class="lang-btn" data-lang="en">EN</button>
     <button class="lang-btn" data-lang="fr">FR</button>
@@ -886,6 +896,16 @@
     <button class="lang-btn" data-lang="zh">ZH</button>
     <button class="lang-btn" data-lang="ar">AR</button>
     <button class="lang-btn" data-lang="nl">NL</button>
+  </div>
+  <div class="header-user">
+    <button class="user-btn" id="user-btn" onclick="handleUserBtn()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span id="user-btn-label"></span>
+    </button>
+    <button class="fav-nav-btn" id="fav-nav-btn" onclick="handleFavNav()" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span id="fav-nav-label"></span>
+    </button>
   </div>
 </header>
 
@@ -1001,7 +1021,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.5.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.6.0</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -1037,7 +1057,10 @@
 <div class="favorites-panel" id="favorites-panel">
   <div class="fav-header">
     <p class="fav-title" id="fav-title"></p>
-    <button class="fav-close" onclick="closeFavorites()">&#x2715;</button>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button onclick="handleSignOut()" style="background:none;border:none;cursor:pointer;font-size:11px;color:var(--muted);font-family:'DM Sans',sans-serif;padding:4px 8px" id="fav-signout-btn"></button>
+      <button class="fav-close" onclick="closeFavorites()">&#x2715;</button>
+    </div>
   </div>
   <div class="fav-list" id="fav-list"></div>
 </div>
@@ -1225,14 +1248,31 @@ async function handleSignOut() {
 function updateUserBtn() {
   const btn = document.getElementById('user-btn');
   const label = document.getElementById('user-btn-label');
+  const favBtn = document.getElementById('fav-nav-btn');
+  const favLabel = document.getElementById('fav-nav-label');
   if (!btn || !label) return;
   if (currentUser) {
     btn.classList.add('signed-in');
     label.textContent = currentUser.email.split('@')[0];
+    if (favBtn) { favBtn.style.display = 'flex'; }
+    if (favLabel) { favLabel.textContent = t('favNav') || 'My favourites'; }
   } else {
     btn.classList.remove('signed-in');
     label.textContent = t('signIn');
+    if (favBtn) { favBtn.style.display = 'none'; }
   }
+}
+
+function handleFavNav() {
+  if (!currentUser) { openAuthModal(); return; }
+  openFavorites();
+}
+
+async function removeFavorite(suggestionId, e) {
+  e.stopPropagation();
+  if (!currentUser) return;
+  await sbRemoveLike(currentUser.token, currentUser.id, suggestionId).catch(() => {});
+  loadFavorites();
 }
 
 // Restore session from localStorage
@@ -1249,6 +1289,8 @@ function restoreSession() {
 // ── FAVORITES UI ──────────────────────────────────────────────────────────────
 function openFavorites() {
   document.getElementById('fav-title').textContent = t('favorites');
+  const so = document.getElementById('fav-signout-btn');
+  if (so) so.textContent = t('signOut') || 'Sign out';
   document.getElementById('favorites-panel').classList.add('open');
   loadFavorites();
 }
@@ -1269,12 +1311,15 @@ async function loadFavorites() {
   list.innerHTML = rows.map(row => {
     const s = row.suggestions;
     if (!s) return '';
-    return `<div class="fav-item" onclick="loadFavItem('${s.query}','${s.id}')">
-      ${s.image ? `<img class="fav-img" src="${esc(s.image)}" alt="${esc(s.name)}" onerror="this.style.background='var(--paper-dark)'">` : `<div class="fav-img"></div>`}
-      <div class="fav-info">
-        <p class="fav-name">${esc(s.name)}</p>
-        <p class="fav-city">${esc(s.city)}</p>
+    return `<div class="fav-item">
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0" onclick="loadFavItem('${s.query}','${s.id}')">
+        ${s.image ? `<img class="fav-img" src="${esc(s.image)}" alt="${esc(s.name)}" onerror="this.style.background='var(--paper-dark)'">` : `<div class="fav-img"></div>`}
+        <div class="fav-info">
+          <p class="fav-name">${esc(s.name)}</p>
+          <p class="fav-city">${esc(s.city)}</p>
+        </div>
       </div>
+      <button onclick="removeFavorite('${s.id}', event)" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:11px;padding:4px 8px;border-radius:4px;transition:color 0.15s;flex-shrink:0" title="${t('removeFav') || 'Remove'}">✕</button>
     </div>`;
   }).join('');
 }
@@ -1386,6 +1431,7 @@ const I18N = {
     orSignUp: 'No account yet?',
     orSignIn: 'Already have an account?',
     checkEmail: 'Check your email to confirm your account, then sign in.',
+    favNav: 'My favourites', removeFav: 'Remove',
   },
   fr: {
     eyebrow: 'Slow travel · Lieux secrets',
@@ -1427,6 +1473,7 @@ const I18N = {
     orSignUp: 'Pas encore de compte ?',
     orSignIn: 'Déjà un compte ?',
     checkEmail: 'Vérifiez votre email pour confirmer votre compte, puis connectez-vous.',
+    favNav: 'Mes favoris', removeFav: 'Supprimer',
   },
   es: {
     eyebrow: 'Viaje lento · Joyas ocultas',
@@ -1468,6 +1515,7 @@ const I18N = {
     orSignUp: '¿No tienes cuenta?',
     orSignIn: '¿Ya tienes cuenta?',
     checkEmail: 'Comprueba tu email para confirmar tu cuenta, luego inicia sesión.',
+    favNav: 'Mis favoritos', removeFav: 'Eliminar',
   },
   de: {
     eyebrow: 'Langsames Reisen · Versteckte Schätze',
@@ -1509,6 +1557,7 @@ const I18N = {
     orSignUp: 'Noch kein Konto?',
     orSignIn: 'Bereits ein Konto?',
     checkEmail: 'Prüfe deine E-Mail zur Bestätigung, dann melde dich an.',
+    favNav: 'Meine Favoriten', removeFav: 'Entfernen',
   },
   it: {
     eyebrow: 'Viaggio lento · Luoghi nascosti',
@@ -1550,6 +1599,7 @@ const I18N = {
     orSignUp: 'Non hai un account?',
     orSignIn: 'Hai già un account?',
     checkEmail: "Controlla la tua email per confermare l'account, poi accedi.",
+    favNav: 'I miei preferiti', removeFav: 'Rimuovi',
   },
   pt: {
     eyebrow: 'Viagem lenta · Tesouros escondidos',
@@ -1591,6 +1641,7 @@ const I18N = {
     orSignUp: 'Não tem conta?',
     orSignIn: 'Já tem conta?',
     checkEmail: 'Verifique o seu email para confirmar a conta, depois entre.',
+    favNav: 'Os meus favoritos', removeFav: 'Remover',
   },
   ja: {
     eyebrow: 'スローな旅 · 隠れた名所',
@@ -1632,6 +1683,7 @@ const I18N = {
     orSignUp: 'アカウントをお持ちでない方',
     orSignIn: 'すでにアカウントをお持ちの方',
     checkEmail: 'メールを確認してアカウントを認証し、ログインしてください。',
+    favNav: 'お気に入り', removeFav: '削除',
   },
   zh: {
     eyebrow: '慢旅行 · 隐藏宝地',
@@ -1673,6 +1725,7 @@ const I18N = {
     orSignUp: '还没有账户？',
     orSignIn: '已有账户？',
     checkEmail: '请查看邮箱确认账户，然后登录。',
+    favNav: '我的收藏', removeFav: '删除',
   },
   ar: {
     eyebrow: 'السفر الهادئ · الجواهر الخفية',
@@ -1714,6 +1767,7 @@ const I18N = {
     orSignUp: 'ليس لديك حساب؟',
     orSignIn: 'لديك حساب بالفعل؟',
     checkEmail: 'تحقق من بريدك الإلكتروني لتأكيد حسابك، ثم سجّل دخولك.',
+    favNav: 'مفضلتي', removeFav: 'إزالة',
   },
   nl: {
     eyebrow: 'Langzaam reizen · Verborgen schatten',
@@ -1755,6 +1809,7 @@ const I18N = {
     orSignUp: 'Nog geen account?',
     orSignIn: 'Al een account?',
     checkEmail: 'Controleer je e-mail om je account te bevestigen, en log daarna in.',
+    favNav: 'Mijn favorieten', removeFav: 'Verwijderen',
   },
 };
 
