@@ -1058,7 +1058,7 @@ function applySeasonTheme() {
   root.style.setProperty('--sage-light', s.accentLight);
   root.style.setProperty('--muted', s.muted);
   root.style.setProperty('--rust', s.like);
-  updateSeasonLabel();
+  if (typeof updateSeasonLabel === 'function') updateSeasonLabel();
 }
 
 function setHemisphere(north) {
@@ -1069,9 +1069,6 @@ function setHemisphere(north) {
 function toggleHemisphere() {
   isNorthernHemisphere = !isNorthernHemisphere;
   applySeasonTheme();
-}
-
-applySeasonTheme();
 }
 
 applySeasonTheme();
