@@ -1410,27 +1410,36 @@ function launchParticles(originEl) {
   const season = getCurrentSeason();
   const { chars, colors } = SEASON_PARTICLES[season];
   const rect = originEl.getBoundingClientRect();
-  const count = 18;
+  const count = 20;
 
-  // Spread spawn points across the full card width, not just center
-  const spawnPoints = Array.from({ length: count }, (_, i) => ({
-    x: rect.left + (rect.width * (0.1 + Math.random() * 0.8)),
-    y: rect.top + (rect.height * (0.1 + Math.random() * 0.5)),
-  }));
+  // Spawn along the top edge and sides of the card
+  const spawnPoints = Array.from({ length: count }, (_, i) => {
+    const edge = Math.random();
+    if (edge < 0.6) {
+      // Top edge
+      return { x: rect.left + rect.width * (0.05 + Math.random() * 0.9), y: rect.top + Math.random() * 30 };
+    } else if (edge < 0.8) {
+      // Left edge
+      return { x: rect.left + Math.random() * 40, y: rect.top + rect.height * Math.random() * 0.4 };
+    } else {
+      // Right edge
+      return { x: rect.right - Math.random() * 40, y: rect.top + rect.height * Math.random() * 0.4 };
+    }
+  });
 
-  // Random burst patterns — radial, upward, diagonal, fountain
+  // Burst patterns with more travel distance
   const patterns = [
-    () => ({ angle: Math.random() * 360, dist: 60 + Math.random() * 120 }),
-    () => ({ angle: -90 + (Math.random() - 0.5) * 140, dist: 50 + Math.random() * 100 }),
-    () => ({ angle: (Math.random() > 0.5 ? 1 : -1) * (30 + Math.random() * 60), dist: 70 + Math.random() * 80 }),
-    () => ({ angle: -80 + (Math.random() - 0.5) * 60, dist: 80 + Math.random() * 140 }),
+    () => ({ angle: -90 + (Math.random() - 0.5) * 160, dist: 120 + Math.random() * 180 }),
+    () => ({ angle: Math.random() * 360,                dist: 100 + Math.random() * 160 }),
+    () => ({ angle: -70 + (Math.random() - 0.5) * 80,  dist: 150 + Math.random() * 200 }),
+    () => ({ angle: (Math.random() > 0.5 ? 1 : -1) * (20 + Math.random() * 80), dist: 130 + Math.random() * 170 }),
   ];
 
   for (let i = 0; i < count; i++) {
     const { x, y } = spawnPoints[i];
     const el = document.createElement('span');
     const color = colors[i % colors.length];
-    const size = 9 + Math.random() * 9;
+    const size = 13 + Math.random() * 12;
     el.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;opacity:0;will-change:transform,opacity;line-height:1;';
     el.style.fontSize = size + 'px';
     el.style.color = color;
@@ -1456,7 +1465,7 @@ function launchParticles(originEl) {
         const p = Math.min(elapsed / dur, 1);
         const eased = 1 - Math.pow(1 - p, 2);
         const opacity = p < 0.15 ? p / 0.15 : 1 - ((p - 0.15) / 0.85);
-        el.style.opacity = Math.max(0, opacity * 0.85);
+        el.style.opacity = Math.max(0, opacity * 1.0);
         el.style.transform = 'translate(' + (tx*eased) + 'px,' + (ty*eased) + 'px) rotate(' + (eased*rotAmt*rotDir) + 'deg) scale(' + (0.4+eased*0.8) + ')';
         if (p < 1) requestAnimationFrame(frame);
         else el.remove();
