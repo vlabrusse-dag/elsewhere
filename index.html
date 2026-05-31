@@ -141,12 +141,12 @@
   /* ── HERO ── */
   .hero {
     position: relative;
-    min-height: 100vh;
+    min-height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 8rem 2rem 4rem;
+    padding: 8rem 2rem 3rem;
     text-align: center;
     z-index: 1;
   }
@@ -1097,7 +1097,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.9.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.9.1</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -2815,7 +2815,7 @@ function renderResults(query, main, sbOthers) {
     alsoHtml = `<div class="also-section"><p class="also-title">${t('alsoTitle')}</p><div class="also-grid">${cards}</div></div>`;
   }
 
-  const crowdHtml = main.input_crowd ? `
+  const crowdHtml = (main.input_crowd && main.input_crowd > 0) ? `
     <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
       <span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)">${t('crowdLabel2') || 'Crowd level'} :</span>
       ${renderCrowdScore(main.input_crowd)}
