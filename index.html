@@ -696,6 +696,93 @@
   .lightbox-close:hover { opacity: 1; }
 
   /* DARK MODE — Inexploré */
+  /* AUTH MODAL */
+  .auth-modal {
+    position: fixed; inset: 0; z-index: 2000;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(26,26,24,0.7); backdrop-filter: blur(8px);
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .auth-modal.open { display: flex; }
+  .auth-modal.visible { opacity: 1; }
+  .auth-box {
+    background: var(--paper); border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 2rem;
+    width: 100%; max-width: 380px; margin: 1rem;
+    box-shadow: 0 8px 60px rgba(0,0,0,0.2);
+    position: relative;
+  }
+  .auth-close {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none; cursor: pointer;
+    font-size: 20px; color: var(--muted); line-height: 1;
+  }
+  .auth-logo { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 300; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink); margin-bottom: 4px; }
+  .auth-logo span { color: var(--sage); }
+  .auth-title { font-size: 15px; font-weight: 400; color: var(--ink); margin-bottom: 4px; }
+  .auth-sub { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.5; }
+  .auth-field { margin-bottom: 12px; }
+  .auth-field label { display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+  .auth-field input {
+    width: 100%; background: var(--paper-dark); border: 0.5px solid var(--border);
+    border-radius: var(--radius); padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink);
+    outline: none; transition: border-color 0.2s;
+  }
+  .auth-field input:focus { border-color: var(--sage); }
+  .auth-submit {
+    width: 100%; background: var(--ink); color: var(--paper);
+    border: none; border-radius: 50px; padding: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400;
+    cursor: pointer; margin-top: 8px; transition: background 0.2s;
+  }
+  .auth-submit:hover { background: var(--sage); }
+  .auth-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+  .auth-error { font-size: 12px; color: var(--rust); margin-top: 8px; display: none; }
+  .auth-toggle { font-size: 12px; color: var(--muted); margin-top: 14px; text-align: center; }
+  .auth-toggle button { background: none; border: none; color: var(--sage); cursor: pointer; font-size: 12px; font-family: 'DM Sans', sans-serif; text-decoration: underline; }
+
+  /* USER BUTTON in header */
+  .user-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: none; border: 0.5px solid var(--border);
+    border-radius: 50px; padding: 5px 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 11px;
+    color: var(--muted); cursor: pointer; transition: all 0.2s;
+  }
+  .user-btn:hover { border-color: var(--sage); color: var(--sage); }
+  .user-btn svg { width: 13px; height: 13px; }
+  .user-btn.signed-in { border-color: var(--sage); color: var(--sage); }
+
+  /* FAVORITES PANEL */
+  .favorites-panel {
+    position: fixed; top: 0; right: 0; bottom: 0; width: 340px;
+    background: var(--paper); border-left: 0.5px solid var(--border);
+    z-index: 1500; transform: translateX(100%);
+    transition: transform 0.3s ease; overflow-y: auto;
+    box-shadow: -4px 0 30px rgba(0,0,0,0.1);
+  }
+  .favorites-panel.open { transform: translateX(0); }
+  .fav-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 1.5rem; border-bottom: 0.5px solid var(--border);
+    position: sticky; top: 0; background: var(--paper); z-index: 1;
+  }
+  .fav-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; color: var(--ink); }
+  .fav-close { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 20px; line-height: 1; }
+  .fav-list { padding: 1rem 1.5rem; }
+  .fav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 0.5px solid var(--border);
+    cursor: pointer; transition: opacity 0.15s;
+  }
+  .fav-item:hover { opacity: 0.75; }
+  .fav-img { width: 52px; height: 52px; border-radius: var(--radius); object-fit: cover; background: var(--paper-dark); flex-shrink: 0; }
+  .fav-info { flex: 1; min-width: 0; }
+  .fav-name { font-size: 13px; font-weight: 400; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fav-city { font-size: 11px; color: var(--muted); }
+  .fav-empty { padding: 2rem 0; text-align: center; font-size: 13px; color: var(--muted); line-height: 1.6; }
+
   /* SHARE BUTTONS */
   .share-wrap { display: flex; align-items: center; gap: 6px; }
   .share-btn {
@@ -784,6 +871,10 @@
 
 <header>
   <a href="/" class="logo">Else<span>where</span></a>
+  <button class="user-btn" id="user-btn" onclick="handleUserBtn()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    <span id="user-btn-label"></span>
+  </button>
   <div class="lang-selector" id="lang-selector">
     <button class="lang-btn" data-lang="en">EN</button>
     <button class="lang-btn" data-lang="fr">FR</button>
@@ -910,12 +1001,45 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.3.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.4.0</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">&#x2715;</button>
   <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+</div>
+
+<!-- AUTH MODAL -->
+<div class="auth-modal" id="auth-modal" onclick="handleModalBgClick(event)">
+  <div class="auth-box">
+    <button class="auth-close" onclick="closeAuthModal()">&#x2715;</button>
+    <p class="auth-logo">Else<span>where</span></p>
+    <p class="auth-title" id="auth-title"></p>
+    <p class="auth-sub" id="auth-sub"></p>
+    <div class="auth-field">
+      <label id="lbl-email"></label>
+      <input type="email" id="auth-email" autocomplete="email" />
+    </div>
+    <div class="auth-field">
+      <label id="lbl-password"></label>
+      <input type="password" id="auth-password" autocomplete="current-password" />
+    </div>
+    <button class="auth-submit" id="auth-submit" onclick="handleAuthSubmit()"></button>
+    <p class="auth-error" id="auth-error"></p>
+    <p class="auth-toggle">
+      <span id="auth-toggle-text"></span>
+      <button onclick="toggleAuthMode()" id="auth-toggle-btn"></button>
+    </p>
+  </div>
+</div>
+
+<!-- FAVORITES PANEL -->
+<div class="favorites-panel" id="favorites-panel">
+  <div class="fav-header">
+    <p class="fav-title" id="fav-title"></p>
+    <button class="fav-close" onclick="closeFavorites()">&#x2715;</button>
+  </div>
+  <div class="fav-list" id="fav-list"></div>
 </div>
 
 <script>
@@ -926,6 +1050,238 @@ let filterRarity = 1;
 // ── SUPABASE ──────────────────────────────────────────────────────────────────
 const SB_URL = 'https://hfsnwprfntxnovwkwjan.supabase.co';
 const SB_KEY = 'sb_publishable_ORLl3OejwXpcJ2WziBC0_Q_OWBKMLwv';
+
+// ── AUTH STATE ───────────────────────────────────────────────────────────────
+let currentUser = null;
+let authMode = 'signin'; // 'signin' | 'signup'
+
+// ── SUPABASE AUTH HELPERS ─────────────────────────────────────────────────────
+async function sbSignIn(email, password) {
+  const res = await fetch(SB_URL + '/auth/v1/token?grant_type=password', {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error_description || data.msg || 'Auth error');
+  return data;
+}
+
+async function sbSignUp(email, password) {
+  const res = await fetch(SB_URL + '/auth/v1/signup', {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error_description || data.msg || 'Signup error');
+  return data;
+}
+
+async function sbSignOut(token) {
+  await fetch(SB_URL + '/auth/v1/logout', {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + token },
+  });
+}
+
+async function sbAddLike(token, userId, suggestionId) {
+  const res = await fetch(SB_URL + '/rest/v1/user_likes', {
+    method: 'POST',
+    headers: {
+      'apikey': SB_KEY, 'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json', 'Prefer': 'return=minimal',
+    },
+    body: JSON.stringify({ user_id: userId, suggestion_id: suggestionId }),
+  });
+  return res.ok || res.status === 409; // 409 = already exists
+}
+
+async function sbRemoveLike(token, userId, suggestionId) {
+  const res = await fetch(
+    SB_URL + '/rest/v1/user_likes?user_id=eq.' + userId + '&suggestion_id=eq.' + suggestionId,
+    { method: 'DELETE', headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + token } }
+  );
+  return res.ok;
+}
+
+async function sbGetUserLikes(token) {
+  const res = await fetch(
+    SB_URL + '/rest/v1/user_likes?select=suggestion_id,suggestions(*)&order=created_at.desc',
+    { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + token } }
+  );
+  if (!res.ok) return [];
+  return await res.json();
+}
+
+async function sbCheckLiked(token, suggestionId) {
+  const res = await fetch(
+    SB_URL + '/rest/v1/user_likes?suggestion_id=eq.' + suggestionId + '&limit=1',
+    { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + token } }
+  );
+  if (!res.ok) return false;
+  const rows = await res.json();
+  return rows.length > 0;
+}
+
+// ── AUTH UI ───────────────────────────────────────────────────────────────────
+function openAuthModal() {
+  const modal = document.getElementById('auth-modal');
+  modal.style.display = 'flex';
+  requestAnimationFrame(() => modal.classList.add('open', 'visible'));
+  updateAuthModalText();
+  document.getElementById('auth-email').focus();
+}
+
+function closeAuthModal() {
+  const modal = document.getElementById('auth-modal');
+  modal.classList.remove('visible');
+  setTimeout(() => { modal.classList.remove('open'); modal.style.display = 'none'; }, 200);
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+function handleModalBgClick(e) {
+  if (e.target === document.getElementById('auth-modal')) closeAuthModal();
+}
+
+function toggleAuthMode() {
+  authMode = authMode === 'signin' ? 'signup' : 'signin';
+  updateAuthModalText();
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+function updateAuthModalText() {
+  const isSignIn = authMode === 'signin';
+  document.getElementById('auth-title').textContent = t('authTitle');
+  document.getElementById('auth-sub').textContent = t('authSub');
+  document.getElementById('lbl-email').textContent = t('email');
+  document.getElementById('lbl-password').textContent = t('password');
+  document.getElementById('auth-submit').textContent = isSignIn ? t('signIn') : t('signUp');
+  document.getElementById('auth-toggle-text').textContent = isSignIn ? t('orSignUp') : t('orSignIn');
+  document.getElementById('auth-toggle-btn').textContent = isSignIn ? t('signUp') : t('signIn');
+  document.getElementById('auth-email').placeholder = 'you@example.com';
+}
+
+async function handleAuthSubmit() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const btn = document.getElementById('auth-submit');
+  const errEl = document.getElementById('auth-error');
+  if (!email || !password) return;
+
+  btn.disabled = true;
+  errEl.style.display = 'none';
+
+  try {
+    let data;
+    if (authMode === 'signin') {
+      data = await sbSignIn(email, password);
+    } else {
+      data = await sbSignUp(email, password);
+    }
+    if (data.access_token) {
+      currentUser = { token: data.access_token, id: data.user?.id, email: data.user?.email };
+      localStorage.setItem('sb_session', JSON.stringify(currentUser));
+      updateUserBtn();
+      closeAuthModal();
+    } else {
+      errEl.textContent = t('authError');
+      errEl.style.display = 'block';
+    }
+  } catch (e) {
+    errEl.textContent = t('authError');
+    errEl.style.display = 'block';
+  }
+  btn.disabled = false;
+}
+
+function handleUserBtn() {
+  if (currentUser) {
+    openFavorites();
+  } else {
+    authMode = 'signin';
+    openAuthModal();
+  }
+}
+
+async function handleSignOut() {
+  if (currentUser) await sbSignOut(currentUser.token).catch(() => {});
+  currentUser = null;
+  localStorage.removeItem('sb_session');
+  updateUserBtn();
+  closeFavorites();
+}
+
+function updateUserBtn() {
+  const btn = document.getElementById('user-btn');
+  const label = document.getElementById('user-btn-label');
+  if (!btn || !label) return;
+  if (currentUser) {
+    btn.classList.add('signed-in');
+    label.textContent = currentUser.email.split('@')[0];
+  } else {
+    btn.classList.remove('signed-in');
+    label.textContent = t('signIn');
+  }
+}
+
+// Restore session from localStorage
+function restoreSession() {
+  try {
+    const saved = localStorage.getItem('sb_session');
+    if (saved) {
+      currentUser = JSON.parse(saved);
+      updateUserBtn();
+    }
+  } catch (e) {}
+}
+
+// ── FAVORITES UI ──────────────────────────────────────────────────────────────
+function openFavorites() {
+  document.getElementById('fav-title').textContent = t('favorites');
+  document.getElementById('favorites-panel').classList.add('open');
+  loadFavorites();
+}
+
+function closeFavorites() {
+  document.getElementById('favorites-panel').classList.remove('open');
+}
+
+async function loadFavorites() {
+  const list = document.getElementById('fav-list');
+  if (!currentUser) return;
+  list.innerHTML = '<p class="fav-empty" style="opacity:0.5">…</p>';
+  const rows = await sbGetUserLikes(currentUser.token).catch(() => []);
+  if (!rows.length) {
+    list.innerHTML = `<p class="fav-empty">${t('noFavorites')}</p>`;
+    return;
+  }
+  list.innerHTML = rows.map(row => {
+    const s = row.suggestions;
+    if (!s) return '';
+    return `<div class="fav-item" onclick="loadFavItem('${s.query}','${s.id}')">
+      ${s.image ? `<img class="fav-img" src="${esc(s.image)}" alt="${esc(s.name)}" onerror="this.style.background='var(--paper-dark)'">` : `<div class="fav-img"></div>`}
+      <div class="fav-info">
+        <p class="fav-name">${esc(s.name)}</p>
+        <p class="fav-city">${esc(s.city)}</p>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadFavItem(query, id) {
+  closeFavorites();
+  document.getElementById('place-input').value = query;
+  const suggestion = await sbGetById(id);
+  if (!suggestion) return;
+  const resultsEl = document.getElementById('results');
+  resultsEl.style.display = 'block';
+  window.scrollTo({ top: document.getElementById('hero').offsetHeight - 80, behavior: 'smooth' });
+  const topSuggestions = await sbGetTopByQuery(query).catch(() => []);
+  renderResults(query, { ...suggestion, liked: true }, topSuggestions.filter(s => s.id !== id).slice(0, 3));
+  const shareUrl = window.location.origin + window.location.pathname + '?r=' + id;
+  window.history.replaceState({}, '', shareUrl);
+}
 
 async function sbInsert(data) {
   const res = await fetch(SB_URL + '/rest/v1/suggestions', {
@@ -1007,6 +1363,18 @@ const I18N = {
     examplesNear: ['Eiffel Tower', 'Colosseum', 'Sagrada Família', 'Trevi Fountain', 'Big Ben'],
     examplesRegion: ['Paris', 'Rome', 'Barcelona', 'London', 'Kyoto'],
     share: 'Share', copyLink: 'Copy link', copied: 'Copied!',
+    signIn: 'Sign in',
+    signOut: 'Sign out',
+    signUp: 'Create account',
+    email: 'Email',
+    password: 'Password',
+    authTitle: 'Join Elsewhere',
+    authSub: 'Sign in to like places and save your favourites.',
+    favorites: 'My favourites',
+    noFavorites: 'No favourites yet — like a place to save it here.',
+    authError: 'Invalid email or password.',
+    orSignUp: 'No account yet?',
+    orSignIn: 'Already have an account?',
   },
   fr: {
     eyebrow: 'Slow travel · Lieux secrets',
@@ -1035,6 +1403,18 @@ const I18N = {
     examplesNear: ['Tour Eiffel', 'Louvre', 'Notre-Dame', 'Sacré-Cœur', 'Versailles'],
     examplesRegion: ['Paris', 'Lyon', 'Bordeaux', 'Marseille', 'Nantes'],
     share: 'Partager', copyLink: 'Copier le lien', copied: 'Copié !',
+    signIn: 'Se connecter',
+    signOut: 'Se déconnecter',
+    signUp: 'Créer un compte',
+    email: 'Email',
+    password: 'Mot de passe',
+    authTitle: 'Rejoindre Elsewhere',
+    authSub: 'Connectez-vous pour liker des lieux et sauvegarder vos favoris.',
+    favorites: 'Mes favoris',
+    noFavorites: 'Pas encore de favoris — likez un lieu pour le retrouver ici.',
+    authError: 'Email ou mot de passe incorrect.',
+    orSignUp: 'Pas encore de compte ?',
+    orSignIn: 'Déjà un compte ?',
   },
   es: {
     eyebrow: 'Viaje lento · Joyas ocultas',
@@ -1063,6 +1443,18 @@ const I18N = {
     examplesNear: ['Sagrada Família', 'Coliseo', 'Alhambra', 'Prado', 'Guggenheim'],
     examplesRegion: ['Barcelona', 'Madrid', 'Sevilla', 'Valencia', 'Bilbao'],
     share: 'Compartir', copyLink: 'Copiar enlace', copied: '¡Copiado!',
+    signIn: 'Iniciar sesión',
+    signOut: 'Cerrar sesión',
+    signUp: 'Crear cuenta',
+    email: 'Correo',
+    password: 'Contraseña',
+    authTitle: 'Únete a Elsewhere',
+    authSub: 'Inicia sesión para guardar tus lugares favoritos.',
+    favorites: 'Mis favoritos',
+    noFavorites: 'Sin favoritos aún.',
+    authError: 'Email o contraseña incorrectos.',
+    orSignUp: '¿No tienes cuenta?',
+    orSignIn: '¿Ya tienes cuenta?',
   },
   de: {
     eyebrow: 'Langsames Reisen · Versteckte Schätze',
@@ -1091,6 +1483,18 @@ const I18N = {
     examplesNear: ['Brandenburger Tor', 'Kölner Dom', 'Neuschwanstein', 'Reichstag', 'Pergamonmuseum'],
     examplesRegion: ['Berlin', 'München', 'Hamburg', 'Köln', 'Frankfurt'],
     share: 'Teilen', copyLink: 'Link kopieren', copied: 'Kopiert!',
+    signIn: 'Anmelden',
+    signOut: 'Abmelden',
+    signUp: 'Konto erstellen',
+    email: 'E-Mail',
+    password: 'Passwort',
+    authTitle: 'Elsewhere beitreten',
+    authSub: 'Melde dich an, um Orte zu liken und zu speichern.',
+    favorites: 'Meine Favoriten',
+    noFavorites: 'Noch keine Favoriten.',
+    authError: 'E-Mail oder Passwort falsch.',
+    orSignUp: 'Noch kein Konto?',
+    orSignIn: 'Bereits ein Konto?',
   },
   it: {
     eyebrow: 'Viaggio lento · Luoghi nascosti',
@@ -1119,6 +1523,18 @@ const I18N = {
     examplesNear: ['Colosseo', 'Fontana di Trevi', 'Uffizi', 'Canal Grande', 'Duomo'],
     examplesRegion: ['Roma', 'Firenze', 'Venezia', 'Milano', 'Napoli'],
     share: 'Condividi', copyLink: 'Copia link', copied: 'Copiato!',
+    signIn: 'Accedi',
+    signOut: 'Esci',
+    signUp: 'Crea account',
+    email: 'Email',
+    password: 'Password',
+    authTitle: 'Unisciti a Elsewhere',
+    authSub: 'Accedi per salvare i tuoi luoghi preferiti.',
+    favorites: 'I miei preferiti',
+    noFavorites: 'Nessun preferito ancora.',
+    authError: 'Email o password errati.',
+    orSignUp: 'Non hai un account?',
+    orSignIn: 'Hai già un account?',
   },
   pt: {
     eyebrow: 'Viagem lenta · Tesouros escondidos',
@@ -1147,6 +1563,18 @@ const I18N = {
     examplesNear: ['Torre de Belém', 'Coliseu', 'Sagrada Família', 'Cristo Redentor', 'Castelo'],
     examplesRegion: ['Lisboa', 'Porto', 'Sintra', 'Rio de Janeiro', 'São Paulo'],
     share: 'Partilhar', copyLink: 'Copiar link', copied: 'Copiado!',
+    signIn: 'Entrar',
+    signOut: 'Sair',
+    signUp: 'Criar conta',
+    email: 'Email',
+    password: 'Senha',
+    authTitle: 'Juntar-se ao Elsewhere',
+    authSub: 'Entre para guardar os seus lugares favoritos.',
+    favorites: 'Os meus favoritos',
+    noFavorites: 'Sem favoritos ainda.',
+    authError: 'Email ou senha incorretos.',
+    orSignUp: 'Não tem conta?',
+    orSignIn: 'Já tem conta?',
   },
   ja: {
     eyebrow: 'スローな旅 · 隠れた名所',
@@ -1175,6 +1603,18 @@ const I18N = {
     examplesNear: ['東京タワー', '浅草寺', '清水寺', '金閣寺', '姫路城'],
     examplesRegion: ['東京', '京都', '大阪', '奈良', '鎌倉'],
     share: 'シェア', copyLink: 'リンクをコピー', copied: 'コピーしました',
+    signIn: 'ログイン',
+    signOut: 'ログアウト',
+    signUp: 'アカウント作成',
+    email: 'メール',
+    password: 'パスワード',
+    authTitle: 'Elsewhereに参加',
+    authSub: 'ログインしてお気に入りの場所を保存しましょう。',
+    favorites: 'お気に入り',
+    noFavorites: 'まだお気に入りはありません。',
+    authError: 'メールまたはパスワードが正しくありません。',
+    orSignUp: 'アカウントをお持ちでない方',
+    orSignIn: 'すでにアカウントをお持ちの方',
   },
   zh: {
     eyebrow: '慢旅行 · 隐藏宝地',
@@ -1203,6 +1643,18 @@ const I18N = {
     examplesNear: ['长城', '故宫', '天坛', '外滩', '西湖'],
     examplesRegion: ['北京', '上海', '杭州', '成都', '西安'],
     share: '分享', copyLink: '复制链接', copied: '已复制',
+    signIn: '登录',
+    signOut: '退出',
+    signUp: '创建账户',
+    email: '邮箱',
+    password: '密码',
+    authTitle: '加入 Elsewhere',
+    authSub: '登录以保存您喜爱的地方。',
+    favorites: '我的收藏',
+    noFavorites: '暂无收藏。',
+    authError: '邮箱或密码错误。',
+    orSignUp: '还没有账户？',
+    orSignIn: '已有账户？',
   },
   ar: {
     eyebrow: 'السفر الهادئ · الجواهر الخفية',
@@ -1231,6 +1683,18 @@ const I18N = {
     examplesNear: ['الأهرامات', 'برج إيفل', 'الكولوسيوم', 'تاج محل', 'الأقصر'],
     examplesRegion: ['القاهرة', 'مراكش', 'دبي', 'إسطنبول', 'بيروت'],
     share: 'مشاركة', copyLink: 'نسخ الرابط', copied: 'تم النسخ',
+    signIn: 'تسجيل الدخول',
+    signOut: 'تسجيل الخروج',
+    signUp: 'إنشاء حساب',
+    email: 'البريد الإلكتروني',
+    password: 'كلمة المرور',
+    authTitle: 'انضم إلى Elsewhere',
+    authSub: 'سجّل دخولك لحفظ أماكنك المفضلة.',
+    favorites: 'مفضلتي',
+    noFavorites: 'لا مفضلات بعد.',
+    authError: 'بريد إلكتروني أو كلمة مرور غير صحيحة.',
+    orSignUp: 'ليس لديك حساب؟',
+    orSignIn: 'لديك حساب بالفعل؟',
   },
   nl: {
     eyebrow: 'Langzaam reizen · Verborgen schatten',
@@ -1259,6 +1723,18 @@ const I18N = {
     examplesNear: ['Eiffeltoren', 'Colosseum', 'Sagrada Família', 'Trevi Fontein', 'Big Ben'],
     examplesRegion: ['Amsterdam', 'Rotterdam', 'Utrecht', 'Den Haag', 'Brugge'],
     share: 'Delen', copyLink: 'Link kopiëren', copied: 'Gekopieerd!',
+    signIn: 'Inloggen',
+    signOut: 'Uitloggen',
+    signUp: 'Account aanmaken',
+    email: 'E-mail',
+    password: 'Wachtwoord',
+    authTitle: 'Word lid van Elsewhere',
+    authSub: 'Log in om plaatsen te liken en op te slaan.',
+    favorites: 'Mijn favorieten',
+    noFavorites: 'Nog geen favorieten.',
+    authError: 'Onjuist e-mailadres of wachtwoord.',
+    orSignUp: 'Nog geen account?',
+    orSignIn: 'Al een account?',
   },
 };
 
@@ -1920,25 +2396,42 @@ function renderResults(query, main, sbOthers) {
 }
 
 async function handleLike(cardId, queryEnc, nameEnc, supabaseId) {
+  // Require auth
+  if (!currentUser) {
+    authMode = 'signin';
+    openAuthModal();
+    return;
+  }
+
   const query = decodeURIComponent(queryEnc);
   const name = decodeURIComponent(nameEnc);
   const key = normalizeQuery(query);
   const entry = STORE[key]?.find(s => s.name === name);
-  if (entry?.liked) return;
 
   const btn = document.getElementById(cardId + '-like');
   const count = document.getElementById(cardId + '-count');
+  const isLiked = btn?.classList.contains('liked');
 
-  // Optimistic UI update
-  if (entry) { entry.liked = true; entry.likes++; }
-  if (btn) btn.classList.add('liked');
-  const newCount = entry ? entry.likes : (parseInt(count?.textContent || '0') + 1);
-  if (count) count.textContent = newCount;
-
-  // Persist to Supabase
-  if (supabaseId) {
-    const currentLikes = newCount - 1;
-    await sbLike(supabaseId, currentLikes).catch(() => {});
+  if (isLiked) {
+    // Unlike
+    if (btn) btn.classList.remove('liked');
+    const newCount = Math.max(0, parseInt(count?.textContent || '1') - 1);
+    if (count) count.textContent = newCount;
+    if (entry) { entry.liked = false; entry.likes = newCount; }
+    if (supabaseId) {
+      await sbRemoveLike(currentUser.token, currentUser.id, supabaseId).catch(() => {});
+      await sbLike(supabaseId, newCount).catch(() => {});
+    }
+  } else {
+    // Like
+    if (entry) { entry.liked = true; entry.likes++; }
+    if (btn) btn.classList.add('liked');
+    const newCount = entry ? entry.likes : (parseInt(count?.textContent || '0') + 1);
+    if (count) count.textContent = newCount;
+    if (supabaseId) {
+      await sbAddLike(currentUser.token, currentUser.id, supabaseId).catch(() => {});
+      await sbLike(supabaseId, newCount).catch(() => {});
+    }
   }
 }
 
@@ -2034,7 +2527,18 @@ function launchParticles(originEl) {
 document.getElementById('search-btn').addEventListener('click', handleSearch);
 
 // Load shared result on page load if ?r= param exists
-window.addEventListener('DOMContentLoaded', loadSharedResult);
+window.addEventListener('DOMContentLoaded', () => {
+  restoreSession();
+  updateUserBtn();
+  loadSharedResult();
+});
+
+document.getElementById('auth-email').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('auth-password').focus();
+});
+document.getElementById('auth-password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleAuthSubmit();
+});
 document.getElementById('examples-row').addEventListener('click', e => {
   const chip = e.target.closest('.example-chip');
   if (chip) fillAndSearch(chip.dataset.place);
