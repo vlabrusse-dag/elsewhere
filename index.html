@@ -876,21 +876,6 @@
   .home-sections { display: none; }
   .home-sections.visible { display: block; }
 
-  /* Hero background image */
-  .hero-bg {
-    position: absolute; inset: 0; z-index: 0;
-    background-size: cover; background-position: center;
-    background-repeat: no-repeat;
-    transition: opacity 1.2s ease;
-  }
-  .hero-bg::after {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(to bottom,
-      rgba(var(--paper-rgb, 245,242,235), 0.55) 0%,
-      rgba(var(--paper-rgb, 245,242,235), 0.3) 40%,
-      rgba(var(--paper-rgb, 245,242,235), 0.7) 80%,
-      rgba(var(--paper-rgb, 245,242,235), 1) 100%);
-  }
 
   /* Big DOTD */
   .dotd-big {
@@ -1187,7 +1172,6 @@
 
 <!-- SVG Compass rose background -->
 <div class="hero" id="hero">
-  <div class="hero-bg" id="hero-bg"></div>
   <svg class="compass-bg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="100" cy="100" r="95" stroke="#1a1a18" stroke-width="0.5"/>
     <circle cx="100" cy="100" r="70" stroke="#1a1a18" stroke-width="0.3"/>
@@ -1332,7 +1316,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.1.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.1.1</span>
 </footer>
 
 <!-- ACTIVITY FEED PANEL -->
@@ -3407,9 +3391,7 @@ async function loadPlaceOfDay() {
     bigImg.src = dotd.image;
     bigImg.alt = dotd.name;
     if (bigWrap) bigWrap.style.display = 'block';
-    // Also set as hero background
-    const heroBg = document.getElementById('hero-bg');
-    if (heroBg) heroBg.style.backgroundImage = 'url(' + dotd.image + ')';
+
   }
 
   // Show homepage sections
