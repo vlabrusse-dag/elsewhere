@@ -1035,7 +1035,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.7.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.7.1</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -2082,9 +2082,18 @@ function applyRarityMode() {
     document.body.style.background = '#0d0d0b';
     document.body.style.color = '#dedad0';
   } else {
-    // Clear forced styles and restore seasonal theme
+    // Clear ALL forced inline styles first
     document.body.style.background = '';
     document.body.style.color = '';
+    const root = document.documentElement;
+    [
+      '--paper','--paper-dark','--ink','--muted','--border',
+      '--sage','--sage-light','--rust',
+      '--season-paper','--season-paper-dark','--season-accent',
+      '--season-accent-light','--season-muted','--season-badge-bg',
+      '--season-badge-text','--season-like','--season-ink',
+    ].forEach(v => root.style.removeProperty(v));
+    // Re-apply from scratch based on current hemisphere + month
     applySeasonTheme();
   }
 }
