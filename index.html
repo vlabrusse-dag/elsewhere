@@ -1207,7 +1207,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.0.1</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.0.3</span>
 </footer>
 
 <!-- ACTIVITY FEED PANEL -->
@@ -1292,7 +1292,7 @@ let filterRarity = 1;
 
 // ── SUPABASE ──────────────────────────────────────────────────────────────────
 const SB_URL = 'https://hfsnwprfntxnovwkwjan.supabase.co';
-const SB_KEY = 'sb_publishable_ORLl3OejwXpcJ2WziBC0_Q_OWBKMLwv';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhmc253cHJmbnR4bm92d2t3amFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyMzA2MjYsImV4cCI6MjA5NTgwNjYyNn0.BWh_u3ecjAKS4U-8uNZmmG4wYppIPVN11AMEdIeJKHo';
 
 // ── AUTH STATE ───────────────────────────────────────────────────────────────
 let currentUser = null;
@@ -1337,7 +1337,11 @@ async function sbAddLike(token, userId, suggestionId) {
     },
     body: JSON.stringify({ user_id: userId, suggestion_id: suggestionId }),
   });
-  return res.ok || res.status === 409; // 409 = already exists
+  if (!res.ok && res.status !== 409) {
+    const err = await res.text().catch(() => '');
+    console.warn('[like] sbAddLike failed:', res.status, err);
+  }
+  return res.ok || res.status === 409;
 }
 
 async function sbRemoveLike(token, userId, suggestionId) {
@@ -1504,14 +1508,28 @@ async function removeFavorite(suggestionId, e) {
 }
 
 // Restore session from localStorage
-function restoreSession() {
+async function restoreSession() {
   try {
     const saved = localStorage.getItem('sb_session');
     if (saved) {
       currentUser = JSON.parse(saved);
+      // Verify token is still valid
+      const check = await fetch(SB_URL + '/auth/v1/user', {
+        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + currentUser.token }
+      });
+      if (!check.ok) {
+        // Token expired — clear session
+        console.warn('[auth] session expired, clearing');
+        currentUser = null;
+        localStorage.removeItem('sb_session');
+      } else {
+        const userData = await check.json();
+        currentUser.id = userData.id;
+        currentUser.email = userData.email;
+      }
       updateUserBtn();
     }
-  } catch (e) {}
+  } catch (e) { console.warn('[auth] restoreSession error:', e); }
 }
 
 // ── FAVORITES UI ──────────────────────────────────────────────────────────────
@@ -2543,6 +2561,7 @@ function applyLang(lang) {
   if (typeof updateSeasonLabel === 'function') updateSeasonLabel();
   if (typeof updateFiltersUI === 'function') updateFiltersUI();
   if (typeof updateSurpriseBtn === 'function') updateSurpriseBtn();
+  if (typeof updateFeedBtn === 'function') updateFeedBtn();
   document.documentElement.lang = lang;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
   document.getElementById('txt-eyebrow').textContent = t('eyebrow');
@@ -2695,6 +2714,7 @@ function applySeasonTheme() {
   if (typeof updateSeasonLabel === 'function') updateSeasonLabel();
   if (typeof updateFiltersUI === 'function') updateFiltersUI();
   if (typeof updateSurpriseBtn === 'function') updateSurpriseBtn();
+  if (typeof updateFeedBtn === 'function') updateFeedBtn();
 }
 
 function setHemisphere(north) {
@@ -3591,9 +3611,8 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function updateFeedBtn() {
-  const btn = document.getElementById('feed-btn');
-  const span = btn?.querySelector('span');
-  if (span) span.textContent = t('feedTitle') || 'Exploring now';
+  const span = document.getElementById('txt-feed-btn');
+  if (span) span.textContent = t('feedTitle') || 'Community';
 }
 
 document.getElementById('auth-email').addEventListener('keydown', e => {
