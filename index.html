@@ -532,7 +532,7 @@
 
 <footer>
   <span id="txt-footer">Elsewhere — Discover the road less travelled. Fighting overtourism, one hidden gem at a time.</span>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.4;letter-spacing:0.08em;">v2.8.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.4;letter-spacing:0.08em;">v3.0.0</span>
 </footer>
 
 <script>
@@ -775,7 +775,7 @@ async function fetchSuggestion(query) {
     ? `\n\nAlready suggested for this place: ${existing.map(s => s.name).join(', ')}. Suggest a DIFFERENT hidden gem.`
     : '';
 
-  const res = await fetch('/api/suggest', {
+  const res = await fetch('https://elsewhere-suggest.vlabrusse.workers.dev', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query, contextHint, lang: currentLang })
