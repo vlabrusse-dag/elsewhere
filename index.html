@@ -1353,19 +1353,34 @@ async function loadFavItem(query, id) {
 }
 
 async function sbInsert(data) {
+  // Upsert: if same name+city exists, return existing row without duplicating
   const res = await fetch(SB_URL + '/rest/v1/suggestions', {
     method: 'POST',
     headers: {
       'apikey': SB_KEY,
       'Authorization': 'Bearer ' + SB_KEY,
       'Content-Type': 'application/json',
-      'Prefer': 'return=representation',
+      'Prefer': 'return=representation,resolution=ignore-duplicates',
     },
     body: JSON.stringify(data),
   });
-  if (!res.ok) return null;
-  const rows = await res.json();
-  return rows[0] || null;
+  if (res.status === 201 || res.status === 200) {
+    const rows = await res.json();
+    if (rows && rows.length > 0) return rows[0];
+  }
+  // If duplicate (409 or empty), fetch existing row
+  if (res.status === 409 || res.status === 201) {
+    const existing = await fetch(
+      SB_URL + '/rest/v1/suggestions?name=eq.' + encodeURIComponent(data.name) +
+      '&city=eq.' + encodeURIComponent(data.city) + '&limit=1',
+      { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
+    );
+    if (existing.ok) {
+      const rows = await existing.json();
+      return rows[0] || null;
+    }
+  }
+  return null;
 }
 
 async function sbGetById(id) {
