@@ -1316,7 +1316,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.1.1</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.1.2</span>
 </footer>
 
 <!-- ACTIVITY FEED PANEL -->
@@ -3331,7 +3331,8 @@ async function fetchAnotherSuggestion(query, excludeName) {
 
 // ── PLACE OF THE DAY ─────────────────────────────────────────────────────────
 async function loadPlaceOfDay() {
-  const today = new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const today = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
   const cached = localStorage.getItem('dotd_' + today);
   let dotd;
 
