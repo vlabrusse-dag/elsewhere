@@ -1390,6 +1390,67 @@ function esc(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+
+// ── SEASONAL PARTICLES ────────────────────────────────────────────────────────
+const SEASON_PARTICLES = {
+  winter:  ['❄','❅','❆','·','·'],
+  spring:  ['✿','❀','·','°','✦'],
+  summer:  ['✦','★','·','✧','°'],
+  autumn:  ['◈','·','❧','°','✦'],
+};
+
+function getCurrentSeason() {
+  const m = new Date().getMonth();
+  const idx = (isNorthernHemisphere ? SI_N : SI_S)[m];
+  return ['spring','summer','autumn','winter'][idx];
+}
+
+function launchParticles(originEl) {
+  if (!originEl) return;
+  const season = getCurrentSeason();
+  const chars = SEASON_PARTICLES[season];
+  const rect = originEl.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + 40;
+  const count = 14;
+
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('span');
+    el.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;opacity:0;will-change:transform,opacity;';
+    el.textContent = chars[i % chars.length];
+    const size = 10 + Math.random() * 10;
+    el.style.fontSize = size + 'px';
+    el.style.left = (cx + (Math.random() - 0.5) * 80) + 'px';
+    el.style.top = cy + 'px';
+    document.body.appendChild(el);
+
+    const angle = (Math.random() * 260) - 130;
+    const dist = 50 + Math.random() * 100;
+    const rad = angle * Math.PI / 180;
+    const tx = Math.cos(rad) * dist;
+    const ty = Math.sin(rad) * dist - 60;
+    const delay = Math.random() * 400;
+    const dur = 1400 + Math.random() * 800;
+    const rotDir = Math.random() > 0.5 ? 1 : -1;
+
+    (function(el, tx, ty, dur, delay, rotDir) {
+      const startTime = performance.now() + delay;
+      function frame(now) {
+        const elapsed = now - startTime;
+        if (elapsed < 0) { requestAnimationFrame(frame); return; }
+        const p = Math.min(elapsed / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 2);
+        const opacity = p < 0.2 ? p / 0.2 : 1 - ((p - 0.2) / 0.8);
+        el.style.opacity = Math.max(0, opacity * 0.8);
+        el.style.transform = 'translate(' + (tx*eased) + 'px,' + (ty*eased) + 'px) rotate(' + (eased*160*rotDir) + 'deg) scale(' + (0.5+eased*0.7) + ')';
+        if (p < 1) requestAnimationFrame(frame);
+        else el.remove();
+      }
+      requestAnimationFrame(frame);
+    })(el, tx, ty, dur, delay, rotDir);
+  }
+}
+
 document.getElementById('search-btn').addEventListener('click', handleSearch);
 document.getElementById('examples-row').addEventListener('click', e => {
   const chip = e.target.closest('.example-chip');
