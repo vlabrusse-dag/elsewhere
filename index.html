@@ -872,6 +872,111 @@
   .share-btn.copy-btn { font-size: 11px; width: auto; padding: 0 10px; border-radius: 50px; gap: 5px; }
   .share-btn.copy-btn.success { border-color: var(--sage); color: var(--sage); }
 
+  /* SOCIAL FEATURES */
+
+  /* Username step in auth modal */
+  .username-step { display: none; }
+  .username-step.active { display: block; }
+  .auth-main-step.hidden { display: none; }
+
+  /* Visited / Overcrowded buttons */
+  .visit-btns { display: flex; gap: 8px; padding-top: 10px; border-top: 0.5px solid var(--border); }
+  .visit-btn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    background: none; border: 0.5px solid var(--border); border-radius: 50px;
+    padding: 7px 10px; font-family: 'DM Sans', sans-serif; font-size: 11px;
+    color: var(--muted); cursor: pointer; transition: all 0.15s;
+  }
+  .visit-btn:hover { border-color: var(--sage); color: var(--sage); }
+  .visit-btn.visited { background: rgba(122,158,135,0.1); border-color: var(--sage); color: var(--sage); }
+  .visit-btn.overcrowded { background: rgba(184,92,58,0.08); border-color: var(--rust); color: var(--rust); }
+
+  /* Discovered by */
+  .discovered-by {
+    font-size: 10px; color: var(--muted); letter-spacing: 0.06em;
+    display: flex; align-items: center; gap: 4px; margin-bottom: 6px;
+  }
+  .discovered-by svg { width: 10px; height: 10px; }
+
+  /* Activity feed */
+  .feed-panel {
+    position: fixed; top: 0; left: 0; bottom: 0; width: 320px;
+    background: var(--paper); border-right: 0.5px solid var(--border);
+    z-index: 1500; transform: translateX(-100%);
+    transition: transform 0.3s ease; overflow-y: auto;
+    box-shadow: 4px 0 30px rgba(0,0,0,0.08);
+  }
+  .feed-panel.open { transform: translateX(0); }
+  .feed-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 1.5rem; border-bottom: 0.5px solid var(--border);
+    position: sticky; top: 0; background: var(--paper); z-index: 1;
+  }
+  .feed-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; color: var(--ink); }
+  .feed-close { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 20px; }
+  .feed-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 1.5rem; border-bottom: 0.5px solid var(--border);
+    cursor: pointer; transition: background 0.15s;
+  }
+  .feed-item:hover { background: var(--paper-dark); }
+  .feed-img { width: 44px; height: 44px; border-radius: var(--radius); object-fit: cover; background: var(--paper-dark); flex-shrink: 0; }
+  .feed-info { flex: 1; min-width: 0; }
+  .feed-name { font-size: 13px; color: var(--ink); font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .feed-meta { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .feed-badge { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sage); }
+
+  /* Feed button in header */
+  .feed-btn {
+    display: flex; align-items: center; gap: 5px;
+    background: none; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 11px;
+    color: var(--muted); padding: 5px 8px; border-radius: 50px;
+    transition: color 0.2s;
+  }
+  .feed-btn:hover { color: var(--sage); }
+  .feed-btn svg { width: 13px; height: 13px; }
+  .feed-live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--sage); animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* Profile panel */
+  .profile-section { padding: 1.5rem; border-bottom: 0.5px solid var(--border); }
+  .profile-username { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400; color: var(--ink); margin-bottom: 4px; }
+  .profile-stat { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
+  .profile-stat-num { font-size: 22px; font-weight: 300; color: var(--ink); }
+  .profile-stat-label { font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+  .profile-stats-row { display: flex; gap: 1.5rem; margin: 12px 0; }
+  .explorer-score-wrap { margin-top: 12px; }
+  .explorer-bar { height: 4px; background: var(--paper-dark); border-radius: 50px; margin-top: 6px; }
+  .explorer-fill { height: 100%; border-radius: 50px; background: linear-gradient(90deg, var(--sage), var(--rust)); transition: width 0.6s ease; }
+
+  /* Badges */
+  .badges-grid { display: flex; flex-wrap: wrap; gap: 8px; padding: 1rem 1.5rem; }
+  .badge-item {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--paper-dark); border-radius: 50px;
+    padding: 5px 12px; font-size: 11px; color: var(--muted);
+  }
+  .badge-item.earned { background: rgba(122,158,135,0.12); color: var(--ink); }
+  .badge-item.earned .badge-icon { filter: none; }
+  .badge-icon { font-size: 14px; filter: grayscale(1) opacity(0.4); }
+
+  /* Submit place */
+  .submit-section { padding: 1.5rem; }
+  .submit-field { margin-bottom: 10px; }
+  .submit-field label { display: block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .submit-field input, .submit-field textarea {
+    width: 100%; background: var(--paper-dark); border: 0.5px solid var(--border);
+    border-radius: var(--radius); padding: 8px 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink);
+    outline: none; resize: vertical;
+  }
+  .submit-field textarea { min-height: 70px; }
+  .submit-field input:focus, .submit-field textarea:focus { border-color: var(--sage); }
+
   /* DARK MODE transitions */
   body, body * {
     transition: background-color 0.5s ease, border-color 0.4s ease, color 0.3s ease;
@@ -946,6 +1051,10 @@
 
 <header>
   <a href="/" class="logo">Else<span>where</span></a>
+  <button class="feed-btn" id="feed-btn" onclick="openFeed()">
+    <div class="feed-live-dot"></div>
+    <span id="txt-feed-btn"></span>
+  </button>
   <div class="lang-selector" id="lang-selector">
     <button class="lang-btn" data-lang="en">EN</button>
     <button class="lang-btn" data-lang="fr">FR</button>
@@ -1098,8 +1207,42 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.9.3</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.0.0</span>
 </footer>
+
+<!-- ACTIVITY FEED PANEL -->
+<div class="feed-panel" id="feed-panel">
+  <div class="feed-header">
+    <p class="feed-title" id="feed-panel-title"></p>
+    <button class="feed-close" onclick="closeFeed()">&#x2715;</button>
+  </div>
+  <div id="feed-list" style="padding-top:4px"></div>
+</div>
+
+<!-- PROFILE / SOCIAL PANEL -->
+<div class="favorites-panel" id="profile-panel" style="width:380px">
+  <div class="fav-header">
+    <p class="fav-title" id="profile-panel-title"></p>
+    <button class="fav-close" onclick="closeProfile()">&#x2715;</button>
+  </div>
+  <div id="profile-content"></div>
+</div>
+
+<!-- USERNAME STEP (shown after signup) -->
+<div class="auth-modal" id="username-modal" style="display:none">
+  <div class="auth-box">
+    <p class="auth-logo">Else<span>where</span></p>
+    <p class="auth-title" id="username-modal-title"></p>
+    <p class="auth-sub" id="username-modal-sub"></p>
+    <div class="auth-field">
+      <label id="lbl-username"></label>
+      <input type="text" id="username-input" maxlength="30" autocomplete="off" />
+      <p style="font-size:11px;color:var(--muted);margin-top:4px" id="username-helper"></p>
+    </div>
+    <button class="auth-submit" id="username-submit" onclick="handleUsernameSubmit()"></button>
+    <p class="auth-error" id="username-error"></p>
+  </div>
+</div>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">&#x2715;</button>
@@ -1288,11 +1431,19 @@ async function handleAuthSubmit() {
       updateUserBtn();
       closeAuthModal();
     } else if (authMode === 'signup' && data.id) {
-      // Account created but email confirmation required
-      errEl.style.color = 'var(--sage)';
-      errEl.textContent = t('checkEmail');
-      errEl.style.display = 'block';
-      document.getElementById('auth-submit').disabled = true;
+      // Account created — if auto-confirmed, set session and ask for username
+      if (data.access_token) {
+        currentUser = { token: data.access_token, id: data.user?.id, email: data.user?.email };
+        localStorage.setItem('sb_session', JSON.stringify(currentUser));
+        closeAuthModal();
+        openUsernameModal();
+      } else {
+        // Email confirmation required
+        errEl.style.color = 'var(--sage)';
+        errEl.textContent = t('checkEmail');
+        errEl.style.display = 'block';
+        document.getElementById('auth-submit').disabled = true;
+      }
     } else {
       errEl.style.color = 'var(--rust)';
       errEl.textContent = t('authError');
@@ -1307,7 +1458,7 @@ async function handleAuthSubmit() {
 
 function handleUserBtn() {
   if (currentUser) {
-    openFavorites();
+    openProfile();
   } else {
     authMode = 'signin';
     openAuthModal();
@@ -1330,7 +1481,7 @@ function updateUserBtn() {
   if (!btn || !label) return;
   if (currentUser) {
     btn.classList.add('signed-in');
-    label.textContent = currentUser.email.split('@')[0];
+    label.textContent = currentUser.username || currentUser.email.split('@')[0];
     if (favBtn) { favBtn.style.display = 'flex'; }
     if (favLabel) { favLabel.textContent = t('favNav') || 'My favourites'; }
   } else {
@@ -1492,6 +1643,298 @@ async function sbGetTopByQuery(query) {
   return await res.json();
 }
 
+// ── SOCIAL SUPABASE HELPERS ──────────────────────────────────────────────────
+
+async function sbCreateProfile(userId, username) {
+  const res = await fetch(SB_URL + '/rest/v1/user_profiles', {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + currentUser.token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ id: userId, username: username }),
+  });
+  return res.ok || res.status === 409;
+}
+
+async function sbGetProfile(userId) {
+  const res = await fetch(SB_URL + '/rest/v1/user_profiles?id=eq.' + userId, {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + (currentUser?.token || SB_KEY) }
+  });
+  if (!res.ok) return null;
+  const rows = await res.json();
+  return rows[0] || null;
+}
+
+async function sbGetProfileByUsername(username) {
+  const res = await fetch(SB_URL + '/rest/v1/user_profiles?username=eq.' + encodeURIComponent(username), {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  });
+  if (!res.ok) return null;
+  const rows = await res.json();
+  return rows[0] || null;
+}
+
+async function sbMarkDiscovered(suggestionId, userId) {
+  // Only set discovered_by if not already set
+  const check = await fetch(SB_URL + '/rest/v1/suggestions?id=eq.' + suggestionId + '&select=discovered_by', {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  });
+  if (!check.ok) return;
+  const rows = await check.json();
+  if (rows[0] && rows[0].discovered_by) return; // already claimed
+  await fetch(SB_URL + '/rest/v1/suggestions?id=eq.' + suggestionId, {
+    method: 'PATCH',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + currentUser.token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ discovered_by: userId }),
+  });
+}
+
+async function sbGetDiscoveredBy(userId) {
+  const res = await fetch(SB_URL + '/rest/v1/user_profiles?id=eq.' + userId, {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  });
+  if (!res.ok) return null;
+  const rows = await res.json();
+  return rows[0]?.username || null;
+}
+
+async function sbAddVisit(suggestionId, status) {
+  if (!currentUser) return;
+  await fetch(SB_URL + '/rest/v1/user_visits', {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + currentUser.token, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates' },
+    body: JSON.stringify({ user_id: currentUser.id, suggestion_id: suggestionId, status }),
+  });
+  if (status === 'overcrowded') {
+    await fetch(SB_URL + '/rest/v1/rpc/increment_overcrowded', {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + currentUser.token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ suggestion_id: suggestionId }),
+    }).catch(() => {});
+  }
+}
+
+async function sbGetRecentActivity(limit) {
+  limit = limit || 20;
+  const res = await fetch(
+    SB_URL + '/rest/v1/user_likes?select=created_at,suggestion_id,suggestions(name,city,image,id,query),user_id&order=created_at.desc&limit=' + limit,
+    { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
+  );
+  if (!res.ok) return [];
+  return await res.json();
+}
+
+async function sbSubmitPlace(data) {
+  if (!currentUser) return false;
+  const res = await fetch(SB_URL + '/rest/v1/submitted_places', {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + currentUser.token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...data, user_id: currentUser.id }),
+  });
+  return res.ok;
+}
+
+// ── BADGES ────────────────────────────────────────────────────────────────────
+const BADGES = [
+  { id: 'first_like',    icon: '✦', label: 'First discovery',   check: (likes) => likes >= 1 },
+  { id: 'explorer_5',   icon: '🧭', label: '5 places liked',    check: (likes) => likes >= 5 },
+  { id: 'explorer_20',  icon: '🗺', label: '20 places liked',   check: (likes) => likes >= 20 },
+  { id: 'globetrotter', icon: '🌍', label: '3 countries',       check: (likes, countries) => countries >= 3 },
+  { id: 'seasons',      icon: '🍂', label: 'All 4 seasons',     check: (likes, countries, seasons) => seasons >= 4 },
+  { id: 'unexplored_3', icon: '🔮', label: 'Inexploré × 3',     check: (likes, countries, seasons, unexplored) => unexplored >= 3 },
+];
+
+function computeBadges(likes, countries, seasons, unexplored) {
+  return BADGES.map(b => ({ ...b, earned: b.check(likes, countries, seasons, unexplored) }));
+}
+
+function computeExplorerScore(likes, countries) {
+  // Score 0-100 based on likes and country diversity
+  const likeScore = Math.min(likes * 3, 60);
+  const countryScore = Math.min(countries * 8, 40);
+  return Math.min(likeScore + countryScore, 100);
+}
+
+// ── FEED ──────────────────────────────────────────────────────────────────────
+async function openFeed() {
+  const panel = document.getElementById('feed-panel');
+  const title = document.getElementById('feed-panel-title');
+  if (title) title.textContent = t('feedTitle') || 'Exploring now';
+  panel.classList.add('open');
+  loadFeed();
+}
+
+function closeFeed() {
+  document.getElementById('feed-panel').classList.remove('open');
+}
+
+async function loadFeed() {
+  const list = document.getElementById('feed-list');
+  if (!list) return;
+  list.innerHTML = '<p style="padding:1.5rem;font-size:13px;color:var(--muted)">…</p>';
+  const rows = await sbGetRecentActivity(30).catch(() => []);
+  if (!rows.length) {
+    list.innerHTML = `<p style="padding:1.5rem;font-size:13px;color:var(--muted)">${t('feedEmpty') || 'No activity yet.'}</p>`;
+    return;
+  }
+  list.innerHTML = rows.map(row => {
+    const s = row.suggestions;
+    if (!s) return '';
+    const timeAgo = formatTimeAgo(row.created_at);
+    return `<div class="feed-item" onclick="loadFavItem('${esc(s.query||s.name)}','${esc(s.id)}')">
+      ${s.image ? `<img class="feed-img" src="${esc(s.image)}" alt="" onerror="this.style.display='none'">` : `<div class="feed-img"></div>`}
+      <div class="feed-info">
+        <p class="feed-name">${esc(s.name)}</p>
+        <p class="feed-meta">${esc(s.city)} · ${timeAgo}</p>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function formatTimeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m + 'm ago';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + 'h ago';
+  return Math.floor(h / 24) + 'd ago';
+}
+
+// ── PROFILE PANEL ─────────────────────────────────────────────────────────────
+async function openProfile() {
+  if (!currentUser) { openAuthModal(); return; }
+  const panel = document.getElementById('profile-panel');
+  const title = document.getElementById('profile-panel-title');
+  if (title) title.textContent = t('profileTitle') || 'My profile';
+  panel.classList.add('open');
+  loadProfile();
+}
+
+function closeProfile() {
+  document.getElementById('profile-panel')?.classList.remove('open');
+}
+
+async function loadProfile() {
+  const content = document.getElementById('profile-content');
+  if (!content || !currentUser) return;
+  content.innerHTML = '<p style="padding:1.5rem;font-size:13px;color:var(--muted)">…</p>';
+
+  const [profile, likesRaw] = await Promise.all([
+    sbGetProfile(currentUser.id).catch(() => null),
+    sbGetUserLikes(currentUser.token).catch(() => []),
+  ]);
+
+  const username = profile?.username || currentUser.email.split('@')[0];
+  const likedSuggestions = likesRaw.map(r => r.suggestions).filter(Boolean);
+  const countries = new Set(likedSuggestions.map(s => s.country).filter(Boolean));
+  const score = computeExplorerScore(likedSuggestions.length, countries.size);
+  const badges = computeBadges(likedSuggestions.length, countries.size, 0, 0);
+
+  const badgesHtml = badges.map(b => `
+    <div class="badge-item ${b.earned ? 'earned' : ''}">
+      <span class="badge-icon">${b.icon}</span>
+      <span>${b.label}</span>
+    </div>`).join('');
+
+  content.innerHTML = `
+    <div class="profile-section">
+      <p class="profile-username">@${esc(username)}</p>
+      <div class="profile-stats-row">
+        <div class="profile-stat"><span class="profile-stat-num">${likedSuggestions.length}</span><span class="profile-stat-label">${t('favorites') || 'places'}</span></div>
+        <div class="profile-stat"><span class="profile-stat-num">${countries.size}</span><span class="profile-stat-label">${t('countries') || 'countries'}</span></div>
+      </div>
+      <div class="explorer-score-wrap">
+        <p style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)">${t('explorerScore') || 'Explorer score'} — ${score}/100</p>
+        <div class="explorer-bar"><div class="explorer-fill" style="width:${score}%"></div></div>
+      </div>
+    </div>
+    <div class="badges-grid">${badgesHtml}</div>
+    <div class="submit-section">
+      <p style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">${t('submitPlace') || 'Suggest a hidden gem'}</p>
+      <div class="submit-field"><label>${t('submitName') || 'Place name'}</label><input type="text" id="submit-name" /></div>
+      <div class="submit-field"><label>${t('submitCity') || 'City'}</label><input type="text" id="submit-city" /></div>
+      <div class="submit-field"><label>${t('submitCountry') || 'Country'}</label><input type="text" id="submit-country" /></div>
+      <div class="submit-field"><label>${t('submitWhy') || 'Why is it special?'}</label><textarea id="submit-why"></textarea></div>
+      <button class="auth-submit" onclick="handleSubmitPlace()" style="margin-top:4px">${t('submitBtn') || 'Submit'}</button>
+      <p id="submit-msg" style="display:none;font-size:12px;color:var(--sage);margin-top:8px"></p>
+    </div>`;
+}
+
+async function handleVisit(cardId, suggestionIdEnc, status) {
+  if (!currentUser) { openAuthModal(); return; }
+  const suggestionId = decodeURIComponent(suggestionIdEnc);
+  if (!suggestionId) return;
+  const btn = document.getElementById(cardId + '-' + status);
+  if (btn) btn.classList.add(status);
+  await sbAddVisit(suggestionId, status).catch(() => {});
+}
+
+async function loadDiscoveredBy(suggestionId, elementId) {
+  const res = await fetch(SB_URL + '/rest/v1/suggestions?id=eq.' + suggestionId + '&select=discovered_by', {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  });
+  if (!res.ok) return;
+  const rows = await res.json();
+  const discId = rows[0]?.discovered_by;
+  if (!discId) return;
+  const username = await sbGetDiscoveredBy(discId).catch(() => null);
+  const el = document.getElementById(elementId);
+  if (el && username) el.textContent = '@' + username;
+}
+
+async function handleSubmitPlace() {
+  const name = document.getElementById('submit-name')?.value.trim();
+  const city = document.getElementById('submit-city')?.value.trim();
+  const country = document.getElementById('submit-country')?.value.trim();
+  const why = document.getElementById('submit-why')?.value.trim();
+  if (!name || !city) return;
+  const ok = await sbSubmitPlace({ name, city, country, why });
+  const msg = document.getElementById('submit-msg');
+  if (msg) { msg.textContent = t('submitSuccess') || 'Thank you!'; msg.style.display = 'block'; }
+}
+
+// ── USERNAME MODAL ────────────────────────────────────────────────────────────
+function openUsernameModal() {
+  const modal = document.getElementById('username-modal');
+  modal.style.display = 'flex';
+  requestAnimationFrame(() => modal.classList.add('open', 'visible'));
+  const title = document.getElementById('username-modal-title');
+  const sub = document.getElementById('username-modal-sub');
+  const lbl = document.getElementById('lbl-username');
+  const btn = document.getElementById('username-submit');
+  const helper = document.getElementById('username-helper');
+  const input = document.getElementById('username-input');
+  if (title) title.textContent = t('chooseUsername') || 'Choose a username';
+  if (sub) sub.textContent = t('usernameHelper') || 'This is how others will see you.';
+  if (lbl) lbl.textContent = t('usernameLabel') || 'Username';
+  if (btn) btn.textContent = t('submitBtn') || 'Continue';
+  if (helper) helper.textContent = t('usernamePlaceholder') || 'e.g. wanderer_paris';
+  if (input) input.focus();
+}
+
+async function handleUsernameSubmit() {
+  const input = document.getElementById('username-input');
+  const errEl = document.getElementById('username-error');
+  const btn = document.getElementById('username-submit');
+  const username = (input?.value || '').trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+  if (username.length < 3) {
+    if (errEl) { errEl.textContent = t('usernameError') || 'Invalid username.'; errEl.style.display = 'block'; }
+    return;
+  }
+  if (btn) btn.disabled = true;
+  const ok = await sbCreateProfile(currentUser.id, username).catch(() => false);
+  if (ok) {
+    currentUser.username = username;
+    localStorage.setItem('sb_session', JSON.stringify(currentUser));
+    const modal = document.getElementById('username-modal');
+    modal.classList.remove('visible');
+    setTimeout(() => { modal.classList.remove('open'); modal.style.display = 'none'; }, 200);
+    updateUserBtn();
+  } else {
+    if (errEl) { errEl.textContent = t('usernameError') || 'Username taken.'; errEl.style.display = 'block'; }
+    if (btn) btn.disabled = false;
+  }
+}
+
 async function sbGetRelatedLiked(city, country, excludeId, excludeName) {
   const excludeKey = (excludeName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
@@ -1557,7 +2000,7 @@ const I18N = {
     hours: 'Hours', duration: 'Visit', season: 'Best season', distance: 'Distance',
     mapsLink: 'Maps', wikiLink: 'Wikipedia', crowdLabels: ['','Very rare','Rare','Quiet','Moderate','Busy'],
     errorMsg: 'Something went wrong. Please try again.',
-    notAPlace: 'Hmm, we searched high and low… but that doesn\'t seem to be a place. Try a landmark, a city, or anywhere humans actually go.',
+    notAPlace: "Hmm, we searched high and low… but that doesn\'t seem to be a place. Try a landmark, a city, or anywhere humans actually go.",
     filtersBtn: 'Advanced filters',
     radiusLabel: 'Search radius',
     nearName: 'Close', nearDesc: 'Same city · ≤ 5km',
@@ -1583,6 +2026,27 @@ const I18N = {
     favNav: 'My favourites', removeFav: 'Remove',
     anotherSuggestion: 'Another suggestion',
     dotd: 'Place of the day', crowdLabels2: ['Peaceful', 'Busy', 'Very busy', 'Saturated'], surpriseBtn: '✦ Surprise me', surpriseLoading: 'Finding a hidden gem…', crowdLabel2: 'Crowd level',
+    chooseUsername: 'Choose a username',
+    usernamePlaceholder: 'e.g. wanderer_paris',
+    usernameLabel: 'Username',
+    usernameHelper: 'This is how others will see you.',
+    usernameError: 'Username already taken or invalid.',
+    visitedBtn: 'I visited this ✓',
+    overcrowdedBtn: 'Too crowded now ✗',
+    discoveredBy: 'Discovered by',
+    feedTitle: 'Exploring now',
+    feedEmpty: 'No activity yet — be the first explorer!',
+    submitPlace: 'Suggest a hidden gem',
+    submitName: 'Place name',
+    submitCity: 'City',
+    submitCountry: 'Country',
+    submitWhy: 'Why is it special?',
+    submitBtn: 'Submit',
+    submitSuccess: 'Thank you! We will review your suggestion.',
+    profileTitle: 'My profile',
+    explorerScore: 'Explorer score',
+    countries: 'countries',
+    editProfile: 'Edit profile',
   },
   fr: {
     eyebrow: 'Slow travel · Lieux secrets',
@@ -1601,7 +2065,7 @@ const I18N = {
     hours: 'Horaires', duration: 'Visite', season: 'Meilleure saison', distance: 'Distance',
     mapsLink: 'Maps', wikiLink: 'Wikipédia', crowdLabels: ['','Très rare','Rare','Calme','Modérée','Animé'],
     errorMsg: 'Une erreur est survenue. Réessayez.',
-    notAPlace: 'Hm… on a cherché partout, mais ça ne ressemble pas vraiment à un lieu. Essayez un monument, une ville, ou n\'importe où où les humains se rendent.',
+    notAPlace: "Hm… on a cherché partout, mais ça ne ressemble pas vraiment à un lieu. Essayez un monument, une ville, ou n\'importe où où les humains se rendent.",
     filtersBtn: 'Filtres avancés',
     radiusLabel: 'Rayon de recherche',
     nearName: 'Proche', nearDesc: 'Même ville · ≤ 5km',
@@ -1627,6 +2091,27 @@ const I18N = {
     favNav: 'Mes favoris', removeFav: 'Supprimer',
     anotherSuggestion: 'Autre suggestion',
     dotd: 'Lieu du jour', crowdLabels2: ['Paisible', 'Fréquenté', 'Très fréquenté', 'Saturé'], surpriseBtn: '✦ Surprends-moi', surpriseLoading: "Recherche d'une pépite…", crowdLabel2: 'Fréquentation',
+    chooseUsername: 'Choisissez un pseudo',
+    usernamePlaceholder: 'ex. explorateur_paris',
+    usernameLabel: 'Pseudo',
+    usernameHelper: "C'est ainsi que les autres vous verront.",
+    usernameError: 'Pseudo déjà pris ou invalide.',
+    visitedBtn: "J'y suis allé ✓",
+    overcrowdedBtn: 'Trop fréquenté ✗',
+    discoveredBy: 'Découvert par',
+    feedTitle: 'La communauté explore',
+    feedEmpty: "Pas encore d'activité — soyez le premier explorateur !",
+    submitPlace: 'Proposer un lieu secret',
+    submitName: 'Nom du lieu',
+    submitCity: 'Ville',
+    submitCountry: 'Pays',
+    submitWhy: 'Pourquoi est-il spécial ?',
+    submitBtn: 'Soumettre',
+    submitSuccess: 'Merci ! Nous examinerons votre suggestion.',
+    profileTitle: 'Mon profil',
+    explorerScore: 'Score explorateur',
+    countries: 'pays',
+    editProfile: 'Modifier mon profil',
   },
   es: {
     eyebrow: 'Viaje lento · Joyas ocultas',
@@ -1671,6 +2156,27 @@ const I18N = {
     favNav: 'Mis favoritos', removeFav: 'Eliminar',
     anotherSuggestion: 'Otra sugerencia',
     dotd: 'Lugar del día', crowdLabels2: ['Tranquilo', 'Concurrido', 'Muy concurrido', 'Saturado'], surpriseBtn: '✦ Sorpréndeme', surpriseLoading: 'Buscando una joya…', crowdLabel2: 'Afluencia',
+    chooseUsername: 'Elige un nombre de usuario',
+    usernamePlaceholder: 'p.ej. viajero_madrid',
+    usernameLabel: 'Usuario',
+    usernameHelper: 'Así te verán los demás.',
+    usernameError: 'Nombre ya en uso o inválido.',
+    visitedBtn: 'Estuve aquí ✓',
+    overcrowdedBtn: 'Demasiado concurrido ✗',
+    discoveredBy: 'Descubierto por',
+    feedTitle: 'Explorando ahora',
+    feedEmpty: 'Sin actividad aún.',
+    submitPlace: 'Proponer un lugar secreto',
+    submitName: 'Nombre del lugar',
+    submitCity: 'Ciudad',
+    submitCountry: 'País',
+    submitWhy: '¿Por qué es especial?',
+    submitBtn: 'Enviar',
+    submitSuccess: '¡Gracias! Revisaremos tu sugerencia.',
+    profileTitle: 'Mi perfil',
+    explorerScore: 'Puntuación exploradora',
+    countries: 'países',
+    editProfile: 'Editar perfil',
   },
   de: {
     eyebrow: 'Langsames Reisen · Versteckte Schätze',
@@ -1715,6 +2221,27 @@ const I18N = {
     favNav: 'Meine Favoriten', removeFav: 'Entfernen',
     anotherSuggestion: 'Andere Vorschlag',
     dotd: 'Ort des Tages', crowdLabels2: ['Ruhig', 'Belebt', 'Sehr belebt', 'Überfüllt'], surpriseBtn: '✦ Überrasch mich', surpriseLoading: 'Suche ein Geheimtipp…', crowdLabel2: 'Besucheraufkommen',
+    chooseUsername: 'Benutzername wählen',
+    usernamePlaceholder: 'z.B. entdecker_berlin',
+    usernameLabel: 'Benutzername',
+    usernameHelper: 'So sehen dich andere.',
+    usernameError: 'Benutzername vergeben oder ungültig.',
+    visitedBtn: 'War ich ✓',
+    overcrowdedBtn: 'Zu überfüllt ✗',
+    discoveredBy: 'Entdeckt von',
+    feedTitle: 'Gerade erkundet',
+    feedEmpty: 'Noch keine Aktivität.',
+    submitPlace: 'Geheimtipp vorschlagen',
+    submitName: 'Ortsname',
+    submitCity: 'Stadt',
+    submitCountry: 'Land',
+    submitWhy: 'Was macht es besonders?',
+    submitBtn: 'Einreichen',
+    submitSuccess: 'Danke! Wir prüfen deinen Vorschlag.',
+    profileTitle: 'Mein Profil',
+    explorerScore: 'Entdecker-Score',
+    countries: 'Länder',
+    editProfile: 'Profil bearbeiten',
   },
   it: {
     eyebrow: 'Viaggio lento · Luoghi nascosti',
@@ -1759,6 +2286,7 @@ const I18N = {
     favNav: 'I miei preferiti', removeFav: 'Rimuovi',
     anotherSuggestion: 'Altro suggerimento',
     dotd: 'Luogo del giorno', crowdLabels2: ['Tranquillo', 'Frequentato', 'Molto frequentato', 'Saturo'], surpriseBtn: '✦ Sorprendimi', surpriseLoading: 'Ricerca di un gioiello…', crowdLabel2: 'Affollamento',
+    chooseUsername: 'Scegli un nome utente', usernamePlaceholder: 'es. esploratore_roma', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'Ci sono stato ✓', overcrowdedBtn: 'Troppo affollato ✗', discoveredBy: 'Scoperto da', feedTitle: 'La comunità esplora', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
   },
   pt: {
     eyebrow: 'Viagem lenta · Tesouros escondidos',
@@ -1803,6 +2331,7 @@ const I18N = {
     favNav: 'Os meus favoritos', removeFav: 'Remover',
     anotherSuggestion: 'Outra sugestão',
     dotd: 'Lugar do dia', crowdLabels2: ['Tranquilo', 'Movimentado', 'Muito movimentado', 'Saturado'], surpriseBtn: '✦ Surpreende-me', surpriseLoading: 'À procura de uma joia…', crowdLabel2: 'Afluência',
+    chooseUsername: 'Escolha um nome de utilizador', usernamePlaceholder: 'ex. explorador_lisboa', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'Estive lá ✓', overcrowdedBtn: 'Demasiado cheio ✗', discoveredBy: 'Descoberto por', feedTitle: 'A comunidade explora', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
   },
   ja: {
     eyebrow: 'スローな旅 · 隠れた名所',
@@ -1847,6 +2376,7 @@ const I18N = {
     favNav: 'お気に入り', removeFav: '削除',
     anotherSuggestion: '別の提案',
     dotd: '今日のスポット', crowdLabels2: ['静か', '混雑', '非常に混雑', '飽和'], surpriseBtn: '✦ サプライズ', surpriseLoading: '隠れた名所を探しています…', crowdLabel2: '混雑度',
+    chooseUsername: 'ユーザー名を選択', usernamePlaceholder: '例: explorer_tokyo', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: '行ってきた ✓', overcrowdedBtn: '混んでいる ✗', discoveredBy: '発見者', feedTitle: 'コミュニティが探索中', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
   },
   zh: {
     eyebrow: '慢旅行 · 隐藏宝地',
@@ -1891,6 +2421,7 @@ const I18N = {
     favNav: '我的收藏', removeFav: '删除',
     anotherSuggestion: '换一个建议',
     dotd: '今日地点', crowdLabels2: ['安静', '繁忙', '非常繁忙', '饱和'], surpriseBtn: '✦ 给我惊喜', surpriseLoading: '寻找隐藏宝地…', crowdLabel2: '拥挤程度',
+    chooseUsername: '选择用户名', usernamePlaceholder: '例如: 探索者_北京', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: '我去过 ✓', overcrowdedBtn: '太拥挤了 ✗', discoveredBy: '发现者', feedTitle: '社区正在探索', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
   },
   ar: {
     eyebrow: 'السفر الهادئ · الجواهر الخفية',
@@ -1935,6 +2466,7 @@ const I18N = {
     favNav: 'مفضلتي', removeFav: 'إزالة',
     anotherSuggestion: 'اقتراح آخر',
     dotd: 'مكان اليوم', crowdLabels2: ['هادئ', 'مزدحم', 'مزدحم جداً', 'مشبع'], surpriseBtn: '✦ فاجئني', surpriseLoading: 'البحث عن جوهرة خفية…', crowdLabel2: 'مستوى الازدحام',
+    chooseUsername: 'اختر اسم مستخدم', usernamePlaceholder: 'مثال: مستكشف_القاهرة', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'زرته ✓', overcrowdedBtn: 'مزدحم جداً ✗', discoveredBy: 'اكتشفه', feedTitle: 'المجتمع يستكشف', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
   },
   nl: {
     eyebrow: 'Langzaam reizen · Verborgen schatten',
@@ -1979,6 +2511,7 @@ const I18N = {
     favNav: 'Mijn favorieten', removeFav: 'Verwijderen',
     anotherSuggestion: 'Andere suggestie',
     dotd: 'Plek van de dag', crowdLabels2: ['Rustig', 'Druk', 'Erg druk', 'Verzadigd'], surpriseBtn: '✦ Verras me', surpriseLoading: 'Op zoek naar een verborgen parel…', crowdLabel2: 'Drukte',
+    chooseUsername: 'Kies een gebruikersnaam', usernamePlaceholder: 'bijv. ontdekker_amsterdam', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'Ik was er ✓', overcrowdedBtn: 'Te druk nu ✗', discoveredBy: 'Ontdekt door', feedTitle: 'De gemeenschap verkent', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
   },
 };
 
@@ -2828,6 +3361,10 @@ function renderResults(query, main, sbOthers) {
         ${main.mood ? `<p class="card-mood">${esc(main.mood)}</p>` : ''}
       </div>
       <div class="main-card-body">
+        ${main.discovered_by ? `<p class="discovered-by">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          ${t('discoveredBy') || 'Discovered by'} <strong id="discoverer-name-${mainId}">…</strong>
+        </p>` : ''}
         <p class="card-location">${esc(main.city)}${main.country ? ' · ' + esc(main.country) : ''}</p>
         <h2 class="card-name">${esc(main.name)}</h2>
         ${chips ? `<div class="card-chips">${chips}</div>` : ''}
@@ -2840,6 +3377,14 @@ function renderResults(query, main, sbOthers) {
             <span id="${mainId}-count">${main.likes}</span> ${t('likes')}
           </button>
           <div class="card-links">${links}</div>
+        </div>
+        <div class="visit-btns">
+          <button class="visit-btn" id="${mainId}-visited" onclick="handleVisit('${mainId}','${encodeURIComponent(main.id||'')}','visited')">
+            ${t('visitedBtn') || 'I visited this ✓'}
+          </button>
+          <button class="visit-btn" id="${mainId}-overcrowded" onclick="handleVisit('${mainId}','${encodeURIComponent(main.id||'')}','overcrowded')">
+            ${t('overcrowdedBtn') || 'Too crowded now ✗'}
+          </button>
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:10px;">
           <span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)">${t('share')}</span>
@@ -2865,6 +3410,14 @@ function renderResults(query, main, sbOthers) {
         <span>${t('anotherSuggestion')}</span>
       </button>
     </div>`;
+
+  // Mark as discovered by current user if first like
+  if (currentUser && main.id) {
+    sbMarkDiscovered(main.id, currentUser.id).catch(() => {});
+    if (main.discovered_by) {
+      loadDiscoveredBy(main.id, 'discoverer-name-' + mainId);
+    }
+  }
 
   // Launch seasonal particles after DOM update
   requestAnimationFrame(function() {
@@ -3013,9 +3566,16 @@ window.addEventListener('DOMContentLoaded', () => {
   restoreSession();
   updateUserBtn();
   updateSurpriseBtn();
+  updateFeedBtn();
   loadSharedResult();
   setTimeout(loadPlaceOfDay, 800);
 });
+
+function updateFeedBtn() {
+  const btn = document.getElementById('feed-btn');
+  const span = btn?.querySelector('span');
+  if (span) span.textContent = t('feedTitle') || 'Exploring now';
+}
 
 document.getElementById('auth-email').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('auth-password').focus();
