@@ -696,6 +696,20 @@
   .lightbox-close:hover { opacity: 1; }
 
   /* DARK MODE — Inexploré */
+  /* SHARE BUTTONS */
+  .share-wrap { display: flex; align-items: center; gap: 6px; }
+  .share-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 0.5px solid var(--border); background: none;
+    cursor: pointer; transition: all 0.15s; color: var(--muted);
+    text-decoration: none;
+  }
+  .share-btn:hover { border-color: var(--sage); color: var(--sage); background: rgba(0,0,0,0.03); }
+  .share-btn svg { width: 14px; height: 14px; }
+  .share-btn.copy-btn { font-size: 11px; width: auto; padding: 0 10px; border-radius: 50px; gap: 5px; }
+  .share-btn.copy-btn.success { border-color: var(--sage); color: var(--sage); }
+
   /* DARK MODE transitions */
   body, body * {
     transition: background-color 0.5s ease, border-color 0.4s ease, color 0.3s ease;
@@ -896,7 +910,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.2.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.3.0</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -908,6 +922,61 @@
 // ── FILTER STATE
 let filterRadius = 'region';
 let filterRarity = 1;
+
+// ── SUPABASE ──────────────────────────────────────────────────────────────────
+const SB_URL = 'https://hfsnwprfntxnovwkwjan.supabase.co';
+const SB_KEY = 'sb_publishable_ORLl3OejwXpcJ2WziBC0_Q_OWBKMLwv';
+
+async function sbInsert(data) {
+  const res = await fetch(SB_URL + '/rest/v1/suggestions', {
+    method: 'POST',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) return null;
+  const rows = await res.json();
+  return rows[0] || null;
+}
+
+async function sbGetById(id) {
+  const res = await fetch(SB_URL + '/rest/v1/suggestions?id=eq.' + id + '&limit=1', {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY },
+  });
+  if (!res.ok) return null;
+  const rows = await res.json();
+  return rows[0] || null;
+}
+
+async function sbLike(id, currentLikes) {
+  const res = await fetch(SB_URL + '/rest/v1/suggestions?id=eq.' + id, {
+    method: 'PATCH',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+    },
+    body: JSON.stringify({ likes: currentLikes + 1 }),
+  });
+  if (!res.ok) return null;
+  const rows = await res.json();
+  return rows[0] || null;
+}
+
+async function sbGetTopByQuery(query) {
+  const encoded = encodeURIComponent(query.toLowerCase());
+  const res = await fetch(
+    SB_URL + '/rest/v1/suggestions?query=eq.' + encoded + '&order=likes.desc&limit=5',
+    { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
+  );
+  if (!res.ok) return [];
+  return await res.json();
+}
 
 // ── i18n ──────────────────────────────────────────────────────────────────
 const I18N = {
@@ -937,6 +1006,7 @@ const I18N = {
     rarityLevels: ['Discreet', 'Confidential', 'Secret', 'Unexplored'],
     examplesNear: ['Eiffel Tower', 'Colosseum', 'Sagrada Família', 'Trevi Fountain', 'Big Ben'],
     examplesRegion: ['Paris', 'Rome', 'Barcelona', 'London', 'Kyoto'],
+    share: 'Share', copyLink: 'Copy link', copied: 'Copied!',
   },
   fr: {
     eyebrow: 'Slow travel · Lieux secrets',
@@ -964,6 +1034,7 @@ const I18N = {
     rarityLevels: ['Discret', 'Confidentiel', 'Secret', 'Inexploré'],
     examplesNear: ['Tour Eiffel', 'Louvre', 'Notre-Dame', 'Sacré-Cœur', 'Versailles'],
     examplesRegion: ['Paris', 'Lyon', 'Bordeaux', 'Marseille', 'Nantes'],
+    share: 'Partager', copyLink: 'Copier le lien', copied: 'Copié !',
   },
   es: {
     eyebrow: 'Viaje lento · Joyas ocultas',
@@ -991,6 +1062,7 @@ const I18N = {
     rarityLevels: ['Discreto', 'Confidencial', 'Secreto', 'Inexplorado'],
     examplesNear: ['Sagrada Família', 'Coliseo', 'Alhambra', 'Prado', 'Guggenheim'],
     examplesRegion: ['Barcelona', 'Madrid', 'Sevilla', 'Valencia', 'Bilbao'],
+    share: 'Compartir', copyLink: 'Copiar enlace', copied: '¡Copiado!',
   },
   de: {
     eyebrow: 'Langsames Reisen · Versteckte Schätze',
@@ -1018,6 +1090,7 @@ const I18N = {
     rarityLevels: ['Diskret', 'Vertraulich', 'Geheim', 'Unerforscht'],
     examplesNear: ['Brandenburger Tor', 'Kölner Dom', 'Neuschwanstein', 'Reichstag', 'Pergamonmuseum'],
     examplesRegion: ['Berlin', 'München', 'Hamburg', 'Köln', 'Frankfurt'],
+    share: 'Teilen', copyLink: 'Link kopieren', copied: 'Kopiert!',
   },
   it: {
     eyebrow: 'Viaggio lento · Luoghi nascosti',
@@ -1045,6 +1118,7 @@ const I18N = {
     rarityLevels: ['Discreto', 'Riservato', 'Segreto', 'Inesplorato'],
     examplesNear: ['Colosseo', 'Fontana di Trevi', 'Uffizi', 'Canal Grande', 'Duomo'],
     examplesRegion: ['Roma', 'Firenze', 'Venezia', 'Milano', 'Napoli'],
+    share: 'Condividi', copyLink: 'Copia link', copied: 'Copiato!',
   },
   pt: {
     eyebrow: 'Viagem lenta · Tesouros escondidos',
@@ -1072,6 +1146,7 @@ const I18N = {
     rarityLevels: ['Discreto', 'Confidencial', 'Secreto', 'Inexplorado'],
     examplesNear: ['Torre de Belém', 'Coliseu', 'Sagrada Família', 'Cristo Redentor', 'Castelo'],
     examplesRegion: ['Lisboa', 'Porto', 'Sintra', 'Rio de Janeiro', 'São Paulo'],
+    share: 'Partilhar', copyLink: 'Copiar link', copied: 'Copiado!',
   },
   ja: {
     eyebrow: 'スローな旅 · 隠れた名所',
@@ -1099,6 +1174,7 @@ const I18N = {
     rarityLevels: ['ひそか', '非公開', '秘密', '未踏'],
     examplesNear: ['東京タワー', '浅草寺', '清水寺', '金閣寺', '姫路城'],
     examplesRegion: ['東京', '京都', '大阪', '奈良', '鎌倉'],
+    share: 'シェア', copyLink: 'リンクをコピー', copied: 'コピーしました',
   },
   zh: {
     eyebrow: '慢旅行 · 隐藏宝地',
@@ -1126,6 +1202,7 @@ const I18N = {
     rarityLevels: ['低调', '私密', '秘密', '未探索'],
     examplesNear: ['长城', '故宫', '天坛', '外滩', '西湖'],
     examplesRegion: ['北京', '上海', '杭州', '成都', '西安'],
+    share: '分享', copyLink: '复制链接', copied: '已复制',
   },
   ar: {
     eyebrow: 'السفر الهادئ · الجواهر الخفية',
@@ -1153,6 +1230,7 @@ const I18N = {
     rarityLevels: ['خفي', 'سري', 'مخفي', 'مجهول'],
     examplesNear: ['الأهرامات', 'برج إيفل', 'الكولوسيوم', 'تاج محل', 'الأقصر'],
     examplesRegion: ['القاهرة', 'مراكش', 'دبي', 'إسطنبول', 'بيروت'],
+    share: 'مشاركة', copyLink: 'نسخ الرابط', copied: 'تم النسخ',
   },
   nl: {
     eyebrow: 'Langzaam reizen · Verborgen schatten',
@@ -1180,6 +1258,7 @@ const I18N = {
     rarityLevels: ['Discreet', 'Vertrouwelijk', 'Geheim', 'Onontdekt'],
     examplesNear: ['Eiffeltoren', 'Colosseum', 'Sagrada Família', 'Trevi Fontein', 'Big Ben'],
     examplesRegion: ['Amsterdam', 'Rotterdam', 'Utrecht', 'Den Haag', 'Brugge'],
+    share: 'Delen', copyLink: 'Link kopiëren', copied: 'Gekopieerd!',
   },
 };
 
@@ -1589,21 +1668,33 @@ async function handleSearch() {
   btn.disabled = true;
 
   try {
-    // Check store for top liked suggestion first
-    const stored = sortByLikes(getStored(query));
+    // Check Supabase for top liked suggestion first
+    const topSuggestions = await sbGetTopByQuery(query).catch(() => []);
     let mainSuggestion;
 
-    if (stored.length > 0 && stored[0].likes > 0) {
-      // Use top liked as primary, fetch new one too
-      mainSuggestion = stored[0];
-      fetchSuggestion(query).then(s => upsertSuggestion(query, s)).catch(() => {});
+    if (topSuggestions.length > 0 && topSuggestions[0].likes > 0) {
+      mainSuggestion = topSuggestions[0];
+      mainSuggestion.liked = false;
+      // Fetch new suggestion in background for variety
+      fetchSuggestion(query).then(async s => {
+        const saved = await sbInsert({ ...s, query: query.toLowerCase(), likes: 0 });
+        if (saved) upsertSuggestion(query, { ...s, id: saved.id, likes: 0 });
+      }).catch(() => {});
     } else {
-      // Fetch fresh suggestion from Claude
       const fetched = await fetchSuggestion(query);
-      mainSuggestion = upsertSuggestion(query, fetched);
+      // Save to Supabase
+      const saved = await sbInsert({ ...fetched, query: query.toLowerCase(), likes: 0 }).catch(() => null);
+      mainSuggestion = { ...fetched, id: saved?.id || null, likes: 0, liked: false };
+      upsertSuggestion(query, mainSuggestion);
     }
 
-    renderResults(query, mainSuggestion);
+    // Update URL with share link
+    if (mainSuggestion.id) {
+      const shareUrl = window.location.origin + window.location.pathname + '?r=' + mainSuggestion.id;
+      window.history.replaceState({}, '', shareUrl);
+    }
+
+    renderResults(query, mainSuggestion, topSuggestions.slice(1, 4));
   } catch(err) {
     const msg = err.rateLimited
       ? err.message
@@ -1614,6 +1705,25 @@ async function handleSearch() {
   }
 
   btn.disabled = false;
+}
+
+// Load shared result from URL on page load
+async function loadSharedResult() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('r');
+  if (!id) return;
+  try {
+    const suggestion = await sbGetById(id);
+    if (!suggestion) return;
+    document.getElementById('place-input').value = suggestion.query;
+    const resultsEl = document.getElementById('results');
+    const inner = document.getElementById('results-inner');
+    resultsEl.style.display = 'block';
+    inner.innerHTML = `<div class="loading-wrap"><div class="loader"></div><p class="loading-txt">${t('loading')}</p></div>`;
+    window.scrollTo({ top: document.getElementById('hero').offsetHeight - 80, behavior: 'smooth' });
+    const topSuggestions = await sbGetTopByQuery(suggestion.query).catch(() => []);
+    renderResults(suggestion.query, { ...suggestion, liked: false }, topSuggestions.filter(s => s.id !== id).slice(0, 3));
+  } catch(e) { /* silent fail */ }
 }
 
 // Category icon map
@@ -1654,6 +1764,22 @@ function crowdText(level) {
   return labels[Math.min(Math.max(level || 1, 1), 5)] || '';
 }
 
+function getShareUrl() {
+  return window.location.href;
+}
+
+async function copyShareLink(btnEl) {
+  const url = getShareUrl();
+  try {
+    await navigator.clipboard.writeText(url);
+    btnEl.classList.add('success');
+    const span = btnEl.querySelector('span');
+    const orig = span.textContent;
+    span.textContent = t('copied') || 'Copied!';
+    setTimeout(() => { btnEl.classList.remove('success'); span.textContent = orig; }, 2000);
+  } catch(e) {}
+}
+
 function openLightbox(src, alt) {
   const lb = document.getElementById('lightbox');
   const img = document.getElementById('lightbox-img');
@@ -1672,9 +1798,12 @@ function closeLightbox() {
 
 function closeLightboxOnEsc(e) { if (e.key === 'Escape') closeLightbox(); }
 
-function renderResults(query, main) {
+function renderResults(query, main, sbOthers) {
   const inner = document.getElementById('results-inner');
-  const others = sortByLikes(getStored(query)).filter(s => s.name !== main.name).slice(0, 4);
+  // Use Supabase others if provided, else fallback to in-memory store
+  const others = sbOthers && sbOthers.length > 0
+    ? sbOthers
+    : sortByLikes(getStored(query)).filter(s => s.name !== main.name).slice(0, 4);
   const mainId = 'main-' + Date.now();
 
   // Image area
@@ -1758,11 +1887,26 @@ function renderResults(query, main) {
         ${infoItems ? `<div class="info-grid">${infoItems}</div>` : ''}
         ${main.crowd_level ? `<div class="crowd-wrap"><p class="crowd-label">${t('crowd')}</p><div class="crowd-dots">${dots}</div></div>` : ''}
         <div class="card-actions" style="padding-top:12px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-          <button class="like-btn ${main.liked ? 'liked' : ''}" id="${mainId}-like" onclick="handleLike('${mainId}', '${encodeURIComponent(query)}', '${encodeURIComponent(main.name)}')">
+          <button class="like-btn ${main.liked ? 'liked' : ''}" id="${mainId}-like" onclick="handleLike('${mainId}', '${encodeURIComponent(query)}', '${encodeURIComponent(main.name)}', '${main.id || ''}')">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
             <span id="${mainId}-count">${main.likes}</span> ${t('likes')}
           </button>
           <div class="card-links">${links}</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:10px;">
+          <span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)">${t('share')}</span>
+          <div class="share-wrap">
+            <button class="share-btn copy-btn" onclick="copyShareLink(this)" title="${t('copyLink')}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <span>${t('copyLink')}</span>
+            </button>
+            <a class="share-btn" href="https://wa.me/?text=${encodeURIComponent((main.name || '') + ' — ' + (main.city || '') + ' ' + window.location.href)}" target="_blank" rel="noopener" title="WhatsApp">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.37 5.07L2 22l5.07-1.35C8.44 21.5 10.18 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2"/></svg>
+            </a>
+            <a class="share-btn" href="https://twitter.com/intent/tweet?text=${encodeURIComponent('Discovered ' + (main.name || '') + ' in ' + (main.city || '') + ' — a hidden gem via @elsewhere_app')}&url=${encodeURIComponent(window.location.href)}" target="_blank" rel="noopener" title="X / Twitter">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -1775,19 +1919,27 @@ function renderResults(query, main) {
   });
 }
 
-function handleLike(cardId, queryEnc, nameEnc) {
+async function handleLike(cardId, queryEnc, nameEnc, supabaseId) {
   const query = decodeURIComponent(queryEnc);
   const name = decodeURIComponent(nameEnc);
   const key = normalizeQuery(query);
   const entry = STORE[key]?.find(s => s.name === name);
-  if (!entry || entry.liked) return;
-  entry.liked = true;
-  entry.likes++;
+  if (entry?.liked) return;
 
   const btn = document.getElementById(cardId + '-like');
   const count = document.getElementById(cardId + '-count');
+
+  // Optimistic UI update
+  if (entry) { entry.liked = true; entry.likes++; }
   if (btn) btn.classList.add('liked');
-  if (count) count.textContent = entry.likes;
+  const newCount = entry ? entry.likes : (parseInt(count?.textContent || '0') + 1);
+  if (count) count.textContent = newCount;
+
+  // Persist to Supabase
+  if (supabaseId) {
+    const currentLikes = newCount - 1;
+    await sbLike(supabaseId, currentLikes).catch(() => {});
+  }
 }
 
 function esc(s) {
@@ -1880,6 +2032,9 @@ function launchParticles(originEl) {
 }
 
 document.getElementById('search-btn').addEventListener('click', handleSearch);
+
+// Load shared result on page load if ?r= param exists
+window.addEventListener('DOMContentLoaded', loadSharedResult);
 document.getElementById('examples-row').addEventListener('click', e => {
   const chip = e.target.closest('.example-chip');
   if (chip) fillAndSearch(chip.dataset.place);
