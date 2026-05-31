@@ -872,6 +872,112 @@
   .share-btn.copy-btn { font-size: 11px; width: auto; padding: 0 10px; border-radius: 50px; gap: 5px; }
   .share-btn.copy-btn.success { border-color: var(--sage); color: var(--sage); }
 
+  /* HOMEPAGE VISUAL */
+  .home-sections { display: none; }
+  .home-sections.visible { display: block; }
+
+  /* Hero background image */
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background-size: cover; background-position: center;
+    background-repeat: no-repeat;
+    transition: opacity 1.2s ease;
+  }
+  .hero-bg::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom,
+      rgba(var(--paper-rgb, 245,242,235), 0.55) 0%,
+      rgba(var(--paper-rgb, 245,242,235), 0.3) 40%,
+      rgba(var(--paper-rgb, 245,242,235), 0.7) 80%,
+      rgba(var(--paper-rgb, 245,242,235), 1) 100%);
+  }
+
+  /* Big DOTD */
+  .dotd-big {
+    max-width: 720px; margin: 0 auto 3rem;
+    padding: 0 1.5rem; position: relative; z-index: 1;
+  }
+  .dotd-big-label {
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--sage); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .dotd-big-label::before { content: ''; display: block; width: 24px; height: 0.5px; background: var(--sage); }
+  .dotd-big-card {
+    border-radius: 12px; overflow: hidden; cursor: pointer;
+    position: relative; aspect-ratio: 16/7; background: var(--paper-dark);
+    box-shadow: 0 8px 40px rgba(26,26,24,0.12);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .dotd-big-card:hover { transform: translateY(-2px); box-shadow: 0 12px 50px rgba(26,26,24,0.18); }
+  .dotd-big-img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+  .dotd-big-card:hover .dotd-big-img { transform: scale(1.03); }
+  .dotd-big-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(26,24,18,0.75) 0%, rgba(26,24,18,0.1) 50%, transparent 100%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 1.5rem 2rem;
+  }
+  .dotd-big-name {
+    font-family: 'Cormorant Garamond', serif; font-size: clamp(22px, 4vw, 36px);
+    font-weight: 400; color: #fff; line-height: 1.15; margin-bottom: 4px;
+  }
+  .dotd-big-city { font-size: 13px; color: rgba(255,255,255,0.75); margin-bottom: 14px; }
+  .dotd-big-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+    border: 0.5px solid rgba(255,255,255,0.3); border-radius: 50px;
+    padding: 8px 18px; font-family: 'DM Sans', sans-serif;
+    font-size: 12px; color: #fff; cursor: pointer;
+    transition: background 0.2s; width: fit-content;
+  }
+  .dotd-big-btn:hover { background: rgba(255,255,255,0.25); }
+
+  /* Community grid */
+  .community-section {
+    max-width: 720px; margin: 0 auto 3rem;
+    padding: 0 1.5rem;
+  }
+  .community-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .community-title {
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .community-line { flex: 1; height: 0.5px; background: var(--border); }
+  .community-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  }
+  @media (max-width: 600px) { .community-grid { grid-template-columns: repeat(2, 1fr); } }
+  .community-card {
+    border-radius: var(--radius-lg); overflow: hidden; cursor: pointer;
+    position: relative; aspect-ratio: 3/4; background: var(--paper-dark);
+    transition: transform 0.25s ease;
+  }
+  .community-card:hover { transform: translateY(-3px); }
+  .community-card-img { width: 100%; height: 100%; object-fit: cover; }
+  .community-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(26,24,18,0.8) 0%, transparent 55%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 14px;
+  }
+  .community-card-name {
+    font-family: 'Cormorant Garamond', serif; font-size: 16px;
+    font-weight: 400; color: #fff; line-height: 1.2; margin-bottom: 2px;
+  }
+  .community-card-city { font-size: 11px; color: rgba(255,255,255,0.7); }
+  .community-card-likes {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(26,24,18,0.5); backdrop-filter: blur(4px);
+    border-radius: 50px; padding: 3px 9px;
+    font-size: 11px; color: #fff; display: flex; align-items: center; gap: 4px;
+  }
+
   /* SOCIAL FEATURES */
 
   /* Username step in auth modal */
@@ -1081,6 +1187,7 @@
 
 <!-- SVG Compass rose background -->
 <div class="hero" id="hero">
+  <div class="hero-bg" id="hero-bg"></div>
   <svg class="compass-bg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="100" cy="100" r="95" stroke="#1a1a18" stroke-width="0.5"/>
     <circle cx="100" cy="100" r="70" stroke="#1a1a18" stroke-width="0.3"/>
@@ -1173,19 +1280,37 @@
   </div>
 </div>
 
-<!-- PLACE OF DAY -->
-<div style="position:relative;z-index:1;">
-  <div class="dotd-wrap" id="dotd-wrap" style="display:none">
-    <div class="dotd-card" id="dotd-card" onclick="handleDotdClick()">
-      <div class="dotd-img-ph" id="dotd-img-wrap"></div>
-      <div style="flex:1;min-width:0">
-        <p class="dotd-label" id="dotd-label"></p>
-        <p class="dotd-name" id="dotd-name"></p>
-        <p class="dotd-city" id="dotd-city"></p>
+<!-- HOMEPAGE VISUAL SECTIONS -->
+<div class="home-sections" id="home-sections">
+
+  <!-- Big place of day -->
+  <div class="dotd-big" id="dotd-big" style="display:none">
+    <p class="dotd-big-label" id="dotd-big-label"></p>
+    <div class="dotd-big-card" onclick="handleDotdClick()">
+      <img class="dotd-big-img" id="dotd-big-img" src="" alt="" onerror="this.closest('.dotd-big').style.display='none'">
+      <div class="dotd-big-overlay">
+        <p class="dotd-big-name" id="dotd-big-name"></p>
+        <p class="dotd-big-city" id="dotd-big-city"></p>
+        <button class="dotd-big-btn" id="dotd-big-btn">→</button>
       </div>
-      <span class="dotd-arrow">→</span>
     </div>
   </div>
+
+  <!-- Community top picks -->
+  <div class="community-section" id="community-section" style="display:none">
+    <div class="community-header">
+      <span class="community-title" id="community-title"></span>
+      <div class="community-line"></div>
+    </div>
+    <div class="community-grid" id="community-grid"></div>
+  </div>
+
+</div>
+
+<!-- Keep small dotd-wrap hidden (used internally) -->
+<div id="dotd-wrap" style="display:none">
+  <p id="dotd-label"></p><p id="dotd-name"></p><p id="dotd-city"></p>
+  <div id="dotd-img-wrap"></div>
 </div>
 
 <!-- RESULTS -->
@@ -1207,7 +1332,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.0.6</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.1.0</span>
 </footer>
 
 <!-- ACTIVITY FEED PANEL -->
@@ -2106,6 +2231,7 @@ const I18N = {
     badge_countries: '3 countries',
     badge_seasons: 'All 4 seasons',
     badge_unexplored: 'Inexploré × 3',
+    dotdBig: 'Place of the day', communityTop: 'Top discoveries by the community', discoverPlace: 'Discover this place',
   },
   fr: {
     eyebrow: 'Slow travel · Lieux secrets',
@@ -2177,6 +2303,7 @@ const I18N = {
     badge_countries: '3 pays',
     badge_seasons: '4 saisons',
     badge_unexplored: 'Inexploré × 3',
+    dotdBig: 'Lieu du jour', communityTop: 'Les pépites de la communauté', discoverPlace: 'Découvrir ce lieu',
   },
   es: {
     eyebrow: 'Viaje lento · Joyas ocultas',
@@ -2248,6 +2375,7 @@ const I18N = {
     badge_countries: '3 países',
     badge_seasons: '4 estaciones',
     badge_unexplored: 'Inexplorado × 3',
+    dotdBig: 'Lugar del día', communityTop: 'Descubrimientos de la comunidad', discoverPlace: 'Descubrir este lugar',
   },
   de: {
     eyebrow: 'Langsames Reisen · Versteckte Schätze',
@@ -2319,6 +2447,7 @@ const I18N = {
     badge_countries: '3 Länder',
     badge_seasons: '4 Jahreszeiten',
     badge_unexplored: 'Unerforscht × 3',
+    dotdBig: 'Ort des Tages', communityTop: 'Community-Entdeckungen', discoverPlace: 'Diesen Ort entdecken',
   },
   it: {
     eyebrow: 'Viaggio lento · Luoghi nascosti',
@@ -2370,6 +2499,7 @@ const I18N = {
     badge_countries: '3 paesi',
     badge_seasons: '4 stagioni',
     badge_unexplored: 'Inesplorato × 3',
+    dotdBig: 'Luogo del giorno', communityTop: 'Scoperte della comunità', discoverPlace: 'Scopri questo luogo',
   },
   pt: {
     eyebrow: 'Viagem lenta · Tesouros escondidos',
@@ -2421,6 +2551,7 @@ const I18N = {
     badge_countries: '3 países',
     badge_seasons: '4 estações',
     badge_unexplored: 'Inexplorado × 3',
+    dotdBig: 'Lugar do dia', communityTop: 'Descobertas da comunidade', discoverPlace: 'Descobrir este lugar',
   },
   ja: {
     eyebrow: 'スローな旅 · 隠れた名所',
@@ -2472,6 +2603,7 @@ const I18N = {
     badge_countries: '3か国',
     badge_seasons: '4シーズン',
     badge_unexplored: '未踏 × 3',
+    dotdBig: '今日のスポット', communityTop: 'コミュニティの発見', discoverPlace: 'このスポットを見る',
   },
   zh: {
     eyebrow: '慢旅行 · 隐藏宝地',
@@ -2523,6 +2655,7 @@ const I18N = {
     badge_countries: '3个国家',
     badge_seasons: '4个季节',
     badge_unexplored: '未探索 × 3',
+    dotdBig: '今日地点', communityTop: '社区精选', discoverPlace: '探索这个地方',
   },
   ar: {
     eyebrow: 'السفر الهادئ · الجواهر الخفية',
@@ -2574,6 +2707,7 @@ const I18N = {
     badge_countries: '٣ دول',
     badge_seasons: '٤ فصول',
     badge_unexplored: 'مجهول × ٣',
+    dotdBig: 'مكان اليوم', communityTop: 'اكتشافات المجتمع', discoverPlace: 'اكتشف هذا المكان',
   },
   nl: {
     eyebrow: 'Langzaam reizen · Verborgen schatten',
@@ -2625,6 +2759,7 @@ const I18N = {
     badge_countries: '3 landen',
     badge_seasons: '4 seizoenen',
     badge_unexplored: 'Onontdekt × 3',
+    dotdBig: 'Plek van de dag', communityTop: 'Gemeenschapsvondsten', discoverPlace: 'Ontdek deze plek',
   },
 };
 
@@ -3042,6 +3177,9 @@ async function handleSearch() {
 
   resultsEl.style.display = 'block';
   inner.innerHTML = `<div class="loading-wrap"><div class="loader"></div><p class="loading-txt">${t('loading')}</p></div>`;
+  // Hide homepage visual sections when showing results
+  const homeSections = document.getElementById('home-sections');
+  if (homeSections) homeSections.classList.remove('visible');
   window.scrollTo({ top: document.getElementById('hero').offsetHeight - 80, behavior: 'smooth' });
 
   btn.disabled = true;
@@ -3244,27 +3382,72 @@ async function loadPlaceOfDay() {
 
   if (!dotd || !dotd.name) return;
 
-  const wrap = document.getElementById('dotd-wrap');
+  // Populate internal refs
   const label = document.getElementById('dotd-label');
   const name = document.getElementById('dotd-name');
   const city = document.getElementById('dotd-city');
-  const imgWrap = document.getElementById('dotd-img-wrap');
-
   if (label) label.textContent = t('dotd') || 'Place of the day';
   if (name) name.textContent = dotd.name;
-  if (city) city.textContent = dotd.city + (dotd.country ? ' · ' + dotd.country : '');
+  if (city) city.textContent = dotd.city;
 
-  if (dotd.image && imgWrap) {
-    const img = document.createElement('img');
-    img.className = 'dotd-img';
-    img.src = dotd.image;
-    img.alt = dotd.name;
-    img.onerror = function() { this.style.display = 'none'; };
-    imgWrap.replaceWith(img);
+  // Populate big visual card
+  const bigWrap = document.getElementById('dotd-big');
+  const bigLabel = document.getElementById('dotd-big-label');
+  const bigName = document.getElementById('dotd-big-name');
+  const bigCity = document.getElementById('dotd-big-city');
+  const bigImg = document.getElementById('dotd-big-img');
+  const bigBtn = document.getElementById('dotd-big-btn');
+
+  if (bigLabel) bigLabel.textContent = t('dotdBig') || 'Place of the day';
+  if (bigName) bigName.textContent = dotd.name;
+  if (bigCity) bigCity.textContent = dotd.city + (dotd.country ? ' · ' + dotd.country : '');
+  if (bigBtn) bigBtn.textContent = (t('discoverPlace') || 'Discover this place') + ' →';
+
+  if (dotd.image && bigImg) {
+    bigImg.src = dotd.image;
+    bigImg.alt = dotd.name;
+    if (bigWrap) bigWrap.style.display = 'block';
+    // Also set as hero background
+    const heroBg = document.getElementById('hero-bg');
+    if (heroBg) heroBg.style.backgroundImage = 'url(' + dotd.image + ')';
   }
 
-  if (wrap) wrap.style.display = 'block';
+  // Show homepage sections
+  const homeSections = document.getElementById('home-sections');
+  if (homeSections) homeSections.classList.add('visible');
+
   window._dotd = dotd;
+}
+
+async function loadCommunityGrid() {
+  const grid = document.getElementById('community-grid');
+  const section = document.getElementById('community-section');
+  const title = document.getElementById('community-title');
+  if (!grid) return;
+
+  if (title) title.textContent = t('communityTop') || 'Top discoveries by the community';
+
+  const res = await fetch(
+    SB_URL + '/rest/v1/suggestions?likes=gt.0&order=likes.desc&limit=6&select=id,name,city,image,query,likes',
+    { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
+  ).catch(() => null);
+  if (!res || !res.ok) return;
+  const places = await res.json();
+  if (!places.length) return;
+
+  grid.innerHTML = places.map(p => `
+    <div class="community-card" onclick="loadFavItem('${esc(p.query||p.name.toLowerCase())}','${esc(p.id)}')">
+      ${p.image
+        ? `<img class="community-card-img" src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="this.closest('.community-card').style.display='none'">`
+        : `<div class="community-card-img" style="background:var(--paper-dark)"></div>`}
+      <div class="community-card-overlay">
+        <p class="community-card-name">${esc(p.name)}</p>
+        <p class="community-card-city">${esc(p.city)}</p>
+      </div>
+      <div class="community-card-likes">♥ ${p.likes}</div>
+    </div>`).join('');
+
+  if (section) section.style.display = 'block';
 }
 
 function handleDotdClick() {
@@ -3683,7 +3866,10 @@ window.addEventListener('DOMContentLoaded', () => {
   updateSurpriseBtn();
   updateFeedBtn();
   loadSharedResult();
-  setTimeout(loadPlaceOfDay, 800);
+  setTimeout(async () => {
+    await loadPlaceOfDay();
+    await loadCommunityGrid();
+  }, 800);
 });
 
 function updateFeedBtn() {
