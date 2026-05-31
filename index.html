@@ -1316,7 +1316,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.1.3</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.1.4</span>
 </footer>
 
 <!-- ACTIVITY FEED PANEL -->
@@ -3691,6 +3691,13 @@ function renderResults(query, main, sbOthers) {
         <span>${t('anotherSuggestion')}</span>
       </button>
     </div>`;
+
+  // Scroll to results if triggered from homepage
+  if (document.getElementById('home-sections') && !document.getElementById('home-sections').classList.contains('visible')) {
+    setTimeout(() => {
+      document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
 
   // Mark as discovered by current user if first like
   if (currentUser && main.id) {
