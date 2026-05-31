@@ -1392,20 +1392,31 @@ async function sbGetById(id) {
   return rows[0] || null;
 }
 
-async function sbLike(id, currentLikes) {
-  const res = await fetch(SB_URL + '/rest/v1/suggestions?id=eq.' + id, {
-    method: 'PATCH',
+async function sbIncrementLike(id) {
+  // Atomic increment via RPC function
+  const res = await fetch(SB_URL + '/rest/v1/rpc/increment_likes', {
+    method: 'POST',
     headers: {
       'apikey': SB_KEY,
       'Authorization': 'Bearer ' + SB_KEY,
       'Content-Type': 'application/json',
-      'Prefer': 'return=representation',
     },
-    body: JSON.stringify({ likes: currentLikes + 1 }),
+    body: JSON.stringify({ suggestion_id: id }),
   });
-  if (!res.ok) return null;
-  const rows = await res.json();
-  return rows[0] || null;
+  return res.ok;
+}
+
+async function sbDecrementLike(id) {
+  const res = await fetch(SB_URL + '/rest/v1/rpc/decrement_likes', {
+    method: 'POST',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ suggestion_id: id }),
+  });
+  return res.ok;
 }
 
 async function sbGetTopByQuery(query) {
@@ -2661,24 +2672,24 @@ async function handleLike(cardId, queryEnc, nameEnc, supabaseId) {
   const isLiked = btn?.classList.contains('liked');
 
   if (isLiked) {
-    // Unlike
+    // Unlike — optimistic UI first
     if (btn) btn.classList.remove('liked');
     const newCount = Math.max(0, parseInt(count?.textContent || '1') - 1);
     if (count) count.textContent = newCount;
     if (entry) { entry.liked = false; entry.likes = newCount; }
     if (supabaseId) {
       await sbRemoveLike(currentUser.token, currentUser.id, supabaseId).catch(() => {});
-      await sbLike(supabaseId, newCount).catch(() => {});
+      await sbDecrementLike(supabaseId).catch(() => {});
     }
   } else {
-    // Like
-    if (entry) { entry.liked = true; entry.likes++; }
+    // Like — optimistic UI first
     if (btn) btn.classList.add('liked');
-    const newCount = entry ? entry.likes : (parseInt(count?.textContent || '0') + 1);
+    const newCount = parseInt(count?.textContent || '0') + 1;
     if (count) count.textContent = newCount;
+    if (entry) { entry.liked = true; entry.likes = newCount; }
     if (supabaseId) {
       await sbAddLike(currentUser.token, currentUser.id, supabaseId).catch(() => {});
-      await sbLike(supabaseId, newCount).catch(() => {});
+      await sbIncrementLike(supabaseId).catch(() => {});
     }
   }
 }
