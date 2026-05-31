@@ -1001,7 +1001,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.4.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.5.0</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -1147,7 +1147,10 @@ function handleModalBgClick(e) {
 function toggleAuthMode() {
   authMode = authMode === 'signin' ? 'signup' : 'signin';
   updateAuthModalText();
-  document.getElementById('auth-error').style.display = 'none';
+  const errEl = document.getElementById('auth-error');
+  errEl.style.display = 'none';
+  errEl.style.color = 'var(--rust)';
+  document.getElementById('auth-submit').disabled = false;
 }
 
 function updateAuthModalText() {
@@ -1184,7 +1187,14 @@ async function handleAuthSubmit() {
       localStorage.setItem('sb_session', JSON.stringify(currentUser));
       updateUserBtn();
       closeAuthModal();
+    } else if (authMode === 'signup' && data.id) {
+      // Account created but email confirmation required
+      errEl.style.color = 'var(--sage)';
+      errEl.textContent = t('checkEmail');
+      errEl.style.display = 'block';
+      document.getElementById('auth-submit').disabled = true;
     } else {
+      errEl.style.color = 'var(--rust)';
       errEl.textContent = t('authError');
       errEl.style.display = 'block';
     }
@@ -1375,6 +1385,7 @@ const I18N = {
     authError: 'Invalid email or password.',
     orSignUp: 'No account yet?',
     orSignIn: 'Already have an account?',
+    checkEmail: 'Check your email to confirm your account, then sign in.',
   },
   fr: {
     eyebrow: 'Slow travel · Lieux secrets',
@@ -1415,6 +1426,7 @@ const I18N = {
     authError: 'Email ou mot de passe incorrect.',
     orSignUp: 'Pas encore de compte ?',
     orSignIn: 'Déjà un compte ?',
+    checkEmail: 'Vérifiez votre email pour confirmer votre compte, puis connectez-vous.',
   },
   es: {
     eyebrow: 'Viaje lento · Joyas ocultas',
@@ -1455,6 +1467,7 @@ const I18N = {
     authError: 'Email o contraseña incorrectos.',
     orSignUp: '¿No tienes cuenta?',
     orSignIn: '¿Ya tienes cuenta?',
+    checkEmail: 'Comprueba tu email para confirmar tu cuenta, luego inicia sesión.',
   },
   de: {
     eyebrow: 'Langsames Reisen · Versteckte Schätze',
@@ -1495,6 +1508,7 @@ const I18N = {
     authError: 'E-Mail oder Passwort falsch.',
     orSignUp: 'Noch kein Konto?',
     orSignIn: 'Bereits ein Konto?',
+    checkEmail: 'Prüfe deine E-Mail zur Bestätigung, dann melde dich an.',
   },
   it: {
     eyebrow: 'Viaggio lento · Luoghi nascosti',
@@ -1535,6 +1549,7 @@ const I18N = {
     authError: 'Email o password errati.',
     orSignUp: 'Non hai un account?',
     orSignIn: 'Hai già un account?',
+    checkEmail: "Controlla la tua email per confermare l'account, poi accedi.",
   },
   pt: {
     eyebrow: 'Viagem lenta · Tesouros escondidos',
@@ -1575,6 +1590,7 @@ const I18N = {
     authError: 'Email ou senha incorretos.',
     orSignUp: 'Não tem conta?',
     orSignIn: 'Já tem conta?',
+    checkEmail: 'Verifique o seu email para confirmar a conta, depois entre.',
   },
   ja: {
     eyebrow: 'スローな旅 · 隠れた名所',
@@ -1615,6 +1631,7 @@ const I18N = {
     authError: 'メールまたはパスワードが正しくありません。',
     orSignUp: 'アカウントをお持ちでない方',
     orSignIn: 'すでにアカウントをお持ちの方',
+    checkEmail: 'メールを確認してアカウントを認証し、ログインしてください。',
   },
   zh: {
     eyebrow: '慢旅行 · 隐藏宝地',
@@ -1655,6 +1672,7 @@ const I18N = {
     authError: '邮箱或密码错误。',
     orSignUp: '还没有账户？',
     orSignIn: '已有账户？',
+    checkEmail: '请查看邮箱确认账户，然后登录。',
   },
   ar: {
     eyebrow: 'السفر الهادئ · الجواهر الخفية',
@@ -1695,6 +1713,7 @@ const I18N = {
     authError: 'بريد إلكتروني أو كلمة مرور غير صحيحة.',
     orSignUp: 'ليس لديك حساب؟',
     orSignIn: 'لديك حساب بالفعل؟',
+    checkEmail: 'تحقق من بريدك الإلكتروني لتأكيد حسابك، ثم سجّل دخولك.',
   },
   nl: {
     eyebrow: 'Langzaam reizen · Verborgen schatten',
@@ -1735,6 +1754,7 @@ const I18N = {
     authError: 'Onjuist e-mailadres of wachtwoord.',
     orSignUp: 'Nog geen account?',
     orSignIn: 'Al een account?',
+    checkEmail: 'Controleer je e-mail om je account te bevestigen, en log daarna in.',
   },
 };
 
