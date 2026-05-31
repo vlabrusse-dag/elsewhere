@@ -451,20 +451,22 @@
 
   /* ENRICHED CARD */
   .card-mood {
-    position: absolute; bottom: 14px; left: 14px; right: 14px;
-    font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic;
-    color: rgba(255,255,255,0.88); font-weight: 300; pointer-events: none;
-    text-shadow: 0 1px 8px rgba(0,0,0,0.35);
+    position: absolute; bottom: 14px; left: 14px;
+    font-family: 'Cormorant Garamond', serif; font-size: 13px; font-style: italic;
+    color: rgba(255,255,255,0.95); font-weight: 300; pointer-events: none;
+    background: rgba(26,26,24,0.62); backdrop-filter: blur(4px);
+    padding: 4px 12px; border-radius: 50px;
   }
   .card-img-clickable { cursor: zoom-in; }
   .card-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
   .card-chip {
-    display: flex; align-items: center; gap: 5px;
-    font-size: 11px; color: var(--color-text-secondary, var(--muted));
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; color: var(--muted);
     background: var(--paper-dark); border-radius: 50px;
     padding: 4px 10px; font-weight: 400; font-family: 'DM Sans', sans-serif;
+    line-height: 1.4;
   }
-  .card-chip i { font-size: 13px; }
+  .card-chip .ti { font-size: 12px; line-height: 1; display: inline-block; }
   .info-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0;
   }
@@ -595,7 +597,7 @@
 
 <footer>
   <span id="txt-footer">Elsewhere — Discover the road less travelled. Fighting overtourism, one hidden gem at a time.</span>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.4;letter-spacing:0.08em;">v3.1.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.4;letter-spacing:0.08em;">v3.2.0</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -957,6 +959,25 @@ const CAT_ICONS = {
   palace: 'ti-crown', market: 'ti-shopping-bag',
 };
 
+const CAT_LABELS = {
+  en: { museum:'Museum', garden:'Garden', castle:'Castle', church:'Church', viewpoint:'Viewpoint', village:'Village', beach:'Beach', nature:'Nature', palace:'Palace', market:'Market' },
+  fr: { museum:'Musée', garden:'Jardin', castle:'Château', church:'Église', viewpoint:'Panorama', village:'Village', beach:'Plage', nature:'Nature', palace:'Palais', market:'Marché' },
+  es: { museum:'Museo', garden:'Jardín', castle:'Castillo', church:'Iglesia', viewpoint:'Mirador', village:'Pueblo', beach:'Playa', nature:'Naturaleza', palace:'Palacio', market:'Mercado' },
+  de: { museum:'Museum', garden:'Garten', castle:'Schloss', church:'Kirche', viewpoint:'Aussicht', village:'Dorf', beach:'Strand', nature:'Natur', palace:'Palast', market:'Markt' },
+  it: { museum:'Museo', garden:'Giardino', castle:'Castello', church:'Chiesa', viewpoint:'Panorama', village:'Villaggio', beach:'Spiaggia', nature:'Natura', palace:'Palazzo', market:'Mercato' },
+  pt: { museum:'Museu', garden:'Jardim', castle:'Castelo', church:'Igreja', viewpoint:'Miradouro', village:'Vila', beach:'Praia', nature:'Natureza', palace:'Palácio', market:'Mercado' },
+  ja: { museum:'美術館', garden:'庭園', castle:'城', church:'教会', viewpoint:'展望台', village:'村', beach:'ビーチ', nature:'自然', palace:'宮殿', market:'市場' },
+  zh: { museum:'博物馆', garden:'花园', castle:'城堡', church:'教堂', viewpoint:'观景台', village:'村庄', beach:'海滩', nature:'自然', palace:'宫殿', market:'市场' },
+  ar: { museum:'متحف', garden:'حديقة', castle:'قلعة', church:'كنيسة', viewpoint:'منظر', village:'قرية', beach:'شاطئ', nature:'طبيعة', palace:'قصر', market:'سوق' },
+  nl: { museum:'Museum', garden:'Tuin', castle:'Kasteel', church:'Kerk', viewpoint:'Uitzicht', village:'Dorp', beach:'Strand', nature:'Natuur', palace:'Paleis', market:'Markt' },
+};
+
+function catLabel(cat) {
+  if (!cat) return '';
+  const labels = CAT_LABELS[currentLang] || CAT_LABELS['en'];
+  return labels[cat.toLowerCase()] || cat;
+}
+
 function crowdText(level) {
   const labels = t('crowdLabels') || ['','Very rare','Rare','Quiet','Moderate','Busy'];
   return labels[Math.min(Math.max(level || 1, 1), 5)] || '';
@@ -1003,7 +1024,7 @@ function renderResults(query, main) {
   // Chips
   const catIcon = CAT_ICONS[main.category] || 'ti-map-pin';
   const chips = [
-    main.category ? `<span class="card-chip"><i class="ti ${catIcon}" aria-hidden="true"></i> ${esc(main.category)}</span>` : '',
+    main.category ? `<span class="card-chip"><i class="ti ${catIcon}"></i> ${esc(catLabel(main.category))}</span>` : '',
     main.distance_km ? `<span class="card-chip"><i class="ti ti-route" aria-hidden="true"></i> ${main.distance_km} km</span>` : '',
     main.duration ? `<span class="card-chip"><i class="ti ti-clock" aria-hidden="true"></i> ${esc(main.duration)}</span>` : '',
     main.best_season ? `<span class="card-chip"><i class="ti ti-sun" aria-hidden="true"></i> ${esc(main.best_season)}</span>` : '',
