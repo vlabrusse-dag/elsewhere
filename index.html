@@ -696,56 +696,46 @@
   .lightbox-close:hover { opacity: 1; }
 
   /* DARK MODE — Inexploré */
-  body.mode-unexplored {
-    --ink: #e8e4dc;
-    --paper: #0e0e0c;
-    --paper-dark: #1a1a16;
-    --muted: #6a6860;
-    --border: rgba(232,228,220,0.1);
-    --sage: #5a7a5a;
-    --rust: #8a4a30;
+  /* DARK MODE transitions */
+  body, body * {
+    transition: background-color 0.5s ease, border-color 0.4s ease, color 0.3s ease;
   }
+
+  /* Dark mode — element-specific overrides that can't be done via CSS vars */
   body.mode-unexplored header {
-    background: rgba(14,14,12,0.92);
-    border-bottom-color: rgba(232,228,220,0.08);
+    background: rgba(13,13,11,0.92) !important;
   }
   body.mode-unexplored .search-field {
-    background: #1a1a16;
-    color: var(--ink);
-    border-color: rgba(232,228,220,0.15);
+    background: #171714 !important;
+    border-color: rgba(222,218,208,0.15) !important;
+    color: #dedad0 !important;
   }
-  body.mode-unexplored .search-field::placeholder { color: #4a4a44; }
-  body.mode-unexplored .search-btn {
-    background: #2a2a24;
-    color: #9a9a88;
-  }
-  body.mode-unexplored .search-btn:hover { background: #5a7a5a; color: #fff; }
+  body.mode-unexplored .search-field::placeholder { color: #3a3830 !important; }
+  body.mode-unexplored .search-btn { background: #1e1e1a !important; color: #8a8878 !important; }
+  body.mode-unexplored .search-btn:hover { background: #4a6e4a !important; color: #fff !important; }
   body.mode-unexplored .main-card,
   body.mode-unexplored .also-card,
-  body.mode-unexplored .filters-panel {
-    background: #141412;
-    border-color: rgba(232,228,220,0.08);
-  }
-  body.mode-unexplored .info-cell { background: #1e1e1a; }
-  body.mode-unexplored .card-chip { background: #1e1e1a; }
-  body.mode-unexplored .like-btn { border-color: rgba(232,228,220,0.15); }
-  body.mode-unexplored .filters-toggle { background: #1a1a16; border-color: rgba(232,228,220,0.15); }
-  body.mode-unexplored .radius-opt { border-color: rgba(232,228,220,0.12); }
-  body.mode-unexplored .radius-opt.selected { border-color: #5a7a5a; }
-  body.mode-unexplored .rarity-track { background: #2a2a24; }
-  body.mode-unexplored footer { border-top-color: rgba(232,228,220,0.08); }
-  body.mode-unexplored .example-chip { border-color: rgba(232,228,220,0.12); }
+  body.mode-unexplored .filters-panel { background: #131310 !important; border-color: rgba(222,218,208,0.08) !important; }
+  body.mode-unexplored .info-cell,
+  body.mode-unexplored .card-chip,
+  body.mode-unexplored .filters-toggle { background: #1a1a16 !important; border-color: rgba(222,218,208,0.12) !important; }
+  body.mode-unexplored .radius-opt { border-color: rgba(222,218,208,0.1) !important; }
+  body.mode-unexplored .radius-opt.selected { border-color: #4a6e4a !important; background: rgba(74,110,74,0.1) !important; }
+  body.mode-unexplored .rarity-track { background: #252520 !important; }
+  body.mode-unexplored .example-chip { border-color: rgba(222,218,208,0.1) !important; color: #5a5850 !important; }
+  body.mode-unexplored .card-why,
+  body.mode-unexplored .card-location,
+  body.mode-unexplored .also-loc,
+  body.mode-unexplored .sb-season-name { color: #5a5850 !important; }
+  body.mode-unexplored .lang-btn { color: #5a5850 !important; }
+  body.mode-unexplored .lang-btn.active { color: #dedad0 !important; background: #1a1a16 !important; }
 
-  /* Fog overlay for unexplored */
+  /* Fog overlay */
   body.mode-unexplored::after {
     content: '';
     position: fixed; inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(90,122,90,0.04) 0%, transparent 70%);
+    background: radial-gradient(ellipse at 50% 0%, rgba(74,110,74,0.06) 0%, transparent 65%);
     pointer-events: none; z-index: 0;
-  }
-
-  body, header, .search-field, .main-card, .also-card, .filters-panel, .info-cell, footer {
-    transition: background 0.6s ease, border-color 0.4s ease, color 0.4s ease;
   }
 
   /* PARTICLES */
@@ -906,7 +896,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.1.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.2.0</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -1408,18 +1398,39 @@ function setRarity(idx) {
 function applyRarityMode() {
   const isUnexplored = filterRarity === 3;
   document.body.classList.toggle('mode-unexplored', isUnexplored);
-  // Override seasonal palette with dark theme when unexplored
+
   if (isUnexplored) {
     const root = document.documentElement;
-    root.style.setProperty('--paper', '#0e0e0c');
-    root.style.setProperty('--paper-dark', '#1a1a16');
-    root.style.setProperty('--sage', '#5a7a5a');
-    root.style.setProperty('--muted', '#6a6860');
-    root.style.setProperty('--rust', '#8a4a30');
-    root.style.setProperty('--ink', '#e8e4dc');
-    root.style.setProperty('--border', 'rgba(232,228,220,0.1)');
+    // Override ALL variables inline so they take priority over seasonal theme
+    const dark = {
+      '--paper':              '#0d0d0b',
+      '--paper-dark':         '#171714',
+      '--ink':                '#dedad0',
+      '--muted':              '#5a5850',
+      '--border':             'rgba(222,218,208,0.1)',
+      '--sage':               '#4a6e4a',
+      '--sage-light':         '#6a8e6a',
+      '--rust':               '#7a3a28',
+      '--season-paper':       '#0d0d0b',
+      '--season-paper-dark':  '#171714',
+      '--season-accent':      '#4a6e4a',
+      '--season-accent-light':'#6a8e6a',
+      '--season-muted':       '#5a5850',
+      '--season-badge-bg':    '#4a6e4a',
+      '--season-badge-text':  '#fff',
+      '--season-like':        '#7a3a28',
+      '--season-ink':         '#dedad0',
+    };
+    for (const [k, v] of Object.entries(dark)) {
+      root.style.setProperty(k, v);
+    }
+    // Force body background directly
+    document.body.style.background = '#0d0d0b';
+    document.body.style.color = '#dedad0';
   } else {
-    // Restore seasonal theme
+    // Clear forced styles and restore seasonal theme
+    document.body.style.background = '';
+    document.body.style.color = '';
     applySeasonTheme();
   }
 }
