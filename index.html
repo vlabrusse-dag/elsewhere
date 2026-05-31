@@ -1035,7 +1035,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.7.1</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.7.3</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -1401,6 +1401,52 @@ async function sbGetTopByQuery(query) {
   );
   if (!res.ok) return [];
   return await res.json();
+}
+
+async function sbGetRelatedLiked(city, country, excludeId, excludeName) {
+  const excludeKey = (excludeName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  function dedup(rows) {
+    const seen = new Set();
+    const out = [];
+    for (const r of rows) {
+      const key = r.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (r.id === excludeId) continue;
+      if (key === excludeKey) continue;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(r);
+      if (out.length >= 3) break;
+    }
+    return out;
+  }
+
+  async function query(filter) {
+    const res = await fetch(
+      SB_URL + '/rest/v1/suggestions?' + filter + '&likes=gt.0&order=likes.desc&limit=15',
+      { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
+    );
+    if (!res.ok) return [];
+    return await res.json();
+  }
+
+  // 1. Same city
+  if (city) {
+    const rows = await query('city=ilike.*' + encodeURIComponent(city) + '*').catch(() => []);
+    const filtered = dedup(rows);
+    if (filtered.length >= 2) return filtered;
+  }
+
+  // 2. Same country
+  if (country) {
+    const rows = await query('country=ilike.*' + encodeURIComponent(country) + '*').catch(() => []);
+    const filtered = dedup(rows);
+    if (filtered.length >= 2) return filtered;
+  }
+
+  // 3. Global top liked
+  const rows = await query('likes=gt.0').catch(() => []);
+  return dedup(rows);
 }
 
 // ── i18n ──────────────────────────────────────────────────────────────────
@@ -2278,7 +2324,15 @@ async function handleSearch() {
       window.history.replaceState({}, '', shareUrl);
     }
 
-    renderResults(query, mainSuggestion, topSuggestions.slice(1, 4));
+    // Get related liked suggestions from same city (smarter "you might also like")
+    const relatedLiked = await sbGetRelatedLiked(
+      mainSuggestion.city || '',
+      mainSuggestion.country || '',
+      mainSuggestion.id,
+      mainSuggestion.name
+    ).catch(() => []);
+
+    renderResults(query, mainSuggestion, relatedLiked);
   } catch(err) {
     const msg = err.rateLimited
       ? err.message
@@ -2493,16 +2547,25 @@ function renderResults(query, main, sbOthers) {
   // Also cards
   const heartSvg = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="10" height="10"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
   let alsoHtml = '';
-  if (others.length > 0) {
-    const cards = others.map(s => `
-      <div class="also-card">
+  if (dedupedOthers !== undefined && false) {
+    // placeholder by normalised name
+  const seenNames = new Set([main.name.toLowerCase().replace(/[^a-z0-9]/g, '')]);
+  const dedupedOthers = others.filter(s => {
+    const key = s.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (seenNames.has(key)) return false;
+    seenNames.add(key);
+    return true;
+  }).slice(0, 3);
+
+  const cards = dedupedOthers.map(s => `
+      <div class="also-card" onclick="loadFavItem('${esc(s.query || '')}','${esc(s.id || '')}')" style="cursor:pointer">
         <div class="also-img-wrap">
           ${s.image ? `<img class="also-img" src="${esc(s.image)}" alt="${esc(s.name)}" loading="lazy" onerror="this.style.display='none'">` : `<div class="also-img-ph"></div>`}
         </div>
         <div class="also-body">
           <p class="also-loc">${esc(s.city)}</p>
           <p class="also-name">${esc(s.name)}</p>
-          <p class="also-likes">${heartSvg} ${s.likes} ${t('likes')}</p>
+          <p class="also-likes">${heartSvg} ${s.likes || 0} ${t('likes')}</p>
         </div>
       </div>`).join('');
     alsoHtml = `<div class="also-section"><p class="also-title">${t('alsoTitle')}</p><div class="also-grid">${cards}</div></div>`;
