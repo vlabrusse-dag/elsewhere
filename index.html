@@ -597,6 +597,22 @@
   }
   .lightbox-close:hover { opacity: 1; }
 
+  /* PARTICLES */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0;
+    font-size: 16px;
+    animation: particle-fall 1.8s ease-out forwards;
+    will-change: transform, opacity;
+  }
+  @keyframes particle-fall {
+    0%   { opacity: 0; transform: translateY(0) rotate(0deg) scale(0.5); }
+    15%  { opacity: 0.9; transform: translateY(-30px) rotate(20deg) scale(1); }
+    100% { opacity: 0; transform: translateY(80px) rotate(120deg) scale(0.6); }
+  }
+
   /* RESPONSIVE */
   @media (max-width: 600px) {
     header { padding: 1rem 1.25rem; }
@@ -1347,6 +1363,12 @@ function renderResults(query, main) {
       </div>
     </div>
     ${alsoHtml}`;
+
+  // Launch seasonal particles after DOM update
+  requestAnimationFrame(function() {
+    const card = document.querySelector('.main-card');
+    if (card) launchParticles(card);
+  });
 }
 
 function handleLike(cardId, queryEnc, nameEnc) {
