@@ -1207,7 +1207,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.0.4</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.0.5</span>
 </footer>
 
 <!-- ACTIVITY FEED PANEL -->
@@ -1740,25 +1740,28 @@ async function sbAddVisit(suggestionId, status) {
 
 async function sbGetRecentActivity(limit) {
   limit = limit || 20;
-  // Get recent likes
+  console.log('[feed] fetching likes...');
   const res = await fetch(
     SB_URL + '/rest/v1/user_likes?order=created_at.desc&limit=' + limit,
     { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
   );
-  if (!res.ok) return [];
+  console.log('[feed] likes status:', res.status);
+  if (!res.ok) { const e = await res.text(); console.warn('[feed] likes error:', e); return []; }
   const likes = await res.json();
+  console.log('[feed] likes count:', likes.length);
   if (!likes.length) return [];
 
-  // Fetch suggestions for those IDs
   const ids = [...new Set(likes.map(l => l.suggestion_id))].join(',');
+  console.log('[feed] fetching suggestions for ids:', ids.slice(0,50));
   const sRes = await fetch(
     SB_URL + '/rest/v1/suggestions?id=in.(' + ids + ')&select=id,name,city,image,query',
     { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
   );
+  console.log('[feed] suggestions status:', sRes.status);
   const suggestions = sRes.ok ? await sRes.json() : [];
+  console.log('[feed] suggestions count:', suggestions.length);
   const sMap = {};
   suggestions.forEach(s => { sMap[s.id] = s; });
-
   return likes.map(l => ({ ...l, suggestions: sMap[l.suggestion_id] || null }));
 }
 
