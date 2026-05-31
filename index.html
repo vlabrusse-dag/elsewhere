@@ -2692,6 +2692,10 @@ async function handleLike(cardId, queryEnc, nameEnc, supabaseId) {
       await sbIncrementLike(supabaseId).catch(() => {});
     }
   }
+  // Refresh favorites panel if open
+  if (document.getElementById('favorites-panel').classList.contains('open')) {
+    loadFavorites();
+  }
 }
 
 function esc(s) {
