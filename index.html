@@ -1393,10 +1393,10 @@ function esc(s) {
 
 // ── SEASONAL PARTICLES ────────────────────────────────────────────────────────
 const SEASON_PARTICLES = {
-  winter:  ['❄','❅','❆','·','·'],
-  spring:  ['✿','❀','·','°','✦'],
-  summer:  ['✦','★','·','✧','°'],
-  autumn:  ['◈','·','❧','°','✦'],
+  winter:  { chars:['❄','❅','❆','·','·'],   colors:['#a8c0d8','#c8dff0','#e0eef8','#7ba8c8','#d0e8f8'] },
+  spring:  { chars:['✿','❀','·','°','✦'],   colors:['#d4a0c0','#e8c0d4','#b07898','#f0d0e0','#c890a8'] },
+  summer:  { chars:['✦','★','·','✧','°'],   colors:['#e8c860','#f0d880','#c8a840','#f8e898','#dab840'] },
+  autumn:  { chars:['◈','·','❧','°','✦'],   colors:['#d4845a','#c06838','#e8a870','#b85030','#f0c090'] },
 };
 
 function getCurrentSeason() {
@@ -1408,46 +1408,61 @@ function getCurrentSeason() {
 function launchParticles(originEl) {
   if (!originEl) return;
   const season = getCurrentSeason();
-  const chars = SEASON_PARTICLES[season];
+  const { chars, colors } = SEASON_PARTICLES[season];
   const rect = originEl.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top + 40;
-  const count = 14;
+  const count = 18;
+
+  // Spread spawn points across the full card width, not just center
+  const spawnPoints = Array.from({ length: count }, (_, i) => ({
+    x: rect.left + (rect.width * (0.1 + Math.random() * 0.8)),
+    y: rect.top + (rect.height * (0.1 + Math.random() * 0.5)),
+  }));
+
+  // Random burst patterns — radial, upward, diagonal, fountain
+  const patterns = [
+    () => ({ angle: Math.random() * 360, dist: 60 + Math.random() * 120 }),
+    () => ({ angle: -90 + (Math.random() - 0.5) * 140, dist: 50 + Math.random() * 100 }),
+    () => ({ angle: (Math.random() > 0.5 ? 1 : -1) * (30 + Math.random() * 60), dist: 70 + Math.random() * 80 }),
+    () => ({ angle: -80 + (Math.random() - 0.5) * 60, dist: 80 + Math.random() * 140 }),
+  ];
 
   for (let i = 0; i < count; i++) {
+    const { x, y } = spawnPoints[i];
     const el = document.createElement('span');
-    el.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;opacity:0;will-change:transform,opacity;';
-    el.textContent = chars[i % chars.length];
-    const size = 10 + Math.random() * 10;
+    const color = colors[i % colors.length];
+    const size = 9 + Math.random() * 9;
+    el.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;opacity:0;will-change:transform,opacity;line-height:1;';
     el.style.fontSize = size + 'px';
-    el.style.left = (cx + (Math.random() - 0.5) * 80) + 'px';
-    el.style.top = cy + 'px';
+    el.style.color = color;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.textContent = chars[Math.floor(Math.random() * chars.length)];
     document.body.appendChild(el);
 
-    const angle = (Math.random() * 260) - 130;
-    const dist = 50 + Math.random() * 100;
-    const rad = angle * Math.PI / 180;
-    const tx = Math.cos(rad) * dist;
-    const ty = Math.sin(rad) * dist - 60;
-    const delay = Math.random() * 400;
-    const dur = 1400 + Math.random() * 800;
+    const pat = patterns[Math.floor(Math.random() * patterns.length)]();
+    const rad = pat.angle * Math.PI / 180;
+    const tx = Math.cos(rad) * pat.dist;
+    const ty = Math.sin(rad) * pat.dist;
+    const delay = Math.random() * 200;       // faster stagger
+    const dur = 800 + Math.random() * 500;  // faster animation
     const rotDir = Math.random() > 0.5 ? 1 : -1;
+    const rotAmt = 80 + Math.random() * 200;
 
-    (function(el, tx, ty, dur, delay, rotDir) {
+    (function(el, tx, ty, dur, delay, rotDir, rotAmt) {
       const startTime = performance.now() + delay;
       function frame(now) {
         const elapsed = now - startTime;
         if (elapsed < 0) { requestAnimationFrame(frame); return; }
         const p = Math.min(elapsed / dur, 1);
         const eased = 1 - Math.pow(1 - p, 2);
-        const opacity = p < 0.2 ? p / 0.2 : 1 - ((p - 0.2) / 0.8);
-        el.style.opacity = Math.max(0, opacity * 0.8);
-        el.style.transform = 'translate(' + (tx*eased) + 'px,' + (ty*eased) + 'px) rotate(' + (eased*160*rotDir) + 'deg) scale(' + (0.5+eased*0.7) + ')';
+        const opacity = p < 0.15 ? p / 0.15 : 1 - ((p - 0.15) / 0.85);
+        el.style.opacity = Math.max(0, opacity * 0.85);
+        el.style.transform = 'translate(' + (tx*eased) + 'px,' + (ty*eased) + 'px) rotate(' + (eased*rotAmt*rotDir) + 'deg) scale(' + (0.4+eased*0.8) + ')';
         if (p < 1) requestAnimationFrame(frame);
         else el.remove();
       }
       requestAnimationFrame(frame);
-    })(el, tx, ty, dur, delay, rotDir);
+    })(el, tx, ty, dur, delay, rotDir, rotAmt);
   }
 }
 
