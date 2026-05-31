@@ -797,6 +797,51 @@
   .fav-city { font-size: 11px; color: var(--muted); }
   .fav-empty { padding: 2rem 0; text-align: center; font-size: 13px; color: var(--muted); line-height: 1.6; }
 
+  /* PLACE OF THE DAY */
+  .dotd-wrap {
+    width: 100%; max-width: 640px; margin: 0 auto 2rem;
+    padding: 0 1.5rem; position: relative; z-index: 1;
+    animation: rise 0.6s ease 0.3s both;
+  }
+  .dotd-card {
+    background: var(--paper-dark); border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 14px 18px;
+    display: flex; align-items: center; gap: 14px; cursor: pointer;
+    transition: box-shadow 0.2s;
+  }
+  .dotd-card:hover { box-shadow: 0 4px 20px rgba(26,26,24,0.08); }
+  .dotd-img {
+    width: 52px; height: 52px; border-radius: var(--radius);
+    object-fit: cover; flex-shrink: 0; background: var(--border);
+  }
+  .dotd-img-ph { width: 52px; height: 52px; border-radius: var(--radius); background: var(--border); flex-shrink: 0; }
+  .dotd-label { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sage); font-weight: 400; margin-bottom: 2px; }
+  .dotd-name { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 400; color: var(--ink); line-height: 1.2; }
+  .dotd-city { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .dotd-arrow { margin-left: auto; color: var(--muted); font-size: 16px; flex-shrink: 0; }
+
+  /* CROWD SCORE */
+  .crowd-score {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--muted); margin-bottom: 10px;
+  }
+  .crowd-score-bars { display: flex; gap: 2px; }
+  .crowd-bar { width: 4px; height: 12px; border-radius: 2px; background: var(--border); }
+  .crowd-bar.filled { background: var(--rust); }
+  .crowd-score.low .crowd-bar.filled { background: var(--sage); }
+  .crowd-score.medium .crowd-bar.filled { background: #c09040; }
+  .crowd-score.high .crowd-bar.filled { background: var(--rust); }
+
+  /* SURPRISE BUTTON */
+  .surprise-btn {
+    background: none; border: 0.5px dashed var(--border);
+    border-radius: 50px; padding: 8px 20px;
+    font-family: 'Cormorant Garamond', serif; font-size: 15px;
+    font-style: italic; color: var(--muted); cursor: pointer;
+    transition: all 0.2s; margin-top: 10px; align-self: center;
+  }
+  .surprise-btn:hover { border-color: var(--sage); color: var(--sage); border-style: solid; }
+
   /* ANOTHER SUGGESTION BUTTON */
   .another-btn {
     display: flex; align-items: center; gap: 8px;
@@ -969,6 +1014,18 @@
     <button class="example-chip" data-place="Big Ben">Big Ben</button>
   </div>
 
+  <div class="dotd-wrap" id="dotd-wrap" style="display:none">
+    <div class="dotd-card" id="dotd-card" onclick="handleDotdClick()">
+      <div class="dotd-img-ph" id="dotd-img-wrap"></div>
+      <div style="flex:1;min-width:0">
+        <p class="dotd-label" id="dotd-label"></p>
+        <p class="dotd-name" id="dotd-name"></p>
+        <p class="dotd-city" id="dotd-city"></p>
+      </div>
+      <span class="dotd-arrow">→</span>
+    </div>
+  </div>
+
   <button class="filters-toggle" id="filters-toggle" onclick="toggleFilters()">
     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
     <span id="txt-filters-btn">Advanced filters</span>
@@ -1035,7 +1092,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.7.4</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.8.0</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -1519,6 +1576,7 @@ const I18N = {
     checkEmail: 'Check your email to confirm your account, then sign in.',
     favNav: 'My favourites', removeFav: 'Remove',
     anotherSuggestion: 'Another suggestion',
+    dotd: 'Place of the day', crowdLabels2: ['Peaceful', 'Busy', 'Very busy', 'Saturated'], surpriseBtn: '✦ Surprise me', surpriseLoading: 'Finding a hidden gem…', crowdLabel2: 'Crowd level',
   },
   fr: {
     eyebrow: 'Slow travel · Lieux secrets',
@@ -1562,6 +1620,7 @@ const I18N = {
     checkEmail: 'Vérifiez votre email pour confirmer votre compte, puis connectez-vous.',
     favNav: 'Mes favoris', removeFav: 'Supprimer',
     anotherSuggestion: 'Autre suggestion',
+    dotd: 'Lieu du jour', crowdLabels2: ['Paisible', 'Fréquenté', 'Très fréquenté', 'Saturé'], surpriseBtn: '✦ Surprends-moi', surpriseLoading: "Recherche d'une pépite…", crowdLabel2: 'Fréquentation',
   },
   es: {
     eyebrow: 'Viaje lento · Joyas ocultas',
@@ -1605,6 +1664,7 @@ const I18N = {
     checkEmail: 'Comprueba tu email para confirmar tu cuenta, luego inicia sesión.',
     favNav: 'Mis favoritos', removeFav: 'Eliminar',
     anotherSuggestion: 'Otra sugerencia',
+    dotd: 'Lugar del día', crowdLabels2: ['Tranquilo', 'Concurrido', 'Muy concurrido', 'Saturado'], surpriseBtn: '✦ Sorpréndeme', surpriseLoading: 'Buscando una joya…', crowdLabel2: 'Afluencia',
   },
   de: {
     eyebrow: 'Langsames Reisen · Versteckte Schätze',
@@ -1648,6 +1708,7 @@ const I18N = {
     checkEmail: 'Prüfe deine E-Mail zur Bestätigung, dann melde dich an.',
     favNav: 'Meine Favoriten', removeFav: 'Entfernen',
     anotherSuggestion: 'Andere Vorschlag',
+    dotd: 'Ort des Tages', crowdLabels2: ['Ruhig', 'Belebt', 'Sehr belebt', 'Überfüllt'], surpriseBtn: '✦ Überrasch mich', surpriseLoading: 'Suche ein Geheimtipp…', crowdLabel2: 'Besucheraufkommen',
   },
   it: {
     eyebrow: 'Viaggio lento · Luoghi nascosti',
@@ -1691,6 +1752,7 @@ const I18N = {
     checkEmail: "Controlla la tua email per confermare l'account, poi accedi.",
     favNav: 'I miei preferiti', removeFav: 'Rimuovi',
     anotherSuggestion: 'Altro suggerimento',
+    dotd: 'Luogo del giorno', crowdLabels2: ['Tranquillo', 'Frequentato', 'Molto frequentato', 'Saturo'], surpriseBtn: '✦ Sorprendimi', surpriseLoading: 'Ricerca di un gioiello…', crowdLabel2: 'Affollamento',
   },
   pt: {
     eyebrow: 'Viagem lenta · Tesouros escondidos',
@@ -1734,6 +1796,7 @@ const I18N = {
     checkEmail: 'Verifique o seu email para confirmar a conta, depois entre.',
     favNav: 'Os meus favoritos', removeFav: 'Remover',
     anotherSuggestion: 'Outra sugestão',
+    dotd: 'Lugar do dia', crowdLabels2: ['Tranquilo', 'Movimentado', 'Muito movimentado', 'Saturado'], surpriseBtn: '✦ Surpreende-me', surpriseLoading: 'À procura de uma joia…', crowdLabel2: 'Afluência',
   },
   ja: {
     eyebrow: 'スローな旅 · 隠れた名所',
@@ -1777,6 +1840,7 @@ const I18N = {
     checkEmail: 'メールを確認してアカウントを認証し、ログインしてください。',
     favNav: 'お気に入り', removeFav: '削除',
     anotherSuggestion: '別の提案',
+    dotd: '今日のスポット', crowdLabels2: ['静か', '混雑', '非常に混雑', '飽和'], surpriseBtn: '✦ サプライズ', surpriseLoading: '隠れた名所を探しています…', crowdLabel2: '混雑度',
   },
   zh: {
     eyebrow: '慢旅行 · 隐藏宝地',
@@ -1820,6 +1884,7 @@ const I18N = {
     checkEmail: '请查看邮箱确认账户，然后登录。',
     favNav: '我的收藏', removeFav: '删除',
     anotherSuggestion: '换一个建议',
+    dotd: '今日地点', crowdLabels2: ['安静', '繁忙', '非常繁忙', '饱和'], surpriseBtn: '✦ 给我惊喜', surpriseLoading: '寻找隐藏宝地…', crowdLabel2: '拥挤程度',
   },
   ar: {
     eyebrow: 'السفر الهادئ · الجواهر الخفية',
@@ -1863,6 +1928,7 @@ const I18N = {
     checkEmail: 'تحقق من بريدك الإلكتروني لتأكيد حسابك، ثم سجّل دخولك.',
     favNav: 'مفضلتي', removeFav: 'إزالة',
     anotherSuggestion: 'اقتراح آخر',
+    dotd: 'مكان اليوم', crowdLabels2: ['هادئ', 'مزدحم', 'مزدحم جداً', 'مشبع'], surpriseBtn: '✦ فاجئني', surpriseLoading: 'البحث عن جوهرة خفية…', crowdLabel2: 'مستوى الازدحام',
   },
   nl: {
     eyebrow: 'Langzaam reizen · Verborgen schatten',
@@ -1906,6 +1972,7 @@ const I18N = {
     checkEmail: 'Controleer je e-mail om je account te bevestigen, en log daarna in.',
     favNav: 'Mijn favorieten', removeFav: 'Verwijderen',
     anotherSuggestion: 'Andere suggestie',
+    dotd: 'Plek van de dag', crowdLabels2: ['Rustig', 'Druk', 'Erg druk', 'Verzadigd'], surpriseBtn: '✦ Verras me', surpriseLoading: 'Op zoek naar een verborgen parel…', crowdLabel2: 'Drukte',
   },
 };
 
@@ -1917,6 +1984,7 @@ function applyLang(lang) {
   currentLang = lang;
   if (typeof updateSeasonLabel === 'function') updateSeasonLabel();
   if (typeof updateFiltersUI === 'function') updateFiltersUI();
+  if (typeof updateSurpriseBtn === 'function') updateSurpriseBtn();
   document.documentElement.lang = lang;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
   document.getElementById('txt-eyebrow').textContent = t('eyebrow');
@@ -2068,6 +2136,7 @@ function applySeasonTheme() {
   root.style.setProperty('--rust', s.like);
   if (typeof updateSeasonLabel === 'function') updateSeasonLabel();
   if (typeof updateFiltersUI === 'function') updateFiltersUI();
+  if (typeof updateSurpriseBtn === 'function') updateSurpriseBtn();
 }
 
 function setHemisphere(north) {
@@ -2484,6 +2553,135 @@ async function fetchAnotherSuggestion(query, excludeName) {
   }
 }
 
+// ── PLACE OF THE DAY ─────────────────────────────────────────────────────────
+async function loadPlaceOfDay() {
+  const today = new Date().toISOString().slice(0, 10);
+  const cached = localStorage.getItem('dotd_' + today);
+  let dotd;
+
+  if (cached) {
+    try { dotd = JSON.parse(cached); } catch(e) {}
+  }
+
+  if (!dotd) {
+    // Ask Claude for a hidden gem of the day based on season
+    const season = getCurrentSeason();
+    const seasonNames = { winter: 'winter', spring: 'spring', summer: 'summer', autumn: 'autumn' };
+    try {
+      const res = await fetch('https://elsewhere-suggest.vlabrusse.workers.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: 'a beautiful hidden gem perfect for ' + seasonNames[season],
+          lang: currentLang,
+          radius: 'region',
+          rarity: 2,
+          isDotd: true,
+        })
+      });
+      if (res.ok) {
+        dotd = await res.json();
+        if (dotd && dotd.name) {
+          localStorage.setItem('dotd_' + today, JSON.stringify(dotd));
+        }
+      }
+    } catch(e) {}
+  }
+
+  if (!dotd || !dotd.name) return;
+
+  const wrap = document.getElementById('dotd-wrap');
+  const label = document.getElementById('dotd-label');
+  const name = document.getElementById('dotd-name');
+  const city = document.getElementById('dotd-city');
+  const imgWrap = document.getElementById('dotd-img-wrap');
+
+  if (label) label.textContent = t('dotd') || 'Place of the day';
+  if (name) name.textContent = dotd.name;
+  if (city) city.textContent = dotd.city + (dotd.country ? ' · ' + dotd.country : '');
+
+  if (dotd.image && imgWrap) {
+    const img = document.createElement('img');
+    img.className = 'dotd-img';
+    img.src = dotd.image;
+    img.alt = dotd.name;
+    img.onerror = function() { this.style.display = 'none'; };
+    imgWrap.replaceWith(img);
+  }
+
+  if (wrap) wrap.style.display = 'block';
+  window._dotd = dotd;
+}
+
+function handleDotdClick() {
+  const dotd = window._dotd;
+  if (!dotd) return;
+  document.getElementById('place-input').value = dotd.name;
+  handleSearch();
+}
+
+// ── CROWD SCORE ───────────────────────────────────────────────────────────────
+function renderCrowdScore(level) {
+  if (!level) return '';
+  const clamped = Math.min(Math.max(level, 1), 4);
+  const classes = ['', 'low', 'low', 'medium', 'high'];
+  const cls = classes[clamped] || 'medium';
+  const labels = t('crowdLabels2') || ['Peaceful','Busy','Very busy','Saturated'];
+  const label = labels[clamped - 1] || '';
+  const bars = [1,2,3,4].map(i =>
+    `<div class="crowd-bar ${i <= clamped ? 'filled' : ''}"></div>`
+  ).join('');
+  return `<div class="crowd-score ${cls}">
+    <div class="crowd-score-bars">${bars}</div>
+    <span>${label}</span>
+  </div>`;
+}
+
+// ── SURPRISE MODE ─────────────────────────────────────────────────────────────
+async function handleSurprise() {
+  const btn = document.getElementById('surprise-btn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
+
+  const season = getCurrentSeason();
+  const seasonQueries = {
+    winter:  ['snowy village Europe', 'medieval castle winter', 'hot spring nature'],
+    spring:  ['flower garden Europe', 'cherry blossom park', 'medieval village spring'],
+    summer:  ['hidden beach Mediterranean', 'mountain viewpoint summer', 'secret lake Europe'],
+    autumn:  ['forest autumn colours', 'wine village France', 'castle autumn Europe'],
+  };
+  const queries = seasonQueries[season] || seasonQueries['spring'];
+  const randomQuery = queries[Math.floor(Math.random() * queries.length)];
+
+  document.getElementById('place-input').value = randomQuery;
+
+  const resultsEl = document.getElementById('results');
+  const inner = document.getElementById('results-inner');
+  resultsEl.style.display = 'block';
+  inner.innerHTML = `<div class="loading-wrap"><div class="loader"></div><p class="loading-txt">${t('surpriseLoading') || 'Finding a hidden gem…'}</p></div>`;
+  window.scrollTo({ top: document.getElementById('hero').offsetHeight - 80, behavior: 'smooth' });
+
+  try {
+    const fetched = await fetchSuggestion(randomQuery);
+    const saved = await sbInsert({ ...fetched, query: randomQuery.toLowerCase(), likes: 0 }).catch(() => null);
+    const suggestion = { ...fetched, id: saved?.id || null, likes: 0, liked: false };
+    upsertSuggestion(randomQuery, suggestion);
+    if (suggestion.id) {
+      window.history.replaceState({}, '', window.location.pathname + '?r=' + suggestion.id);
+    }
+    const related = await sbGetRelatedLiked(suggestion.city || '', suggestion.country || '', suggestion.id, suggestion.name).catch(() => []);
+    renderResults(randomQuery, suggestion, related);
+  } catch(e) {
+    inner.innerHTML = `<div class="error-wrap">${t('errorMsg')}</div>`;
+  }
+
+  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+}
+
+function updateSurpriseBtn() {
+  const btn = document.getElementById('surprise-btn');
+  if (btn) btn.textContent = t('surpriseBtn') || '✦ Surprise me';
+}
+
 function getShareUrl() {
   return window.location.href;
 }
@@ -2597,10 +2795,13 @@ function renderResults(query, main, sbOthers) {
     alsoHtml = `<div class="also-section"><p class="also-title">${t('alsoTitle')}</p><div class="also-grid">${cards}</div></div>`;
   }
 
+  const crowdHtml = main.input_crowd ? renderCrowdScore(main.input_crowd) : '';
+
   inner.innerHTML = `
     <div class="results-header">
       <span class="results-label">${t('altFor')}</span>
       <span class="results-query">${esc(query)}</span>
+      ${crowdHtml}
     </div>
     <div class="main-card">
       <div class="main-img-wrap">
@@ -2793,7 +2994,9 @@ document.getElementById('search-btn').addEventListener('click', handleSearch);
 window.addEventListener('DOMContentLoaded', () => {
   restoreSession();
   updateUserBtn();
+  updateSurpriseBtn();
   loadSharedResult();
+  setTimeout(loadPlaceOfDay, 800);
 });
 
 document.getElementById('auth-email').addEventListener('keydown', e => {
