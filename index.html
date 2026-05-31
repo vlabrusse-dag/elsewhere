@@ -116,11 +116,15 @@
     transition: color 0.2s, background 0.2s;
     text-transform: uppercase;
   }
-  .lang-btn:hover, .lang-btn.active {
+  .lang-btn:hover {
     color: var(--ink);
     background: var(--paper-dark);
   }
-  .lang-btn.active { color: var(--ink); font-weight: 500; }
+  .lang-btn.active {
+    color: var(--ink) !important;
+    background: var(--paper-dark) !important;
+    font-weight: 500;
+  }
 
   /* ── HERO ── */
   .hero {
@@ -535,18 +539,19 @@
 
   /* FILTERS PANEL */
   .filters-toggle {
-    display: flex; align-items: center; gap: 6px;
-    background: none; border: 0.5px solid var(--border);
-    border-radius: 50px; padding: 6px 14px;
-    font-family: 'DM Sans', sans-serif; font-size: 12px;
-    color: var(--muted); cursor: pointer;
-    transition: all 0.2s; margin-top: 10px;
-    align-self: center;
+    display: flex; align-items: center; gap: 7px;
+    background: var(--paper-dark); border: 0.5px solid var(--border);
+    border-radius: 50px; padding: 8px 18px;
+    font-family: 'DM Sans', sans-serif; font-size: 11px;
+    color: var(--muted); cursor: pointer; letter-spacing: 0.04em;
+    transition: all 0.2s; margin-top: 14px;
+    align-self: center; font-weight: 400;
   }
-  .filters-toggle:hover { border-color: var(--sage); color: var(--sage); }
-  .filters-toggle.active { border-color: var(--sage); color: var(--sage); background: rgba(0,0,0,0.03); }
-  .filters-toggle svg { width: 12px; height: 12px; transition: transform 0.2s; }
-  .filters-toggle.active svg { transform: rotate(180deg); }
+  .filters-toggle:hover { border-color: var(--sage); color: var(--sage); background: rgba(0,0,0,0.04); }
+  .filters-toggle.active { border-color: var(--sage); color: var(--sage); background: rgba(0,0,0,0.04); }
+  .filters-toggle .arrow { width: 11px; height: 11px; transition: transform 0.25s; flex-shrink: 0; }
+  .filters-toggle .icon { width: 13px; height: 13px; flex-shrink: 0; }
+  .filters-toggle.active .arrow { transform: rotate(180deg); }
 
   .filters-panel {
     width: 100%; max-width: 560px; align-self: center;
@@ -616,11 +621,12 @@
   .rarity-lbl {
     font-size: 9px; color: var(--muted); letter-spacing: 0.06em;
     text-transform: uppercase; cursor: pointer; transition: color 0.15s;
-    text-align: center; flex: 1;
+    text-align: center; flex: 1; user-select: none;
+    padding: 4px 2px; min-width: 0;
   }
   .rarity-lbl:first-child { text-align: left; }
   .rarity-lbl:last-child { text-align: right; }
-  .rarity-lbl.active { color: var(--sage); font-weight: 500; }
+  .rarity-lbl.active { color: var(--sage) !important; font-weight: 500; }
 
   /* ENRICHED CARD */
   .card-mood {
@@ -719,7 +725,7 @@
 <header>
   <a href="/" class="logo">Else<span>where</span></a>
   <div class="lang-selector" id="lang-selector">
-    <button class="lang-btn active" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="en">EN</button>
     <button class="lang-btn" data-lang="fr">FR</button>
     <button class="lang-btn" data-lang="es">ES</button>
     <button class="lang-btn" data-lang="de">DE</button>
@@ -779,31 +785,31 @@
   </div>
 
   <button class="filters-toggle" id="filters-toggle" onclick="toggleFilters()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
     <span id="txt-filters-btn">Advanced filters</span>
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
   </button>
 
   <div class="filters-panel" id="filters-panel">
     <div class="filter-row">
       <span class="filter-label" id="txt-radius-label">Search radius</span>
       <div class="radius-opts">
-        <label class="radius-opt" id="radius-near" onclick="setRadius('near')">
+        <div class="radius-opt" id="radius-near" onclick="setRadius('near')">
           <span class="radius-opt-icon">🏛</span>
           <span class="radius-opt-text">
             <span class="radius-opt-name" id="txt-radius-near-name">Close</span>
             <span class="radius-opt-desc" id="txt-radius-near-desc">Same city · ≤ 5km</span>
           </span>
           <span class="radius-opt-check"></span>
-        </label>
-        <label class="radius-opt selected" id="radius-region" onclick="setRadius('region')">
+        </div>
+        <div class="radius-opt selected" id="radius-region" onclick="setRadius('region')">
           <span class="radius-opt-icon">🗺</span>
           <span class="radius-opt-text">
             <span class="radius-opt-name" id="txt-radius-region-name">Region</span>
             <span class="radius-opt-desc" id="txt-radius-region-desc">Nearby cities · ≤ 50km</span>
           </span>
           <span class="radius-opt-check"></span>
-        </label>
+        </div>
       </div>
     </div>
 
