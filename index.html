@@ -20,7 +20,33 @@
     --border: rgba(26,26,24,0.12);
     --radius: 4px;
     --radius-lg: 10px;
+    /* Seasonal overrides */
+    --season-paper: #f5f2eb;
+    --season-paper-dark: #ede9df;
+    --season-accent: #7a9e87;
+    --season-accent-light: #b8d4c0;
+    --season-ink: #1a1a18;
+    --season-muted: #8a8578;
+    --season-badge-bg: #7a9e87;
+    --season-badge-text: #fff;
+    --season-like: #b85c3a;
   }
+
+  /* Apply seasonal vars */
+  body {
+    background: var(--season-paper) !important;
+    transition: background 1.2s ease, color 0.8s ease;
+  }
+  .logo span { color: var(--season-accent) !important; }
+  .card-badge { background: var(--season-badge-bg) !important; color: var(--season-badge-text) !important; }
+  .search-field:focus { border-color: var(--season-accent) !important; box-shadow: 0 4px 30px rgba(0,0,0,0.08) !important; }
+  .search-btn:hover { background: var(--season-accent) !important; }
+  .crowd-dot.on { background: var(--season-accent) !important; }
+  .card-chip { background: var(--season-paper-dark) !important; }
+  .like-btn.liked { background: var(--season-like) !important; border-color: var(--season-like) !important; }
+  .example-chip:hover { border-color: var(--season-accent) !important; color: var(--season-accent) !important; background: rgba(0,0,0,0.03) !important; }
+  .hero-eyebrow { color: var(--season-accent) !important; }
+  h1 em { color: var(--season-accent) !important; }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -597,7 +623,7 @@
 
 <footer>
   <span id="txt-footer">Elsewhere — Discover the road less travelled. Fighting overtourism, one hidden gem at a time.</span>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.4;letter-spacing:0.08em;">v3.7.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.4;letter-spacing:0.08em;">v3.8.0</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -823,6 +849,59 @@ document.getElementById('lang-selector').addEventListener('click', e => {
   if (btn) applyLang(btn.dataset.lang);
 });
 
+// ── SEASONAL THEMES ──────────────────────────────────────────────────────────
+const SEASONS = [
+  // Jan — Hiver blanc
+  { paper:'#f0f3f7', paperDark:'#e2e8f0', accent:'#5b7fa6', accentLight:'#a8c0d8', muted:'#7a8898', badgeBg:'#5b7fa6', badgeText:'#fff', like:'#8b4a6b', ink:'#1a1f2e' },
+  // Fév — Hiver tardif
+  { paper:'#f1f0f5', paperDark:'#e4e2ee', accent:'#7b6fa8', accentLight:'#b8b0d4', muted:'#8a8598', badgeBg:'#7b6fa8', badgeText:'#fff', like:'#a05070', ink:'#1e1a2a' },
+  // Mar — Éveil
+  { paper:'#f3f5f0', paperDark:'#e6ebe0', accent:'#6a9470', accentLight:'#aecab2', muted:'#7a8a78', badgeBg:'#6a9470', badgeText:'#fff', like:'#c07040', ink:'#1a221a' },
+  // Avr — Printemps
+  { paper:'#faf3f3', paperDark:'#f0e6e6', accent:'#b07898', accentLight:'#d4b0c4', muted:'#8a7880', badgeBg:'#b07898', badgeText:'#fff', like:'#d47060', ink:'#221a1e' },
+  // Mai — Plein printemps
+  { paper:'#f4f7f0', paperDark:'#e8ede0', accent:'#5a9050', accentLight:'#9ec494', muted:'#728070', badgeBg:'#5a9050', badgeText:'#fff', like:'#c05840', ink:'#182018' },
+  // Juin — Pré-été
+  { paper:'#faf7ec', paperDark:'#f0ebda', accent:'#8a9c50', accentLight:'#c0cc90', muted:'#8a8870', badgeBg:'#8a9c50', badgeText:'#fff', like:'#c06840', ink:'#201e10' },
+  // Juil — Été
+  { paper:'#faf5ec', paperDark:'#f0e8d8', accent:'#c08040', accentLight:'#dab888', muted:'#8a8070', badgeBg:'#c08040', badgeText:'#fff', like:'#b84030', ink:'#241a10' },
+  // Août — Canicule
+  { paper:'#faf2e8', paperDark:'#f0e4d0', accent:'#c06838', accentLight:'#daa882', muted:'#8a7868', badgeBg:'#c06838', badgeText:'#fff', like:'#903030', ink:'#281810' },
+  // Sep — Début automne
+  { paper:'#f8f3ec', paperDark:'#ede4d8', accent:'#b87840', accentLight:'#d8b488', muted:'#887868', badgeBg:'#b87840', badgeText:'#fff', like:'#984838', ink:'#22180e' },
+  // Oct — Automne
+  { paper:'#f7f0ea', paperDark:'#eae0d2', accent:'#a05838', accentLight:'#c89878', muted:'#887060', badgeBg:'#a05838', badgeText:'#fff', like:'#802838', ink:'#201410' },
+  // Nov — Fin automne
+  { paper:'#f2efea', paperDark:'#e4e0d8', accent:'#7a7058', accentLight:'#b0a890', muted:'#807870', badgeBg:'#7a7058', badgeText:'#fff', like:'#804048', ink:'#1c1a16' },
+  // Déc — Hiver
+  { paper:'#f0f2f5', paperDark:'#e2e6ec', accent:'#4a6a8a', accentLight:'#8aaac4', muted:'#788090', badgeBg:'#4a6a8a', badgeText:'#fff', like:'#804868', ink:'#161c24' },
+];
+
+function applySeasonTheme() {
+  const month = new Date().getMonth(); // 0-11
+  const s = SEASONS[month];
+  const root = document.documentElement;
+  root.style.setProperty('--season-paper', s.paper);
+  root.style.setProperty('--season-paper-dark', s.paperDark);
+  root.style.setProperty('--season-accent', s.accent);
+  root.style.setProperty('--season-accent-light', s.accentLight);
+  root.style.setProperty('--season-muted', s.muted);
+  root.style.setProperty('--season-badge-bg', s.badgeBg);
+  root.style.setProperty('--season-badge-text', s.badgeText);
+  root.style.setProperty('--season-like', s.like);
+  root.style.setProperty('--season-ink', s.ink);
+  // Also update paper and paper-dark used throughout
+  root.style.setProperty('--paper', s.paper);
+  root.style.setProperty('--paper-dark', s.paperDark);
+  root.style.setProperty('--sage', s.accent);
+  root.style.setProperty('--sage-light', s.accentLight);
+  root.style.setProperty('--muted', s.muted);
+  root.style.setProperty('--rust', s.like);
+}
+
+applySeasonTheme();
+
+// ── i18n ──────────────────────────────────────────────────────────────────
 // Detect browser language on load
 const browserLang = navigator.language?.slice(0,2);
 if (I18N[browserLang]) applyLang(browserLang);
