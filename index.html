@@ -1051,10 +1051,6 @@
 
 <header>
   <a href="/" class="logo">Else<span>where</span></a>
-  <button class="feed-btn" id="feed-btn" onclick="openFeed()">
-    <div class="feed-live-dot"></div>
-    <span id="txt-feed-btn"></span>
-  </button>
   <div class="lang-selector" id="lang-selector">
     <button class="lang-btn" data-lang="en">EN</button>
     <button class="lang-btn" data-lang="fr">FR</button>
@@ -1068,13 +1064,17 @@
     <button class="lang-btn" data-lang="nl">NL</button>
   </div>
   <div class="header-user">
-    <button class="user-btn" id="user-btn" onclick="handleUserBtn()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-      <span id="user-btn-label"></span>
+    <button class="fav-nav-btn" id="community-btn" onclick="openFeed()" style="display:flex">
+      <div class="feed-live-dot" style="width:6px;height:6px;border-radius:50%;background:var(--sage);animation:pulse 2s infinite;flex-shrink:0"></div>
+      <span id="txt-feed-btn"></span>
     </button>
     <button class="fav-nav-btn" id="fav-nav-btn" onclick="handleFavNav()" style="display:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
       <span id="fav-nav-label"></span>
+    </button>
+    <button class="user-btn" id="user-btn" onclick="handleUserBtn()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span id="user-btn-label"></span>
     </button>
   </div>
 </header>
@@ -1207,7 +1207,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.0.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.0.1</span>
 </footer>
 
 <!-- ACTIVITY FEED PANEL -->
@@ -1696,6 +1696,14 @@ async function sbGetDiscoveredBy(userId) {
   return rows[0]?.username || null;
 }
 
+async function sbRemoveVisit(suggestionId) {
+  if (!currentUser) return;
+  await fetch(
+    SB_URL + '/rest/v1/user_visits?user_id=eq.' + currentUser.id + '&suggestion_id=eq.' + suggestionId,
+    { method: 'DELETE', headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + currentUser.token } }
+  );
+}
+
 async function sbAddVisit(suggestionId, status) {
   if (!currentUser) return;
   await fetch(SB_URL + '/rest/v1/user_visits', {
@@ -1864,8 +1872,19 @@ async function handleVisit(cardId, suggestionIdEnc, status) {
   const suggestionId = decodeURIComponent(suggestionIdEnc);
   if (!suggestionId) return;
   const btn = document.getElementById(cardId + '-' + status);
-  if (btn) btn.classList.add(status);
-  await sbAddVisit(suggestionId, status).catch(() => {});
+  const otherStatus = status === 'visited' ? 'overcrowded' : 'visited';
+  const otherBtn = document.getElementById(cardId + '-' + otherStatus);
+
+  if (btn && btn.classList.contains(status)) {
+    // Toggle off — cancel the visit
+    btn.classList.remove(status);
+    await sbRemoveVisit(suggestionId).catch(() => {});
+  } else {
+    // Toggle on
+    if (btn) btn.classList.add(status);
+    if (otherBtn) otherBtn.classList.remove(otherStatus);
+    await sbAddVisit(suggestionId, status).catch(() => {});
+  }
 }
 
 async function loadDiscoveredBy(suggestionId, elementId) {
@@ -2034,7 +2053,7 @@ const I18N = {
     visitedBtn: 'I visited this ✓',
     overcrowdedBtn: 'Too crowded now ✗',
     discoveredBy: 'Discovered by',
-    feedTitle: 'Exploring now',
+    feedTitle: 'Community',
     feedEmpty: 'No activity yet — be the first explorer!',
     submitPlace: 'Suggest a hidden gem',
     submitName: 'Place name',
@@ -2099,7 +2118,7 @@ const I18N = {
     visitedBtn: "J'y suis allé ✓",
     overcrowdedBtn: 'Trop fréquenté ✗',
     discoveredBy: 'Découvert par',
-    feedTitle: 'La communauté explore',
+    feedTitle: 'Communauté',
     feedEmpty: "Pas encore d'activité — soyez le premier explorateur !",
     submitPlace: 'Proposer un lieu secret',
     submitName: 'Nom du lieu',
@@ -2164,7 +2183,7 @@ const I18N = {
     visitedBtn: 'Estuve aquí ✓',
     overcrowdedBtn: 'Demasiado concurrido ✗',
     discoveredBy: 'Descubierto por',
-    feedTitle: 'Explorando ahora',
+    feedTitle: 'Comunidad',
     feedEmpty: 'Sin actividad aún.',
     submitPlace: 'Proponer un lugar secreto',
     submitName: 'Nombre del lugar',
@@ -2229,7 +2248,7 @@ const I18N = {
     visitedBtn: 'War ich ✓',
     overcrowdedBtn: 'Zu überfüllt ✗',
     discoveredBy: 'Entdeckt von',
-    feedTitle: 'Gerade erkundet',
+    feedTitle: 'Community',
     feedEmpty: 'Noch keine Aktivität.',
     submitPlace: 'Geheimtipp vorschlagen',
     submitName: 'Ortsname',
@@ -2286,7 +2305,7 @@ const I18N = {
     favNav: 'I miei preferiti', removeFav: 'Rimuovi',
     anotherSuggestion: 'Altro suggerimento',
     dotd: 'Luogo del giorno', crowdLabels2: ['Tranquillo', 'Frequentato', 'Molto frequentato', 'Saturo'], surpriseBtn: '✦ Sorprendimi', surpriseLoading: 'Ricerca di un gioiello…', crowdLabel2: 'Affollamento',
-    chooseUsername: 'Scegli un nome utente', usernamePlaceholder: 'es. esploratore_roma', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'Ci sono stato ✓', overcrowdedBtn: 'Troppo affollato ✗', discoveredBy: 'Scoperto da', feedTitle: 'La comunità esplora', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
+    chooseUsername: 'Scegli un nome utente', usernamePlaceholder: 'es. esploratore_roma', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'Ci sono stato ✓', overcrowdedBtn: 'Troppo affollato ✗', discoveredBy: 'Scoperto da', feedTitle: 'Community', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
   },
   pt: {
     eyebrow: 'Viagem lenta · Tesouros escondidos',
@@ -2331,7 +2350,7 @@ const I18N = {
     favNav: 'Os meus favoritos', removeFav: 'Remover',
     anotherSuggestion: 'Outra sugestão',
     dotd: 'Lugar do dia', crowdLabels2: ['Tranquilo', 'Movimentado', 'Muito movimentado', 'Saturado'], surpriseBtn: '✦ Surpreende-me', surpriseLoading: 'À procura de uma joia…', crowdLabel2: 'Afluência',
-    chooseUsername: 'Escolha um nome de utilizador', usernamePlaceholder: 'ex. explorador_lisboa', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'Estive lá ✓', overcrowdedBtn: 'Demasiado cheio ✗', discoveredBy: 'Descoberto por', feedTitle: 'A comunidade explora', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
+    chooseUsername: 'Escolha um nome de utilizador', usernamePlaceholder: 'ex. explorador_lisboa', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'Estive lá ✓', overcrowdedBtn: 'Demasiado cheio ✗', discoveredBy: 'Descoberto por', feedTitle: 'Comunidade', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
   },
   ja: {
     eyebrow: 'スローな旅 · 隠れた名所',
@@ -2376,7 +2395,7 @@ const I18N = {
     favNav: 'お気に入り', removeFav: '削除',
     anotherSuggestion: '別の提案',
     dotd: '今日のスポット', crowdLabels2: ['静か', '混雑', '非常に混雑', '飽和'], surpriseBtn: '✦ サプライズ', surpriseLoading: '隠れた名所を探しています…', crowdLabel2: '混雑度',
-    chooseUsername: 'ユーザー名を選択', usernamePlaceholder: '例: explorer_tokyo', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: '行ってきた ✓', overcrowdedBtn: '混んでいる ✗', discoveredBy: '発見者', feedTitle: 'コミュニティが探索中', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
+    chooseUsername: 'ユーザー名を選択', usernamePlaceholder: '例: explorer_tokyo', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: '行ってきた ✓', overcrowdedBtn: '混んでいる ✗', discoveredBy: '発見者', feedTitle: 'コミュニティ', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
   },
   zh: {
     eyebrow: '慢旅行 · 隐藏宝地',
@@ -2421,7 +2440,7 @@ const I18N = {
     favNav: '我的收藏', removeFav: '删除',
     anotherSuggestion: '换一个建议',
     dotd: '今日地点', crowdLabels2: ['安静', '繁忙', '非常繁忙', '饱和'], surpriseBtn: '✦ 给我惊喜', surpriseLoading: '寻找隐藏宝地…', crowdLabel2: '拥挤程度',
-    chooseUsername: '选择用户名', usernamePlaceholder: '例如: 探索者_北京', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: '我去过 ✓', overcrowdedBtn: '太拥挤了 ✗', discoveredBy: '发现者', feedTitle: '社区正在探索', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
+    chooseUsername: '选择用户名', usernamePlaceholder: '例如: 探索者_北京', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: '我去过 ✓', overcrowdedBtn: '太拥挤了 ✗', discoveredBy: '发现者', feedTitle: '社区', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
   },
   ar: {
     eyebrow: 'السفر الهادئ · الجواهر الخفية',
@@ -2466,7 +2485,7 @@ const I18N = {
     favNav: 'مفضلتي', removeFav: 'إزالة',
     anotherSuggestion: 'اقتراح آخر',
     dotd: 'مكان اليوم', crowdLabels2: ['هادئ', 'مزدحم', 'مزدحم جداً', 'مشبع'], surpriseBtn: '✦ فاجئني', surpriseLoading: 'البحث عن جوهرة خفية…', crowdLabel2: 'مستوى الازدحام',
-    chooseUsername: 'اختر اسم مستخدم', usernamePlaceholder: 'مثال: مستكشف_القاهرة', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'زرته ✓', overcrowdedBtn: 'مزدحم جداً ✗', discoveredBy: 'اكتشفه', feedTitle: 'المجتمع يستكشف', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
+    chooseUsername: 'اختر اسم مستخدم', usernamePlaceholder: 'مثال: مستكشف_القاهرة', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'زرته ✓', overcrowdedBtn: 'مزدحم جداً ✗', discoveredBy: 'اكتشفه', feedTitle: 'المجتمع', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
   },
   nl: {
     eyebrow: 'Langzaam reizen · Verborgen schatten',
@@ -2511,7 +2530,7 @@ const I18N = {
     favNav: 'Mijn favorieten', removeFav: 'Verwijderen',
     anotherSuggestion: 'Andere suggestie',
     dotd: 'Plek van de dag', crowdLabels2: ['Rustig', 'Druk', 'Erg druk', 'Verzadigd'], surpriseBtn: '✦ Verras me', surpriseLoading: 'Op zoek naar een verborgen parel…', crowdLabel2: 'Drukte',
-    chooseUsername: 'Kies een gebruikersnaam', usernamePlaceholder: 'bijv. ontdekker_amsterdam', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'Ik was er ✓', overcrowdedBtn: 'Te druk nu ✗', discoveredBy: 'Ontdekt door', feedTitle: 'De gemeenschap verkent', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
+    chooseUsername: 'Kies een gebruikersnaam', usernamePlaceholder: 'bijv. ontdekker_amsterdam', usernameLabel: 'Username', usernameHelper: '...', usernameError: '...', visitedBtn: 'Ik was er ✓', overcrowdedBtn: 'Te druk nu ✗', discoveredBy: 'Ontdekt door', feedTitle: 'Community', feedEmpty: '...', submitPlace: '...', submitName: '...', submitCity: '...', submitCountry: '...', submitWhy: '...', submitBtn: '...', submitSuccess: '...', profileTitle: '...', explorerScore: '...', countries: '...', editProfile: '...',
   },
 };
 
@@ -3460,8 +3479,8 @@ async function handleLike(cardId, queryEnc, nameEnc, supabaseId) {
     if (count) count.textContent = newCount;
     if (entry) { entry.liked = true; entry.likes = newCount; }
     if (supabaseId) {
-      await sbAddLike(currentUser.token, currentUser.id, supabaseId).catch(() => {});
-      await sbIncrementLike(supabaseId).catch(() => {});
+      const likeOk = await sbAddLike(currentUser.token, currentUser.id, supabaseId).catch(() => false);
+      if (likeOk) await sbIncrementLike(supabaseId).catch(() => {});
     }
   }
   // Refresh favorites panel if open
