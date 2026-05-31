@@ -533,6 +533,95 @@
   .sb-hbtn.on { background: var(--muted); color: var(--paper); border-color: var(--muted); }
   .sb-hbtn:hover:not(.on) { border-color: var(--sage); color: var(--sage); }
 
+  /* FILTERS PANEL */
+  .filters-toggle {
+    display: flex; align-items: center; gap: 6px;
+    background: none; border: 0.5px solid var(--border);
+    border-radius: 50px; padding: 6px 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 12px;
+    color: var(--muted); cursor: pointer;
+    transition: all 0.2s; margin-top: 10px;
+    align-self: center;
+  }
+  .filters-toggle:hover { border-color: var(--sage); color: var(--sage); }
+  .filters-toggle.active { border-color: var(--sage); color: var(--sage); background: rgba(0,0,0,0.03); }
+  .filters-toggle svg { width: 12px; height: 12px; transition: transform 0.2s; }
+  .filters-toggle.active svg { transform: rotate(180deg); }
+
+  .filters-panel {
+    width: 100%; max-width: 560px; align-self: center;
+    background: #fff; border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1.25rem 1.5rem;
+    margin-top: 8px; display: none;
+    animation: rise 0.2s ease both;
+    box-shadow: 0 4px 24px rgba(26,26,24,0.06);
+  }
+  .filters-panel.open { display: block; }
+
+  .filter-row { margin-bottom: 1.1rem; }
+  .filter-row:last-child { margin-bottom: 0; }
+  .filter-label {
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); font-weight: 400; margin-bottom: 10px;
+    display: block;
+  }
+
+  /* Radius options */
+  .radius-opts { display: flex; gap: 8px; }
+  .radius-opt {
+    flex: 1; display: flex; align-items: center; gap: 8px;
+    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+    padding: 10px 14px; cursor: pointer; transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .radius-opt:hover { border-color: var(--sage); }
+  .radius-opt.selected { border-color: var(--sage); background: rgba(0,0,0,0.02); }
+  .radius-opt input { display: none; }
+  .radius-opt-icon { font-size: 18px; line-height: 1; }
+  .radius-opt-text { display: flex; flex-direction: column; }
+  .radius-opt-name { font-size: 13px; color: var(--ink); font-weight: 400; }
+  .radius-opt-desc { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .radius-opt-check {
+    margin-left: auto; width: 16px; height: 16px; border-radius: 50%;
+    border: 1.5px solid var(--border); display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0; transition: all 0.15s;
+  }
+  .radius-opt.selected .radius-opt-check {
+    background: var(--sage); border-color: var(--sage);
+  }
+  .radius-opt.selected .radius-opt-check::after {
+    content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fff;
+  }
+
+  /* Rarity slider */
+  .rarity-wrap { position: relative; padding-bottom: 22px; }
+  .rarity-track {
+    height: 4px; background: var(--paper-dark); border-radius: 50px;
+    position: relative; cursor: pointer;
+  }
+  .rarity-fill {
+    height: 100%; border-radius: 50px; background: var(--sage);
+    transition: width 0.2s;
+  }
+  .rarity-thumb {
+    position: absolute; top: 50%; width: 18px; height: 18px;
+    border-radius: 50%; background: #fff; border: 2px solid var(--sage);
+    transform: translate(-50%, -50%); cursor: grab; transition: left 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .rarity-labels {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between;
+  }
+  .rarity-lbl {
+    font-size: 9px; color: var(--muted); letter-spacing: 0.06em;
+    text-transform: uppercase; cursor: pointer; transition: color 0.15s;
+    text-align: center; flex: 1;
+  }
+  .rarity-lbl:first-child { text-align: left; }
+  .rarity-lbl:last-child { text-align: right; }
+  .rarity-lbl.active { color: var(--sage); font-weight: 500; }
+
   /* ENRICHED CARD */
   .card-mood {
     position: absolute; bottom: 14px; left: 14px;
@@ -688,6 +777,52 @@
     <button class="example-chip" data-place="Trevi Fountain">Trevi Fountain</button>
     <button class="example-chip" data-place="Big Ben">Big Ben</button>
   </div>
+
+  <button class="filters-toggle" id="filters-toggle" onclick="toggleFilters()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+    <span id="txt-filters-btn">Advanced filters</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+
+  <div class="filters-panel" id="filters-panel">
+    <div class="filter-row">
+      <span class="filter-label" id="txt-radius-label">Search radius</span>
+      <div class="radius-opts">
+        <label class="radius-opt" id="radius-near" onclick="setRadius('near')">
+          <span class="radius-opt-icon">🏛</span>
+          <span class="radius-opt-text">
+            <span class="radius-opt-name" id="txt-radius-near-name">Close</span>
+            <span class="radius-opt-desc" id="txt-radius-near-desc">Same city · ≤ 5km</span>
+          </span>
+          <span class="radius-opt-check"></span>
+        </label>
+        <label class="radius-opt selected" id="radius-region" onclick="setRadius('region')">
+          <span class="radius-opt-icon">🗺</span>
+          <span class="radius-opt-text">
+            <span class="radius-opt-name" id="txt-radius-region-name">Region</span>
+            <span class="radius-opt-desc" id="txt-radius-region-desc">Nearby cities · ≤ 50km</span>
+          </span>
+          <span class="radius-opt-check"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <span class="filter-label" id="txt-rarity-label">Rarity level</span>
+      <div class="rarity-wrap">
+        <div class="rarity-track" id="rarity-track" onclick="handleRarityClick(event)">
+          <div class="rarity-fill" id="rarity-fill" style="width:33%"></div>
+          <div class="rarity-thumb" id="rarity-thumb" style="left:33%"></div>
+        </div>
+        <div class="rarity-labels">
+          <span class="rarity-lbl" id="rl-0" onclick="setRarity(0)"></span>
+          <span class="rarity-lbl active" id="rl-1" onclick="setRarity(1)"></span>
+          <span class="rarity-lbl" id="rl-2" onclick="setRarity(2)"></span>
+          <span class="rarity-lbl" id="rl-3" onclick="setRarity(3)"></span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- RESULTS -->
@@ -738,6 +873,14 @@ const I18N = {
     mapsLink: 'Maps', wikiLink: 'Wikipedia', crowdLabels: ['','Very rare','Rare','Quiet','Moderate','Busy'],
     errorMsg: 'Something went wrong. Please try again.',
     notAPlace: 'Hmm, we searched high and low… but that doesn\'t seem to be a place. Try a landmark, a city, or anywhere humans actually go.',
+    filtersBtn: 'Advanced filters',
+    radiusLabel: 'Search radius',
+    nearName: 'Close', nearDesc: 'Same city · ≤ 5km',
+    regionName: 'Region', regionDesc: 'Nearby cities · ≤ 50km',
+    rarityLabel: 'Rarity level',
+    rarityLevels: ['Discreet', 'Confidential', 'Secret', 'Unexplored'],
+    examplesNear: ['Eiffel Tower', 'Colosseum', 'Sagrada Família', 'Trevi Fountain', 'Big Ben'],
+    examplesRegion: ['Paris', 'Rome', 'Barcelona', 'London', 'Kyoto'],
   },
   fr: {
     eyebrow: 'Slow travel · Lieux secrets',
@@ -757,6 +900,14 @@ const I18N = {
     mapsLink: 'Maps', wikiLink: 'Wikipédia', crowdLabels: ['','Très rare','Rare','Calme','Modérée','Animé'],
     errorMsg: 'Une erreur est survenue. Réessayez.',
     notAPlace: 'Hm… on a cherché partout, mais ça ne ressemble pas vraiment à un lieu. Essayez un monument, une ville, ou n\'importe où où les humains se rendent.',
+    filtersBtn: 'Filtres avancés',
+    radiusLabel: 'Rayon de recherche',
+    nearName: 'Proche', nearDesc: 'Même ville · ≤ 5km',
+    regionName: 'Région', regionDesc: 'Villes voisines · ≤ 50km',
+    rarityLabel: 'Niveau de rareté',
+    rarityLevels: ['Discret', 'Confidentiel', 'Secret', 'Inexploré'],
+    examplesNear: ['Tour Eiffel', 'Louvre', 'Notre-Dame', 'Sacré-Cœur', 'Versailles'],
+    examplesRegion: ['Paris', 'Lyon', 'Bordeaux', 'Marseille', 'Nantes'],
   },
   es: {
     eyebrow: 'Viaje lento · Joyas ocultas',
@@ -776,6 +927,14 @@ const I18N = {
     mapsLink: 'Maps', wikiLink: 'Wikipedia', crowdLabels: ['','Muy raro','Raro','Tranquilo','Moderado','Animado'],
     errorMsg: 'Algo salió mal. Por favor, inténtalo de nuevo.',
     notAPlace: 'Mmm… hemos buscado por todas partes, pero eso no parece un lugar. Prueba con un monumento, una ciudad, o cualquier sitio donde vaya la gente.',
+    filtersBtn: 'Filtros avanzados',
+    radiusLabel: 'Radio de búsqueda',
+    nearName: 'Cerca', nearDesc: 'Misma ciudad · ≤ 5km',
+    regionName: 'Región', regionDesc: 'Ciudades cercanas · ≤ 50km',
+    rarityLabel: 'Nivel de rareza',
+    rarityLevels: ['Discreto', 'Confidencial', 'Secreto', 'Inexplorado'],
+    examplesNear: ['Sagrada Família', 'Coliseo', 'Alhambra', 'Prado', 'Guggenheim'],
+    examplesRegion: ['Barcelona', 'Madrid', 'Sevilla', 'Valencia', 'Bilbao'],
   },
   de: {
     eyebrow: 'Langsames Reisen · Versteckte Schätze',
@@ -795,6 +954,14 @@ const I18N = {
     mapsLink: 'Maps', wikiLink: 'Wikipedia', crowdLabels: ['','Sehr selten','Selten','Ruhig','Moderat','Belebt'],
     errorMsg: 'Etwas ist schiefgelaufen. Bitte versuche es erneut.',
     notAPlace: 'Hm… wir haben überall gesucht, aber das scheint kein Ort zu sein. Versuch es mit einem Denkmal, einer Stadt oder irgendwo, wo Menschen hingehen.',
+    filtersBtn: 'Erweiterte Filter',
+    radiusLabel: 'Suchradius',
+    nearName: 'Nah', nearDesc: 'Gleiche Stadt · ≤ 5km',
+    regionName: 'Region', regionDesc: 'Nahe Städte · ≤ 50km',
+    rarityLabel: 'Seltenheitsgrad',
+    rarityLevels: ['Diskret', 'Vertraulich', 'Geheim', 'Unerforscht'],
+    examplesNear: ['Brandenburger Tor', 'Kölner Dom', 'Neuschwanstein', 'Reichstag', 'Pergamonmuseum'],
+    examplesRegion: ['Berlin', 'München', 'Hamburg', 'Köln', 'Frankfurt'],
   },
   it: {
     eyebrow: 'Viaggio lento · Luoghi nascosti',
@@ -814,6 +981,14 @@ const I18N = {
     mapsLink: 'Maps', wikiLink: 'Wikipedia', crowdLabels: ['','Rarissimo','Raro','Tranquillo','Moderato','Affollato'],
     errorMsg: 'Qualcosa è andato storto. Riprova.',
     notAPlace: 'Hmm… abbiamo cercato ovunque, ma questo non sembra un luogo. Prova con un monumento, una città, o qualsiasi posto frequentato dagli umani.',
+    filtersBtn: 'Filtri avanzati',
+    radiusLabel: 'Raggio di ricerca',
+    nearName: 'Vicino', nearDesc: 'Stessa città · ≤ 5km',
+    regionName: 'Regione', regionDesc: 'Città vicine · ≤ 50km',
+    rarityLabel: 'Livello di rarità',
+    rarityLevels: ['Discreto', 'Riservato', 'Segreto', 'Inesplorato'],
+    examplesNear: ['Colosseo', 'Fontana di Trevi', 'Uffizi', 'Canal Grande', 'Duomo'],
+    examplesRegion: ['Roma', 'Firenze', 'Venezia', 'Milano', 'Napoli'],
   },
   pt: {
     eyebrow: 'Viagem lenta · Tesouros escondidos',
@@ -833,6 +1008,14 @@ const I18N = {
     mapsLink: 'Maps', wikiLink: 'Wikipédia', crowdLabels: ['','Muito raro','Raro','Calmo','Moderado','Animado'],
     errorMsg: 'Algo correu mal. Por favor tente novamente.',
     notAPlace: 'Hmm… procurámos em todo o lado, mas isso não parece um lugar. Tente um monumento, uma cidade, ou qualquer sítio onde as pessoas vão.',
+    filtersBtn: 'Filtros avançados',
+    radiusLabel: 'Raio de pesquisa',
+    nearName: 'Perto', nearDesc: 'Mesma cidade · ≤ 5km',
+    regionName: 'Região', regionDesc: 'Cidades próximas · ≤ 50km',
+    rarityLabel: 'Nível de raridade',
+    rarityLevels: ['Discreto', 'Confidencial', 'Secreto', 'Inexplorado'],
+    examplesNear: ['Torre de Belém', 'Coliseu', 'Sagrada Família', 'Cristo Redentor', 'Castelo'],
+    examplesRegion: ['Lisboa', 'Porto', 'Sintra', 'Rio de Janeiro', 'São Paulo'],
   },
   ja: {
     eyebrow: 'スローな旅 · 隠れた名所',
@@ -852,6 +1035,14 @@ const I18N = {
     mapsLink: 'マップ', wikiLink: 'Wikipedia', crowdLabels: ['','極めて希少','希少','静か','普通','混雑'],
     errorMsg: 'エラーが発生しました。もう一度お試しください。',
     notAPlace: 'うーん…どこを探しても見つかりませんでした。それは場所ではないようです。観光地、都市名、または人が訪れる場所を入力してください。',
+    filtersBtn: '詳細フィルター',
+    radiusLabel: '検索範囲',
+    nearName: '近く', nearDesc: '同じ市内 · ≤ 5km',
+    regionName: '地域', regionDesc: '近隣都市 · ≤ 50km',
+    rarityLabel: '希少度',
+    rarityLevels: ['ひそか', '非公開', '秘密', '未踏'],
+    examplesNear: ['東京タワー', '浅草寺', '清水寺', '金閣寺', '姫路城'],
+    examplesRegion: ['東京', '京都', '大阪', '奈良', '鎌倉'],
   },
   zh: {
     eyebrow: '慢旅行 · 隐藏宝地',
@@ -871,6 +1062,14 @@ const I18N = {
     mapsLink: '地图', wikiLink: '维基百科', crowdLabels: ['','极为罕见','罕见','安静','适中','拥挤'],
     errorMsg: '出了点问题，请重试。',
     notAPlace: '嗯……我们找遍了每个角落，但这似乎不是一个地方。请输入景点、城市或任何人们会去的地方。',
+    filtersBtn: '高级筛选',
+    radiusLabel: '搜索范围',
+    nearName: '附近', nearDesc: '同城 · ≤ 5km',
+    regionName: '地区', regionDesc: '周边城市 · ≤ 50km',
+    rarityLabel: '稀有程度',
+    rarityLevels: ['低调', '私密', '秘密', '未探索'],
+    examplesNear: ['长城', '故宫', '天坛', '外滩', '西湖'],
+    examplesRegion: ['北京', '上海', '杭州', '成都', '西安'],
   },
   ar: {
     eyebrow: 'السفر الهادئ · الجواهر الخفية',
@@ -890,6 +1089,14 @@ const I18N = {
     mapsLink: 'الخرائط', wikiLink: 'ويكيبيديا', crowdLabels: ['','نادر جداً','نادر','هادئ','متوسط','مزدحم'],
     errorMsg: 'حدث خطأ ما. يرجى المحاولة مرة أخرى.',
     notAPlace: 'همم… بحثنا في كل مكان، لكن هذا لا يبدو مكاناً. جرّب معلماً سياحياً أو مدينة أو أي مكان يزوره البشر.',
+    filtersBtn: 'فلاتر متقدمة',
+    radiusLabel: 'نطاق البحث',
+    nearName: 'قريب', nearDesc: 'نفس المدينة · ≤ 5km',
+    regionName: 'منطقة', regionDesc: 'مدن قريبة · ≤ 50km',
+    rarityLabel: 'مستوى الندرة',
+    rarityLevels: ['خفي', 'سري', 'مخفي', 'مجهول'],
+    examplesNear: ['الأهرامات', 'برج إيفل', 'الكولوسيوم', 'تاج محل', 'الأقصر'],
+    examplesRegion: ['القاهرة', 'مراكش', 'دبي', 'إسطنبول', 'بيروت'],
   },
   nl: {
     eyebrow: 'Langzaam reizen · Verborgen schatten',
@@ -909,6 +1116,14 @@ const I18N = {
     mapsLink: 'Maps', wikiLink: 'Wikipedia', crowdLabels: ['','Zeer zeldzaam','Zeldzaam','Rustig','Matig','Druk'],
     errorMsg: 'Er is iets misgegaan. Probeer het opnieuw.',
     notAPlace: 'Hmm… we hebben overal gezocht, maar dit lijkt geen plek te zijn. Probeer een bezienswaardigheid, een stad, of ergens waar mensen naartoe gaan.',
+    filtersBtn: 'Geavanceerde filters',
+    radiusLabel: 'Zoekradius',
+    nearName: 'Dichtbij', nearDesc: 'Zelfde stad · ≤ 5km',
+    regionName: 'Regio', regionDesc: 'Nabijgelegen steden · ≤ 50km',
+    rarityLabel: 'Zeldzaamheidsniveau',
+    rarityLevels: ['Discreet', 'Vertrouwelijk', 'Geheim', 'Onontdekt'],
+    examplesNear: ['Eiffeltoren', 'Colosseum', 'Sagrada Família', 'Trevi Fontein', 'Big Ben'],
+    examplesRegion: ['Amsterdam', 'Rotterdam', 'Utrecht', 'Den Haag', 'Brugge'],
   },
 };
 
@@ -919,6 +1134,7 @@ function t(key) { return I18N[currentLang]?.[key] ?? I18N['en'][key]; }
 function applyLang(lang) {
   currentLang = lang;
   if (typeof updateSeasonLabel === 'function') updateSeasonLabel();
+  if (typeof updateFiltersUI === 'function') updateFiltersUI();
   document.documentElement.lang = lang;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
   document.getElementById('txt-eyebrow').textContent = t('eyebrow');
@@ -1069,6 +1285,7 @@ function applySeasonTheme() {
   root.style.setProperty('--muted', s.muted);
   root.style.setProperty('--rust', s.like);
   if (typeof updateSeasonLabel === 'function') updateSeasonLabel();
+  if (typeof updateFiltersUI === 'function') updateFiltersUI();
 }
 
 function setHemisphere(north) {
@@ -1088,6 +1305,93 @@ applySeasonTheme();
 const browserLang = navigator.language?.slice(0,2);
 if (I18N[browserLang]) applyLang(browserLang);
 else applyLang('en');
+updateFiltersUI();
+
+// ── FILTER STATE ─────────────────────────────────────────────────────────────
+let filterRadius = 'region'; // 'near' | 'region'
+let filterRarity = 1; // 0=Discreet 1=Confidential 2=Secret 3=Unexplored
+
+const RARITY_PROMPT = [
+  'slightly less visited than the famous original — a good alternative that locals appreciate',
+  'genuinely off the beaten path — not in mainstream travel guides, rarely visited by tourists',
+  'truly hidden — a local secret, almost unknown outside the immediate area',
+  'ultra-rare and mysterious — almost nobody goes there, it may take effort to find or access',
+];
+
+const RADIUS_PROMPT = {
+  near: 'Maximum 5km from the original place. Must be in the same city or immediate surroundings.',
+  region: 'Within 50km of the original. Can suggest nearby towns or villages in the same region.',
+};
+
+function toggleFilters() {
+  const panel = document.getElementById('filters-panel');
+  const btn = document.getElementById('filters-toggle');
+  panel.classList.toggle('open');
+  btn.classList.toggle('active');
+}
+
+function setRadius(val) {
+  filterRadius = val;
+  document.getElementById('radius-near').classList.toggle('selected', val === 'near');
+  document.getElementById('radius-region').classList.toggle('selected', val === 'region');
+  updateExampleChips();
+}
+
+function setRarity(idx) {
+  filterRarity = idx;
+  updateRarityUI();
+}
+
+function handleRarityClick(e) {
+  const track = document.getElementById('rarity-track');
+  const rect = track.getBoundingClientRect();
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  setRarity(Math.round(pct * 3));
+}
+
+function updateRarityUI() {
+  const pct = (filterRarity / 3) * 100;
+  const fill = document.getElementById('rarity-fill');
+  const thumb = document.getElementById('rarity-thumb');
+  if (fill) fill.style.width = pct + '%';
+  if (thumb) thumb.style.left = pct + '%';
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById('rl-' + i);
+    if (el) el.classList.toggle('active', i === filterRarity);
+  }
+}
+
+function updateExampleChips() {
+  const row = document.getElementById('examples-row');
+  if (!row) return;
+  const examples = filterRadius === 'near'
+    ? (t('examplesNear') || ['Eiffel Tower', 'Colosseum', 'Sagrada Família', 'Trevi Fountain', 'Big Ben'])
+    : (t('examplesRegion') || ['Paris', 'Rome', 'Barcelona', 'London', 'Kyoto']);
+  const chips = row.querySelectorAll('.example-chip');
+  chips.forEach((chip, i) => {
+    if (examples[i]) {
+      chip.dataset.place = examples[i];
+      chip.textContent = examples[i];
+    }
+  });
+}
+
+function updateFiltersUI() {
+  const keys = ['txt-filters-btn','txt-radius-label','txt-radius-near-name','txt-radius-near-desc',
+                 'txt-radius-region-name','txt-radius-region-desc','txt-rarity-label'];
+  const tkeys = ['filtersBtn','radiusLabel','nearName','nearDesc','regionName','regionDesc','rarityLabel'];
+  keys.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = t(tkeys[i]) || el.textContent;
+  });
+  const levels = t('rarityLevels') || ['Discreet','Confidential','Secret','Unexplored'];
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById('rl-' + i);
+    if (el) el.textContent = levels[i];
+  }
+  updateExampleChips();
+  updateRarityUI();
+}
 
 // ── IN-MEMORY STORE (replace with Google Sheets API in production) ─────────
 // Structure: { normalizedQuery: [ { name, city, why, image, google, likes } ] }
@@ -1139,7 +1443,13 @@ async function fetchSuggestion(query) {
   const res = await fetch('https://elsewhere-suggest.vlabrusse.workers.dev', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, contextHint, lang: currentLang })
+    body: JSON.stringify({
+      query,
+      contextHint,
+      lang: currentLang,
+      radius: filterRadius,
+      rarity: filterRarity,
+    })
   });
 
   if (!res.ok) {
