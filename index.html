@@ -627,6 +627,9 @@
   .rarity-lbl:first-child { text-align: left; }
   .rarity-lbl:last-child { text-align: right; }
   .rarity-lbl.active { color: var(--sage) !important; font-weight: 500; }
+  .rarity-lbl-mystery { color: var(--muted); }
+  .rarity-lbl-mystery.active { color: #5a7a5a !important; }
+  body.mode-unexplored .rarity-lbl-mystery.active { color: #7a9a7a !important; }
 
   /* ENRICHED CARD */
   .card-mood {
@@ -691,6 +694,59 @@
     background: none; border: none; line-height: 1;
   }
   .lightbox-close:hover { opacity: 1; }
+
+  /* DARK MODE — Inexploré */
+  body.mode-unexplored {
+    --ink: #e8e4dc;
+    --paper: #0e0e0c;
+    --paper-dark: #1a1a16;
+    --muted: #6a6860;
+    --border: rgba(232,228,220,0.1);
+    --sage: #5a7a5a;
+    --rust: #8a4a30;
+  }
+  body.mode-unexplored header {
+    background: rgba(14,14,12,0.92);
+    border-bottom-color: rgba(232,228,220,0.08);
+  }
+  body.mode-unexplored .search-field {
+    background: #1a1a16;
+    color: var(--ink);
+    border-color: rgba(232,228,220,0.15);
+  }
+  body.mode-unexplored .search-field::placeholder { color: #4a4a44; }
+  body.mode-unexplored .search-btn {
+    background: #2a2a24;
+    color: #9a9a88;
+  }
+  body.mode-unexplored .search-btn:hover { background: #5a7a5a; color: #fff; }
+  body.mode-unexplored .main-card,
+  body.mode-unexplored .also-card,
+  body.mode-unexplored .filters-panel {
+    background: #141412;
+    border-color: rgba(232,228,220,0.08);
+  }
+  body.mode-unexplored .info-cell { background: #1e1e1a; }
+  body.mode-unexplored .card-chip { background: #1e1e1a; }
+  body.mode-unexplored .like-btn { border-color: rgba(232,228,220,0.15); }
+  body.mode-unexplored .filters-toggle { background: #1a1a16; border-color: rgba(232,228,220,0.15); }
+  body.mode-unexplored .radius-opt { border-color: rgba(232,228,220,0.12); }
+  body.mode-unexplored .radius-opt.selected { border-color: #5a7a5a; }
+  body.mode-unexplored .rarity-track { background: #2a2a24; }
+  body.mode-unexplored footer { border-top-color: rgba(232,228,220,0.08); }
+  body.mode-unexplored .example-chip { border-color: rgba(232,228,220,0.12); }
+
+  /* Fog overlay for unexplored */
+  body.mode-unexplored::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(90,122,90,0.04) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  body, header, .search-field, .main-card, .also-card, .filters-panel, .info-cell, footer {
+    transition: background 0.6s ease, border-color 0.4s ease, color 0.4s ease;
+  }
 
   /* PARTICLES */
   .particle {
@@ -824,7 +880,7 @@
           <span class="rarity-lbl" id="rl-0" onclick="setRarity(0)"></span>
           <span class="rarity-lbl active" id="rl-1" onclick="setRarity(1)"></span>
           <span class="rarity-lbl" id="rl-2" onclick="setRarity(2)"></span>
-          <span class="rarity-lbl" id="rl-3" onclick="setRarity(3)"></span>
+          <span class="rarity-lbl rarity-lbl-mystery" id="rl-3" onclick="setRarity(3)"></span>
         </div>
       </div>
     </div>
@@ -850,7 +906,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.0.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.1.0</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -1346,6 +1402,26 @@ function setRadius(val) {
 function setRarity(idx) {
   filterRarity = idx;
   updateRarityUI();
+  applyRarityMode();
+}
+
+function applyRarityMode() {
+  const isUnexplored = filterRarity === 3;
+  document.body.classList.toggle('mode-unexplored', isUnexplored);
+  // Override seasonal palette with dark theme when unexplored
+  if (isUnexplored) {
+    const root = document.documentElement;
+    root.style.setProperty('--paper', '#0e0e0c');
+    root.style.setProperty('--paper-dark', '#1a1a16');
+    root.style.setProperty('--sage', '#5a7a5a');
+    root.style.setProperty('--muted', '#6a6860');
+    root.style.setProperty('--rust', '#8a4a30');
+    root.style.setProperty('--ink', '#e8e4dc');
+    root.style.setProperty('--border', 'rgba(232,228,220,0.1)');
+  } else {
+    // Restore seasonal theme
+    applySeasonTheme();
+  }
 }
 
 function handleRarityClick(e) {
@@ -1353,6 +1429,7 @@ function handleRarityClick(e) {
   const rect = track.getBoundingClientRect();
   const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
   setRarity(Math.round(pct * 3));
+  e.stopPropagation();
 }
 
 function updateRarityUI() {
