@@ -797,6 +797,20 @@
   .fav-city { font-size: 11px; color: var(--muted); }
   .fav-empty { padding: 2rem 0; text-align: center; font-size: 13px; color: var(--muted); line-height: 1.6; }
 
+  /* ANOTHER SUGGESTION BUTTON */
+  .another-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: none; border: 0.5px solid var(--border);
+    border-radius: 50px; padding: 8px 18px;
+    font-family: 'DM Sans', sans-serif; font-size: 12px;
+    color: var(--muted); cursor: pointer; transition: all 0.2s;
+    margin: 0 auto 1.5rem; width: fit-content;
+  }
+  .another-btn:hover { border-color: var(--sage); color: var(--sage); }
+  .another-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .another-btn svg { width: 13px; height: 13px; transition: transform 0.4s; }
+  .another-btn:hover svg { transform: rotate(180deg); }
+
   /* SHARE BUTTONS */
   .share-wrap { display: flex; align-items: center; gap: 6px; }
   .share-btn {
@@ -1021,7 +1035,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.6.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v4.7.0</span>
 </footer>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -1432,6 +1446,7 @@ const I18N = {
     orSignIn: 'Already have an account?',
     checkEmail: 'Check your email to confirm your account, then sign in.',
     favNav: 'My favourites', removeFav: 'Remove',
+    anotherSuggestion: 'Another suggestion',
   },
   fr: {
     eyebrow: 'Slow travel · Lieux secrets',
@@ -1474,6 +1489,7 @@ const I18N = {
     orSignIn: 'Déjà un compte ?',
     checkEmail: 'Vérifiez votre email pour confirmer votre compte, puis connectez-vous.',
     favNav: 'Mes favoris', removeFav: 'Supprimer',
+    anotherSuggestion: 'Autre suggestion',
   },
   es: {
     eyebrow: 'Viaje lento · Joyas ocultas',
@@ -1516,6 +1532,7 @@ const I18N = {
     orSignIn: '¿Ya tienes cuenta?',
     checkEmail: 'Comprueba tu email para confirmar tu cuenta, luego inicia sesión.',
     favNav: 'Mis favoritos', removeFav: 'Eliminar',
+    anotherSuggestion: 'Otra sugerencia',
   },
   de: {
     eyebrow: 'Langsames Reisen · Versteckte Schätze',
@@ -1558,6 +1575,7 @@ const I18N = {
     orSignIn: 'Bereits ein Konto?',
     checkEmail: 'Prüfe deine E-Mail zur Bestätigung, dann melde dich an.',
     favNav: 'Meine Favoriten', removeFav: 'Entfernen',
+    anotherSuggestion: 'Andere Vorschlag',
   },
   it: {
     eyebrow: 'Viaggio lento · Luoghi nascosti',
@@ -1600,6 +1618,7 @@ const I18N = {
     orSignIn: 'Hai già un account?',
     checkEmail: "Controlla la tua email per confermare l'account, poi accedi.",
     favNav: 'I miei preferiti', removeFav: 'Rimuovi',
+    anotherSuggestion: 'Altro suggerimento',
   },
   pt: {
     eyebrow: 'Viagem lenta · Tesouros escondidos',
@@ -1642,6 +1661,7 @@ const I18N = {
     orSignIn: 'Já tem conta?',
     checkEmail: 'Verifique o seu email para confirmar a conta, depois entre.',
     favNav: 'Os meus favoritos', removeFav: 'Remover',
+    anotherSuggestion: 'Outra sugestão',
   },
   ja: {
     eyebrow: 'スローな旅 · 隠れた名所',
@@ -1684,6 +1704,7 @@ const I18N = {
     orSignIn: 'すでにアカウントをお持ちの方',
     checkEmail: 'メールを確認してアカウントを認証し、ログインしてください。',
     favNav: 'お気に入り', removeFav: '削除',
+    anotherSuggestion: '別の提案',
   },
   zh: {
     eyebrow: '慢旅行 · 隐藏宝地',
@@ -1726,6 +1747,7 @@ const I18N = {
     orSignIn: '已有账户？',
     checkEmail: '请查看邮箱确认账户，然后登录。',
     favNav: '我的收藏', removeFav: '删除',
+    anotherSuggestion: '换一个建议',
   },
   ar: {
     eyebrow: 'السفر الهادئ · الجواهر الخفية',
@@ -1768,6 +1790,7 @@ const I18N = {
     orSignIn: 'لديك حساب بالفعل؟',
     checkEmail: 'تحقق من بريدك الإلكتروني لتأكيد حسابك، ثم سجّل دخولك.',
     favNav: 'مفضلتي', removeFav: 'إزالة',
+    anotherSuggestion: 'اقتراح آخر',
   },
   nl: {
     eyebrow: 'Langzaam reizen · Verborgen schatten',
@@ -1810,6 +1833,7 @@ const I18N = {
     orSignIn: 'Al een account?',
     checkEmail: 'Controleer je e-mail om je account te bevestigen, en log daarna in.',
     favNav: 'Mijn favorieten', removeFav: 'Verwijderen',
+    anotherSuggestion: 'Andere suggestie',
   },
 };
 
@@ -2315,6 +2339,62 @@ function crowdText(level) {
   return labels[Math.min(Math.max(level || 1, 1), 5)] || '';
 }
 
+async function fetchAnotherSuggestion(query, excludeName) {
+  const btn = document.getElementById('another-btn');
+  if (btn) btn.disabled = true;
+
+  const inner = document.getElementById('results-inner');
+  const currentCard = document.querySelector('.main-card');
+  if (currentCard) {
+    currentCard.style.opacity = '0.4';
+    currentCard.style.transition = 'opacity 0.3s';
+  }
+
+  try {
+    const res = await fetch('https://elsewhere-suggest.vlabrusse.workers.dev', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query,
+        lang: currentLang,
+        radius: filterRadius,
+        rarity: filterRarity,
+        contextHint: excludeName,
+      })
+    });
+
+    if (res.status === 429) {
+      const data = await res.json().catch(() => ({}));
+      const wait = data.retryAfter ? data.retryAfter + 's' : 'a moment';
+      const err = new Error(`Too many searches. Please wait ${wait}.`);
+      err.rateLimited = true;
+      throw err;
+    }
+    if (res.status === 422) {
+      const data = await res.json().catch(() => ({}));
+      const err = new Error(data.message || '');
+      err.notAPlace = true;
+      throw err;
+    }
+    if (!res.ok) throw new Error('API error ' + res.status);
+
+    const fetched = await res.json();
+    const saved = await sbInsert({ ...fetched, query: query.toLowerCase(), likes: 0 }).catch(() => null);
+    const suggestion = { ...fetched, id: saved?.id || null, likes: 0, liked: false };
+    upsertSuggestion(query, suggestion);
+
+    if (suggestion.id) {
+      window.history.replaceState({}, '', window.location.pathname + '?r=' + suggestion.id);
+    }
+
+    const topSuggestions = await sbGetTopByQuery(query).catch(() => []);
+    renderResults(query, suggestion, topSuggestions.filter(s => s.id !== suggestion.id).slice(0, 3));
+  } catch(err) {
+    if (currentCard) { currentCard.style.opacity = '1'; }
+    if (btn) btn.disabled = false;
+  }
+}
+
 function getShareUrl() {
   return window.location.href;
 }
@@ -2461,7 +2541,13 @@ function renderResults(query, main, sbOthers) {
         </div>
       </div>
     </div>
-    ${alsoHtml}`;
+    ${alsoHtml}
+    <div style="text-align:center;padding-top:0.5rem">
+      <button class="another-btn" id="another-btn" onclick="fetchAnotherSuggestion('${esc(query)}', '${esc(main.name)}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+        <span>${t('anotherSuggestion')}</span>
+      </button>
+    </div>`;
 
   // Launch seasonal particles after DOM update
   requestAnimationFrame(function() {
