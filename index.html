@@ -89,12 +89,13 @@
   .header-user { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; }
   .fav-nav-btn {
     display: flex; align-items: center; gap: 6px;
-    background: none; border: 1px solid var(--border);
+    background: none; border: 1px solid rgba(255,255,255,0.2);
     border-radius: 2px; padding: 4px 12px;
     font-family: 'Inconsolata', monospace; font-size: 11px;
-    color: var(--muted); cursor: pointer; transition: all 0.15s;
+    color: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.15s;
+    letter-spacing: 0.08em;
   }
-  .fav-nav-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .fav-nav-btn:hover { border-color: var(--paper); color: var(--paper); }
   .fav-nav-btn svg { width: 12px; height: 12px; fill: var(--rust); stroke: var(--rust); }
 
   .logo {
@@ -105,7 +106,7 @@
     color: var(--ink);
     text-decoration: none;
   }
-  .logo span { color: var(--rust); font-style: italic; }
+  .logo span { color: var(--rust); }
 
   .lang-selector {
     display: flex;
@@ -755,17 +756,17 @@
   /* USER BUTTON in header */
   .user-btn {
     display: flex; align-items: center; gap: 6px;
-    background: var(--ink); border: 1px solid var(--ink);
+    background: none; border: 1px solid var(--ink);
     border-radius: 2px; padding: 6px 16px;
     font-family: 'Inconsolata', monospace; font-size: 11px;
     letter-spacing: 0.06em;
-    color: var(--paper); cursor: pointer; transition: all 0.2s;
+    color: var(--ink); cursor: pointer; transition: all 0.2s;
     white-space: nowrap;
   }
-  .user-btn:hover { background: var(--rust); border-color: var(--rust); }
-  .user-btn svg { width: 13px; height: 13px; stroke: var(--paper); }
-  .user-btn.signed-in { background: var(--sage); border-color: var(--sage); }
-  .user-btn.signed-in svg { stroke: #fff; }
+  .user-btn:hover { background: var(--ink); color: var(--paper); }
+  .user-btn svg { width: 13px; height: 13px; stroke: var(--ink); }
+  .user-btn.signed-in { background: var(--ink); color: var(--paper); }
+  .user-btn.signed-in svg { stroke: var(--paper); }
 
   /* FAVORITES PANEL */
   .favorites-panel {
@@ -846,13 +847,14 @@
   /* ANOTHER SUGGESTION BUTTON */
   .another-btn {
     display: flex; align-items: center; gap: 8px;
-    background: none; border: 0.5px solid var(--border);
-    border-radius: 50px; padding: 8px 18px;
-    font-family: 'DM Sans', sans-serif; font-size: 12px;
-    color: var(--muted); cursor: pointer; transition: all 0.2s;
+    background: none; border: 1.5px dashed var(--muted);
+    border-radius: 0; padding: 8px 20px;
+    font-family: 'Libre Baskerville', serif; font-size: 13px;
+    font-style: italic;
+    color: var(--muted); cursor: pointer; transition: all 0.15s;
     margin: 0 auto 1.5rem; width: fit-content;
   }
-  .another-btn:hover { border-color: var(--sage); color: var(--sage); }
+  .another-btn:hover { border-color: var(--ink); color: var(--ink); border-style: solid; }
   .another-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .another-btn svg { width: 13px; height: 13px; transition: transform 0.4s; }
   .another-btn:hover svg { transform: rotate(180deg); }
@@ -861,14 +863,14 @@
   .share-wrap { display: flex; align-items: center; gap: 6px; }
   .share-btn {
     display: flex; align-items: center; justify-content: center;
-    width: 32px; height: 32px; border-radius: 50%;
-    border: 0.5px solid var(--border); background: none;
+    width: 32px; height: 32px; border-radius: 0;
+    border: 1.5px solid var(--border); background: none;
     cursor: pointer; transition: all 0.15s; color: var(--muted);
     text-decoration: none;
   }
-  .share-btn:hover { border-color: var(--sage); color: var(--sage); background: rgba(0,0,0,0.03); }
+  .share-btn:hover { border-color: var(--ink); color: var(--ink); }
   .share-btn svg { width: 14px; height: 14px; }
-  .share-btn.copy-btn { font-size: 11px; width: auto; padding: 0 10px; border-radius: 50px; gap: 5px; }
+  .share-btn.copy-btn { font-size: 10px; width: auto; padding: 0 10px; border-radius: 0; gap: 5px; letter-spacing: 0.08em; font-family: 'Inconsolata', monospace; text-transform: uppercase; }
   .share-btn.copy-btn.success { border-color: var(--sage); color: var(--sage); }
 
   /* HOMEPAGE VISUAL */
@@ -878,21 +880,25 @@
 
   /* Big DOTD */
   .dotd-big {
-    max-width: 720px; margin: 0 auto 3rem;
+    max-width: 720px; margin: 0 auto 2rem;
     padding: 0 1.5rem; position: relative; z-index: 1;
   }
   .dotd-big-label {
-    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--sage); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+    font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Inconsolata', monospace;
   }
-  .dotd-big-label::before { content: ''; display: block; width: 24px; height: 0.5px; background: var(--sage); }
+  .dotd-big-label::before, .dotd-big-label::after {
+    content: ''; display: block; height: 0.5px; background: var(--border); flex: 1;
+  }
   .dotd-big-card {
-    border-radius: 12px; overflow: hidden; cursor: pointer;
-    position: relative; aspect-ratio: 16/7; background: var(--paper-dark);
-    box-shadow: 0 8px 40px rgba(26,26,24,0.12);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 0; overflow: hidden; cursor: pointer;
+    position: relative; aspect-ratio: 16/7; background: var(--ink);
+    border: 2px solid var(--ink);
+    transition: opacity 0.2s;
   }
-  .dotd-big-card:hover { transform: translateY(-2px); box-shadow: 0 12px 50px rgba(26,26,24,0.18); }
+  .dotd-big-card:hover { opacity: 0.92; }
   .dotd-big-img {
     width: 100%; height: 100%; object-fit: cover;
     transition: transform 0.6s ease;
@@ -911,13 +917,13 @@
   .dotd-big-city { font-size: 13px; color: rgba(255,255,255,0.75); margin-bottom: 14px; }
   .dotd-big-btn {
     display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
-    border: 0.5px solid rgba(255,255,255,0.3); border-radius: 50px;
-    padding: 8px 18px; font-family: 'DM Sans', sans-serif;
-    font-size: 12px; color: #fff; cursor: pointer;
-    transition: background 0.2s; width: fit-content;
+    background: var(--rust); border: none; border-radius: 0;
+    padding: 8px 20px; font-family: 'Inconsolata', monospace;
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #fff; cursor: pointer;
+    transition: opacity 0.15s; width: fit-content;
   }
-  .dotd-big-btn:hover { background: rgba(255,255,255,0.25); }
+  .dotd-big-btn:hover { opacity: 0.85; }
 
   /* Community grid */
   .community-section {
@@ -929,8 +935,8 @@
     margin-bottom: 16px;
   }
   .community-title {
-    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--muted);
+    font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--muted); font-family: 'Inconsolata', monospace;
   }
   .community-line { flex: 1; height: 0.5px; background: var(--border); }
   .community-grid {
@@ -938,11 +944,12 @@
   }
   @media (max-width: 600px) { .community-grid { grid-template-columns: repeat(2, 1fr); } }
   .community-card {
-    border-radius: var(--radius-lg); overflow: hidden; cursor: pointer;
+    border-radius: 0; overflow: hidden; cursor: pointer;
     position: relative; aspect-ratio: 3/4; background: var(--paper-dark);
-    transition: transform 0.25s ease;
+    border: 1.5px solid var(--ink);
+    transition: opacity 0.15s;
   }
-  .community-card:hover { transform: translateY(-3px); }
+  .community-card:hover { opacity: 0.85; }
   .community-card-img { width: 100%; height: 100%; object-fit: cover; }
   .community-card-overlay {
     position: absolute; inset: 0;
@@ -973,13 +980,14 @@
   .visit-btns { display: flex; gap: 8px; padding-top: 10px; border-top: 0.5px solid var(--border); }
   .visit-btn {
     flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-    background: none; border: 0.5px solid var(--border); border-radius: 50px;
-    padding: 7px 10px; font-family: 'DM Sans', sans-serif; font-size: 11px;
+    background: none; border: 1.5px solid var(--border); border-radius: 0;
+    padding: 7px 10px; font-family: 'Inconsolata', monospace; font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--muted); cursor: pointer; transition: all 0.15s;
   }
-  .visit-btn:hover { border-color: var(--sage); color: var(--sage); }
-  .visit-btn.visited { background: rgba(122,158,135,0.1); border-color: var(--sage); color: var(--sage); }
-  .visit-btn.overcrowded { background: rgba(184,92,58,0.08); border-color: var(--rust); color: var(--rust); }
+  .visit-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .visit-btn.visited { border-color: var(--sage); color: var(--sage); background: rgba(107,158,107,0.08); }
+  .visit-btn.overcrowded { border-color: var(--rust); color: var(--rust); background: rgba(200,90,122,0.08); }
 
   /* Discovered by */
   .discovered-by {
@@ -1170,56 +1178,39 @@
 
 <!-- SVG Compass rose background -->
 <div class="hero" id="hero">
-  <svg class="compass-bg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="100" cy="100" r="95" stroke="#1a1a18" stroke-width="0.5"/>
-    <circle cx="100" cy="100" r="70" stroke="#1a1a18" stroke-width="0.3"/>
-    <circle cx="100" cy="100" r="45" stroke="#1a1a18" stroke-width="0.3"/>
-    <circle cx="100" cy="100" r="4" fill="#1a1a18"/>
-    <line x1="100" y1="5" x2="100" y2="195" stroke="#1a1a18" stroke-width="0.3"/>
-    <line x1="5" y1="100" x2="195" y2="100" stroke="#1a1a18" stroke-width="0.3"/>
-    <line x1="29" y1="29" x2="171" y2="171" stroke="#1a1a18" stroke-width="0.2"/>
-    <line x1="171" y1="29" x2="29" y2="171" stroke="#1a1a18" stroke-width="0.2"/>
-    <polygon points="100,8 104,32 100,28 96,32" fill="#1a1a18"/>
-    <polygon points="100,192 104,168 100,172 96,168" fill="#1a1a18" opacity="0.4"/>
-    <polygon points="8,100 32,96 28,100 32,104" fill="#1a1a18" opacity="0.4"/>
-    <polygon points="192,100 168,96 172,100 168,104" fill="#1a1a18" opacity="0.4"/>
-    <text x="100" y="18" text-anchor="middle" font-size="7" fill="#1a1a18" font-family="serif">N</text>
-    <text x="100" y="188" text-anchor="middle" font-size="5" fill="#1a1a18" font-family="serif" opacity="0.5">S</text>
-    <text x="185" y="103" text-anchor="middle" font-size="5" fill="#1a1a18" font-family="serif" opacity="0.5">E</text>
-    <text x="15" y="103" text-anchor="middle" font-size="5" fill="#1a1a18" font-family="serif" opacity="0.5">W</text>
-  </svg>
+  <!-- Left column: text + search -->
+  <div class="hero-left">
+    <p class="hero-eyebrow" id="txt-eyebrow">Slow travel · Lieux cachés · Anti-overtourism</p>
+    <h1 id="txt-h1">The road<br/><em>less travelled</em></h1>
+    <p class="hero-sub" id="txt-sub">Enter a famous landmark. Discover a hidden gem nearby — just as beautiful, without the crowds.</p>
 
-  <p class="hero-eyebrow" id="txt-eyebrow">Slow travel · Hidden gems</p>
-  <h1 id="txt-h1">The road<br/><em>less travelled</em></h1>
-  <p class="hero-sub" id="txt-sub">Enter a famous landmark. Discover a hidden gem nearby — just as beautiful, without the crowds.</p>
+    <div class="search-wrap">
+      <input
+        type="text"
+        id="place-input"
+        class="search-field"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button class="search-btn" id="search-btn">
+        <span id="txt-btn">Discover →</span>
+      </button>
+    </div>
+    <button class="surprise-btn" id="surprise-btn" onclick="handleSurprise()"></button>
 
-  <div class="search-wrap">
-    <input
-      type="text"
-      id="place-input"
-      class="search-field"
-      autocomplete="off"
-      spellcheck="false"
-    />
-    <button class="search-btn" id="search-btn" >
-      <span id="txt-btn">Discover →</span>
+    <div class="examples" id="examples-row">
+      <button class="example-chip" data-place="Eiffel Tower">Eiffel Tower</button>
+      <button class="example-chip" data-place="Colosseum">Colosseum</button>
+      <button class="example-chip" data-place="Sagrada Família">Sagrada Família</button>
+      <button class="example-chip" data-place="Trevi Fountain">Trevi Fountain</button>
+      <button class="example-chip" data-place="Big Ben">Big Ben</button>
+    </div>
+
+    <button class="filters-toggle" id="filters-toggle" onclick="toggleFilters()">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+      <span id="txt-filters-btn">Advanced filters</span>
+      <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
     </button>
-  </div>
-  <button class="surprise-btn" id="surprise-btn" onclick="handleSurprise()"></button>
-
-  <div class="examples" id="examples-row">
-    <button class="example-chip" data-place="Eiffel Tower">Eiffel Tower</button>
-    <button class="example-chip" data-place="Colosseum">Colosseum</button>
-    <button class="example-chip" data-place="Sagrada Família">Sagrada Família</button>
-    <button class="example-chip" data-place="Trevi Fountain">Trevi Fountain</button>
-    <button class="example-chip" data-place="Big Ben">Big Ben</button>
-  </div>
-
-  <button class="filters-toggle" id="filters-toggle" onclick="toggleFilters()">
-    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
-    <span id="txt-filters-btn">Advanced filters</span>
-    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-  </button>
 
   <div class="filters-panel" id="filters-panel">
     <div class="filter-row">
@@ -1260,6 +1251,39 @@
       </div>
     </div>
   </div>
+  </div><!-- end hero-left -->
+
+  <!-- Right column: naive illustration -->
+  <div class="hero-right" id="hero-illustration">
+    <svg width="280" height="380" viewBox="0 0 280 380" fill="none">
+      <rect width="280" height="380" fill="#EDE8DC"/>
+      <circle cx="220" cy="55" r="30" fill="#F2C94C" opacity="0.85"/>
+      <line x1="220" y1="14" x2="220" y2="5" stroke="#F2C94C" stroke-width="2" stroke-linecap="round"/>
+      <line x1="252" y1="25" x2="258" y2="18" stroke="#F2C94C" stroke-width="2" stroke-linecap="round"/>
+      <line x1="262" y1="55" x2="270" y2="55" stroke="#F2C94C" stroke-width="2" stroke-linecap="round"/>
+      <ellipse cx="140" cy="310" rx="170" ry="80" fill="#6B9E6B"/>
+      <ellipse cx="60" cy="325" rx="110" ry="65" fill="#4A7A4A"/>
+      <ellipse cx="240" cy="330" rx="95" ry="60" fill="#5A8A5A"/>
+      <rect x="95" y="175" width="90" height="105" fill="#C4855A"/>
+      <polygon points="140,110 95,175 185,175" fill="#B87050"/>
+      <rect x="127" y="128" width="26" height="4" fill="#FAF6EE" opacity="0.4"/>
+      <line x1="140" y1="105" x2="140" y2="130" stroke="#FAF6EE" stroke-width="1.5" opacity="0.4"/>
+      <rect x="122" y="240" width="36" height="40" rx="18" fill="#7A4A2A"/>
+      <rect x="100" y="192" width="18" height="22" rx="9" fill="#F2C94C" opacity="0.7"/>
+      <rect x="162" y="192" width="18" height="22" rx="9" fill="#F2C94C" opacity="0.7"/>
+      <rect x="48" y="228" width="9" height="50" fill="#4A3020"/>
+      <circle cx="53" cy="216" r="25" fill="#3A6A3A"/>
+      <rect x="208" y="234" width="9" height="44" fill="#4A3020"/>
+      <circle cx="213" cy="222" r="20" fill="#4A7A4A"/>
+      <path d="M50 92 Q56 86 63 92" stroke="#999" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M72 76 Q78 70 85 76" stroke="#999" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <circle cx="82" cy="298" r="5" fill="#C85A7A"/>
+      <circle cx="185" cy="295" r="4" fill="#F2C94C"/>
+      <circle cx="215" cy="300" r="5" fill="#C85A7A"/>
+      <circle cx="115" cy="302" r="3" fill="#F2C94C"/>
+    </svg>
+  </div>
+
 </div>
 
 <!-- HOMEPAGE VISUAL SECTIONS -->
@@ -1314,7 +1338,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.2.0</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.3.0</span>
 </footer>
 
 <!-- ACTIVITY FEED PANEL -->
