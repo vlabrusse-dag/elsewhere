@@ -7,29 +7,29 @@
 <meta name="description" content="Enter a famous tourist spot. We suggest a hidden gem nearby." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inconsolata:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --ink: #1a1a18;
-    --paper: #f5f2eb;
-    --paper-dark: #ede9df;
-    --sage: #7a9e87;
-    --sage-light: #b8d4c0;
-    --rust: #b85c3a;
-    --muted: #8a8578;
-    --border: rgba(26,26,24,0.12);
-    --radius: 4px;
-    --radius-lg: 10px;
+    --ink: #1C1C1C;
+    --paper: #FAF6EE;
+    --paper-dark: #EDE8DC;
+    --sage: #6B9E6B;
+    --sage-light: #A8C8A8;
+    --rust: #C85A7A;
+    --muted: #888070;
+    --border: rgba(28,28,28,0.15);
+    --radius: 2px;
+    --radius-lg: 3px;
     /* Seasonal overrides */
-    --season-paper: #f5f2eb;
-    --season-paper-dark: #ede9df;
-    --season-accent: #7a9e87;
-    --season-accent-light: #b8d4c0;
-    --season-ink: #1a1a18;
-    --season-muted: #8a8578;
-    --season-badge-bg: #7a9e87;
-    --season-badge-text: #fff;
-    --season-like: #b85c3a;
+    --season-paper: #FAF6EE;
+    --season-paper-dark: #EDE8DC;
+    --season-accent: #6B9E6B;
+    --season-accent-light: #A8C8A8;
+    --season-ink: #1C1C1C;
+    --season-muted: #888070;
+    --season-badge-bg: #1C1C1C;
+    --season-badge-text: #FAF6EE;
+    --season-like: #C85A7A;
   }
 
   /* Apply seasonal vars */
@@ -39,12 +39,12 @@
   }
   .logo span { color: var(--season-accent) !important; }
   .card-badge { background: var(--season-badge-bg) !important; color: var(--season-badge-text) !important; }
-  .search-field:focus { border-color: var(--season-accent) !important; box-shadow: 0 4px 30px rgba(0,0,0,0.08) !important; }
+  .search-field:focus { border-color: var(--season-accent) !important; }
   .search-btn:hover { background: var(--season-accent) !important; }
   .crowd-dot.on { background: var(--season-accent) !important; }
   .card-chip { background: var(--season-paper-dark) !important; }
   .like-btn.liked { background: var(--season-like) !important; border-color: var(--season-like) !important; }
-  .example-chip:hover { border-color: var(--season-accent) !important; color: var(--season-accent) !important; background: rgba(0,0,0,0.03) !important; }
+  .example-chip:hover { border-color: var(--season-accent) !important; color: var(--season-accent) !important; }
   .hero-eyebrow { color: var(--season-accent) !important; }
   h1 em { color: var(--season-accent) !important; }
 
@@ -55,8 +55,8 @@
   body {
     background: var(--paper);
     color: var(--ink);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
+    font-family: 'Inconsolata', monospace;
+    font-weight: 400;
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -80,34 +80,32 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.25rem 2.5rem;
-    background: rgba(245,242,235,0.88);
-    backdrop-filter: blur(12px);
-    border-bottom: 0.5px solid var(--border);
+    padding: 1rem 2rem;
+    background: var(--paper);
+    border-bottom: 1px solid var(--ink);
+    gap: 12px;
   }
 
-  header { gap: 12px; }
   .header-user { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; }
   .fav-nav-btn {
     display: flex; align-items: center; gap: 6px;
-    background: none; border: 0.5px solid var(--border);
-    border-radius: 50px; padding: 5px 12px;
-    font-family: 'DM Sans', sans-serif; font-size: 11px;
-    color: var(--muted); cursor: pointer; transition: all 0.2s;
+    background: none; border: 1px solid var(--border);
+    border-radius: 2px; padding: 4px 12px;
+    font-family: 'Inconsolata', monospace; font-size: 11px;
+    color: var(--muted); cursor: pointer; transition: all 0.15s;
   }
-  .fav-nav-btn:hover { border-color: var(--rust); color: var(--rust); }
+  .fav-nav-btn:hover { border-color: var(--ink); color: var(--ink); }
   .fav-nav-btn svg { width: 12px; height: 12px; fill: var(--rust); stroke: var(--rust); }
 
   .logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 300;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
     color: var(--ink);
     text-decoration: none;
   }
-  .logo span { color: var(--sage); }
+  .logo span { color: var(--rust); font-style: italic; }
 
   .lang-selector {
     display: flex;
@@ -241,8 +239,8 @@
     transition: background 0.2s, transform 0.15s;
     white-space: nowrap;
   }
-  .search-btn:hover { background: var(--sage); }
-  .search-btn:active { transform: scale(0.97); }
+  .search-btn:hover { background: var(--rust); }
+  .search-btn:active { opacity: 0.85; }
   .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .examples {
@@ -500,8 +498,8 @@
   .footer-season:hover { opacity: 1; }
   .sb-season-name {
     font-size: 10px; color: var(--muted);
-    font-family: 'DM Sans', sans-serif; font-weight: 400;
-    letter-spacing: 0.06em; white-space: nowrap;
+    font-family: 'Inconsolata', monospace; font-weight: 400;
+    letter-spacing: 0.1em; white-space: nowrap;
     text-transform: uppercase;
   }
   .sb-track-outer {
@@ -552,26 +550,26 @@
   /* FILTERS PANEL */
   .filters-toggle {
     display: flex; align-items: center; gap: 7px;
-    background: var(--paper-dark); border: 0.5px solid var(--border);
-    border-radius: 50px; padding: 8px 18px;
-    font-family: 'DM Sans', sans-serif; font-size: 11px;
-    color: var(--muted); cursor: pointer; letter-spacing: 0.04em;
-    transition: all 0.2s; margin-top: 14px;
-    align-self: center; font-weight: 400;
+    background: none; border: 1px solid var(--border);
+    border-radius: 2px; padding: 6px 14px;
+    font-family: 'Inconsolata', monospace; font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); cursor: pointer;
+    transition: all 0.15s; margin-top: 14px;
+    align-self: center;
   }
-  .filters-toggle:hover { border-color: var(--sage); color: var(--sage); background: rgba(0,0,0,0.04); }
-  .filters-toggle.active { border-color: var(--sage); color: var(--sage); background: rgba(0,0,0,0.04); }
-  .filters-toggle .arrow { width: 11px; height: 11px; transition: transform 0.25s; flex-shrink: 0; }
-  .filters-toggle .icon { width: 13px; height: 13px; flex-shrink: 0; }
+  .filters-toggle:hover { border-color: var(--ink); color: var(--ink); }
+  .filters-toggle.active { border-color: var(--ink); color: var(--ink); background: var(--paper-dark); }
+  .filters-toggle .arrow { width: 10px; height: 10px; transition: transform 0.2s; flex-shrink: 0; }
+  .filters-toggle .icon { width: 12px; height: 12px; flex-shrink: 0; }
   .filters-toggle.active .arrow { transform: rotate(180deg); }
 
   .filters-panel {
     width: 100%; max-width: 560px; align-self: center;
-    background: #fff; border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg); padding: 1.25rem 1.5rem;
+    background: var(--paper-dark); border: 1px solid var(--ink);
+    border-radius: 2px; padding: 1.25rem 1.5rem;
     margin-top: 8px; display: none;
     animation: rise 0.2s ease both;
-    box-shadow: 0 4px 24px rgba(26,26,24,0.06);
   }
   .filters-panel.open { display: block; }
 
@@ -757,15 +755,16 @@
   /* USER BUTTON in header */
   .user-btn {
     display: flex; align-items: center; gap: 6px;
-    background: var(--ink); border: none;
-    border-radius: 50px; padding: 7px 16px;
-    font-family: 'DM Sans', sans-serif; font-size: 11px;
+    background: var(--ink); border: 1px solid var(--ink);
+    border-radius: 2px; padding: 6px 16px;
+    font-family: 'Inconsolata', monospace; font-size: 11px;
+    letter-spacing: 0.06em;
     color: var(--paper); cursor: pointer; transition: all 0.2s;
     white-space: nowrap;
   }
-  .user-btn:hover { background: var(--sage); }
+  .user-btn:hover { background: var(--rust); border-color: var(--rust); }
   .user-btn svg { width: 13px; height: 13px; stroke: var(--paper); }
-  .user-btn.signed-in { background: var(--sage); }
+  .user-btn.signed-in { background: var(--sage); border-color: var(--sage); }
   .user-btn.signed-in svg { stroke: #fff; }
 
   /* FAVORITES PANEL */
@@ -834,14 +833,14 @@
 
   /* SURPRISE BUTTON */
   .surprise-btn {
-    background: none; border: 0.5px dashed var(--border);
-    border-radius: 50px; padding: 7px 16px;
-    font-family: 'Cormorant Garamond', serif; font-size: 13px;
+    background: none; border: 1px dashed var(--muted);
+    border-radius: 2px; padding: 6px 16px;
+    font-family: 'Libre Baskerville', serif; font-size: 13px;
     font-style: italic; color: var(--muted); cursor: pointer;
-    transition: all 0.2s; margin-top: 8px; align-self: center;
-    white-space: nowrap;
+    transition: all 0.15s; margin-top: 8px; align-self: center;
+    white-space: nowrap; letter-spacing: 0.02em;
   }
-  .surprise-btn:hover { border-color: var(--sage); color: var(--sage); border-style: solid; }
+  .surprise-btn:hover { border-color: var(--ink); color: var(--ink); border-style: solid; }
   .surprise-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   /* ANOTHER SUGGESTION BUTTON */
@@ -1075,38 +1074,37 @@
 
   /* Dark mode — element-specific overrides that can't be done via CSS vars */
   body.mode-unexplored header {
-    background: rgba(13,13,11,0.92) !important;
+    background: #0C0C0A !important;
+    border-color: rgba(232,224,208,0.12) !important;
   }
   body.mode-unexplored .search-field {
-    background: #171714 !important;
-    border-color: rgba(222,218,208,0.15) !important;
-    color: #dedad0 !important;
+    background: #1A1A18 !important;
+    border-color: rgba(232,224,208,0.2) !important;
+    color: #E8E0D0 !important;
   }
-  body.mode-unexplored .search-field::placeholder { color: #3a3830 !important; }
-  body.mode-unexplored .search-btn { background: #1e1e1a !important; color: #8a8878 !important; }
-  body.mode-unexplored .search-btn:hover { background: #4a6e4a !important; color: #fff !important; }
+  body.mode-unexplored .search-wrap { border-color: rgba(232,224,208,0.2) !important; }
+  body.mode-unexplored .search-field::placeholder { color: #4A3A60 !important; }
+  body.mode-unexplored .search-btn { background: #1A1A18 !important; color: #6A5A80 !important; border-color: rgba(232,224,208,0.2) !important; }
+  body.mode-unexplored .search-btn:hover { background: #6A4A8A !important; color: #E8E0D0 !important; }
   body.mode-unexplored .main-card,
   body.mode-unexplored .also-card,
-  body.mode-unexplored .filters-panel { background: #131310 !important; border-color: rgba(222,218,208,0.08) !important; }
-  body.mode-unexplored .info-cell,
+  body.mode-unexplored .filters-panel { background: #141412 !important; border-color: rgba(232,224,208,0.15) !important; }
+  body.mode-unexplored .info-cell { background: #1A1A18 !important; }
   body.mode-unexplored .card-chip,
-  body.mode-unexplored .filters-toggle { background: #1a1a16 !important; border-color: rgba(222,218,208,0.12) !important; }
-  body.mode-unexplored .radius-opt { border-color: rgba(222,218,208,0.1) !important; }
-  body.mode-unexplored .radius-opt.selected { border-color: #4a6e4a !important; background: rgba(74,110,74,0.1) !important; }
+  body.mode-unexplored .filters-toggle { border-color: rgba(232,224,208,0.12) !important; color: #6A5A80 !important; }
+  body.mode-unexplored .radius-opt { border-color: rgba(232,224,208,0.12) !important; }
+  body.mode-unexplored .radius-opt.selected { border-color: #6A4A8A !important; }
   body.mode-unexplored .rarity-track { background: #252520 !important; }
-  body.mode-unexplored .example-chip { border-color: rgba(222,218,208,0.1) !important; color: #5a5850 !important; }
-  body.mode-unexplored .card-why,
-  body.mode-unexplored .card-location,
-  body.mode-unexplored .also-loc,
-  body.mode-unexplored .sb-season-name { color: #5a5850 !important; }
-  body.mode-unexplored .lang-btn { color: #5a5850 !important; }
-  body.mode-unexplored .lang-btn.active { color: #dedad0 !important; background: #1a1a16 !important; }
+  body.mode-unexplored .example-chip { border-color: rgba(232,224,208,0.12) !important; color: #4A3A60 !important; background: none !important; }
+  body.mode-unexplored .lang-btn { color: #4A3A60 !important; }
+  body.mode-unexplored .lang-btn.active { color: #E8E0D0 !important; }
 
-  /* Fog overlay */
+  /* Starfield overlay */
   body.mode-unexplored::after {
     content: '';
     position: fixed; inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(74,110,74,0.06) 0%, transparent 65%);
+    background: radial-gradient(ellipse at 30% 20%, rgba(106,74,138,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(196,168,130,0.05) 0%, transparent 50%);
     pointer-events: none; z-index: 0;
   }
 
@@ -1316,7 +1314,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.1.5</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.2.0</span>
 </footer>
 
 <!-- ACTIVITY FEED PANEL -->
@@ -2776,18 +2774,30 @@ document.getElementById('lang-selector').addEventListener('click', e => {
 
 // ── SEASONAL THEMES ──────────────────────────────────────────────────────────
 const SEASONS = [
-  { paper:'#f0f3f7', paperDark:'#e2e8f0', accent:'#5b7fa6', accentLight:'#a8c0d8', muted:'#7a8898', badgeBg:'#5b7fa6', badgeText:'#fff', like:'#8b4a6b', ink:'#1a1f2e' },
-  { paper:'#f1f0f5', paperDark:'#e4e2ee', accent:'#7b6fa8', accentLight:'#b8b0d4', muted:'#8a8598', badgeBg:'#7b6fa8', badgeText:'#fff', like:'#a05070', ink:'#1e1a2a' },
-  { paper:'#f3f5f0', paperDark:'#e6ebe0', accent:'#6a9470', accentLight:'#aecab2', muted:'#7a8a78', badgeBg:'#6a9470', badgeText:'#fff', like:'#c07040', ink:'#1a221a' },
-  { paper:'#faf3f3', paperDark:'#f0e6e6', accent:'#b07898', accentLight:'#d4b0c4', muted:'#8a7880', badgeBg:'#b07898', badgeText:'#fff', like:'#d47060', ink:'#221a1e' },
-  { paper:'#f4f7f0', paperDark:'#e8ede0', accent:'#5a9050', accentLight:'#9ec494', muted:'#728070', badgeBg:'#5a9050', badgeText:'#fff', like:'#c05840', ink:'#182018' },
-  { paper:'#faf7ec', paperDark:'#f0ebda', accent:'#8a9c50', accentLight:'#c0cc90', muted:'#8a8870', badgeBg:'#8a9c50', badgeText:'#fff', like:'#c06840', ink:'#201e10' },
-  { paper:'#faf5ec', paperDark:'#f0e8d8', accent:'#c08040', accentLight:'#dab888', muted:'#8a8070', badgeBg:'#c08040', badgeText:'#fff', like:'#b84030', ink:'#241a10' },
-  { paper:'#faf2e8', paperDark:'#f0e4d0', accent:'#c06838', accentLight:'#daa882', muted:'#8a7868', badgeBg:'#c06838', badgeText:'#fff', like:'#903030', ink:'#281810' },
-  { paper:'#f8f3ec', paperDark:'#ede4d8', accent:'#b87840', accentLight:'#d8b488', muted:'#887868', badgeBg:'#b87840', badgeText:'#fff', like:'#984838', ink:'#22180e' },
-  { paper:'#f7f0ea', paperDark:'#eae0d2', accent:'#a05838', accentLight:'#c89878', muted:'#887060', badgeBg:'#a05838', badgeText:'#fff', like:'#802838', ink:'#201410' },
-  { paper:'#f2efea', paperDark:'#e4e0d8', accent:'#7a7058', accentLight:'#b0a890', muted:'#807870', badgeBg:'#7a7058', badgeText:'#fff', like:'#804048', ink:'#1c1a16' },
-  { paper:'#f0f2f5', paperDark:'#e2e6ec', accent:'#4a6a8a', accentLight:'#8aaac4', muted:'#788090', badgeBg:'#4a6a8a', badgeText:'#fff', like:'#804868', ink:'#161c24' },
+  // Jan — Hiver blanc
+  { paper:'#EEF0F5', paperDark:'#E0E4EE', accent:'#3A4A6A', accentLight:'#7A9AB8', muted:'#6A7888', badgeBg:'#1C1C1C', badgeText:'#EEF0F5', like:'#8B2E4A', ink:'#1C2A3A' },
+  // Fév — Hiver tardif
+  { paper:'#F0EEF5', paperDark:'#E4E0F0', accent:'#4A3A6A', accentLight:'#9A8AB8', muted:'#6A6880', badgeBg:'#1C1C1C', badgeText:'#F0EEF5', like:'#A84A7A', ink:'#2A1A4A' },
+  // Mar — Éveil
+  { paper:'#F2F5EE', paperDark:'#E4EEE0', accent:'#3A5A2A', accentLight:'#8AB878', muted:'#5A7050', badgeBg:'#1C1C1C', badgeText:'#F2F5EE', like:'#C85A7A', ink:'#1A3A10' },
+  // Avr — Printemps
+  { paper:'#FAF0F4', paperDark:'#F0E0EA', accent:'#8A3A5A', accentLight:'#D490A8', muted:'#785868', badgeBg:'#1C1C1C', badgeText:'#FAF0F4', like:'#6A9E5A', ink:'#5A1A3A' },
+  // Mai — Plein printemps
+  { paper:'#F4F8EE', paperDark:'#E6F0DA', accent:'#2A5A1A', accentLight:'#7AB85A', muted:'#507040', badgeBg:'#1C1C1C', badgeText:'#F4F8EE', like:'#C85A7A', ink:'#0A3A00' },
+  // Juin — Pré-été (base Direction C)
+  { paper:'#FAF6EE', paperDark:'#EDE8DC', accent:'#6B9E6B', accentLight:'#A8C8A8', muted:'#888070', badgeBg:'#1C1C1C', badgeText:'#FAF6EE', like:'#C85A7A', ink:'#1C1C1C' },
+  // Juil — Été
+  { paper:'#FAF4E4', paperDark:'#F0E8CC', accent:'#8A5A10', accentLight:'#D4A840', muted:'#806840', badgeBg:'#1C1C1C', badgeText:'#FAF4E4', like:'#C4853A', ink:'#4A2A00' },
+  // Août — Canicule
+  { paper:'#FAF0E0', paperDark:'#F0E4C8', accent:'#9A4A10', accentLight:'#E8A060', muted:'#886040', badgeBg:'#1C1C1C', badgeText:'#FAF0E0', like:'#D4603A', ink:'#5A2000' },
+  // Sep — Début automne
+  { paper:'#F8F0E4', paperDark:'#EEE4D0', accent:'#8A4A20', accentLight:'#D4903A', muted:'#806050', badgeBg:'#1C1C1C', badgeText:'#F8F0E4', like:'#9A3A28', ink:'#4A2010' },
+  // Oct — Automne
+  { paper:'#F5EEE0', paperDark:'#EAE0CC', accent:'#7A3A18', accentLight:'#C47840', muted:'#785840', badgeBg:'#1C1C1C', badgeText:'#F5EEE0', like:'#9A3A28', ink:'#3A1808' },
+  // Nov — Fin automne
+  { paper:'#F0EAE0', paperDark:'#E4D8C8', accent:'#5A3A20', accentLight:'#A07850', muted:'#705040', badgeBg:'#1C1C1C', badgeText:'#F0EAE0', like:'#8A3030', ink:'#2A1808' },
+  // Déc — Hiver
+  { paper:'#EEF0F8', paperDark:'#E0E4F0', accent:'#2A3A6A', accentLight:'#7A8AB8', muted:'#6A7090', badgeBg:'#1C1C1C', badgeText:'#EEF0F8', like:'#8B2E4A', ink:'#0A1A4A' },
 ];
 
 // Season bar month labels per language
@@ -2971,23 +2981,23 @@ function applyRarityMode() {
     const root = document.documentElement;
     // Override ALL variables inline so they take priority over seasonal theme
     const dark = {
-      '--paper':              '#0d0d0b',
-      '--paper-dark':         '#171714',
-      '--ink':                '#dedad0',
-      '--muted':              '#5a5850',
-      '--border':             'rgba(222,218,208,0.1)',
-      '--sage':               '#4a6e4a',
-      '--sage-light':         '#6a8e6a',
-      '--rust':               '#7a3a28',
-      '--season-paper':       '#0d0d0b',
-      '--season-paper-dark':  '#171714',
-      '--season-accent':      '#4a6e4a',
-      '--season-accent-light':'#6a8e6a',
-      '--season-muted':       '#5a5850',
-      '--season-badge-bg':    '#4a6e4a',
-      '--season-badge-text':  '#fff',
-      '--season-like':        '#7a3a28',
-      '--season-ink':         '#dedad0',
+      '--paper':              '#0C0C0A',
+      '--paper-dark':         '#1A1A18',
+      '--ink':                '#E8E0D0',
+      '--muted':              '#6A5A80',
+      '--border':             'rgba(232,224,208,0.12)',
+      '--sage':               '#6A4A8A',
+      '--sage-light':         '#9A7AB8',
+      '--rust':               '#C4A882',
+      '--season-paper':       '#0C0C0A',
+      '--season-paper-dark':  '#1A1A18',
+      '--season-accent':      '#6A4A8A',
+      '--season-accent-light':'#9A7AB8',
+      '--season-muted':       '#6A5A80',
+      '--season-badge-bg':    '#6A4A8A',
+      '--season-badge-text':  '#E8E0D0',
+      '--season-like':        '#C4A882',
+      '--season-ink':         '#E8E0D0',
     };
     for (const [k, v] of Object.entries(dark)) {
       root.style.setProperty(k, v);
