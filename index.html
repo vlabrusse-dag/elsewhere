@@ -1340,7 +1340,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.3.2</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.3.3</span>
 </footer>
 
 <!-- ACTIVITY FEED PANEL -->
@@ -3411,29 +3411,32 @@ async function loadPlaceOfDay() {
   if (name) name.textContent = dotd.name;
   if (city) city.textContent = dotd.city;
 
-  // Populate big visual card
+  // Populate stamp dotd
   const bigWrap = document.getElementById('dotd-big');
   const bigLabel = document.getElementById('dotd-big-label');
   const bigName = document.getElementById('dotd-big-name');
   const bigCity = document.getElementById('dotd-big-city');
-  const bigImg = document.getElementById('dotd-big-img');
+  const bigWhy = document.getElementById('dotd-big-why');
   const bigBtn = document.getElementById('dotd-big-btn');
+  const stampDay = document.getElementById('dotd-stamp-day');
+  const stampMonth = document.getElementById('dotd-stamp-month');
 
-  if (bigLabel) bigLabel.textContent = t('dotdBig') || 'Place of the day';
+  if (bigLabel) bigLabel.textContent = t('dotdBig') || 'Pépite du jour';
   if (bigName) bigName.textContent = dotd.name;
-  if (bigCity) bigCity.textContent = dotd.city + (dotd.country ? ' · ' + dotd.country : '');
-  if (bigBtn) bigBtn.textContent = (t('discoverPlace') || 'Discover this place') + ' →';
+  if (bigCity) bigCity.textContent = (dotd.city || '') + (dotd.country ? ' · ' + dotd.country : '');
+  if (bigWhy) bigWhy.textContent = dotd.why || '';
+  if (bigBtn) bigBtn.textContent = (t('discoverPlace') || 'Découvrir ce lieu') + ' →';
 
-  if (dotd.image && bigImg) {
-    bigImg.src = dotd.image;
-    bigImg.alt = dotd.name;
-    if (bigWrap) bigWrap.style.display = 'block';
-
+  // Stamp date
+  const nowD = new Date();
+  if (stampDay) stampDay.textContent = nowD.getDate();
+  if (stampMonth) {
+    const mNames = MONTH_FULL_BAR[currentLang] || MONTH_FULL_BAR['en'];
+    stampMonth.textContent = (mNames[nowD.getMonth()] || '').toUpperCase();
   }
 
-  // Show homepage sections
-  const homeSections = document.getElementById('home-sections');
-  if (homeSections) homeSections.style.display = 'block';
+  // Always show dotd block
+  if (bigWrap) bigWrap.style.display = 'block';
 
   window._dotd = dotd;
 }
@@ -3447,7 +3450,7 @@ async function loadCommunityGrid() {
   if (title) title.textContent = t('communityTop') || 'Top discoveries by the community';
 
   const res = await fetch(
-    SB_URL + '/rest/v1/suggestions?likes=gt.0&order=likes.desc&limit=6&select=id,name,city,image,query,likes',
+    SB_URL + '/rest/v1/suggestions?likes=gt.0&order=likes.desc&limit=6&select=id,name,city,country,image,query,likes,category',
     { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
   ).catch(() => null);
   if (!res || !res.ok) return;
@@ -3455,23 +3458,30 @@ async function loadCommunityGrid() {
   if (!places.length) return;
 
   const catColors = { museum:'#7A9E6B', garden:'#4A9A6A', castle:'#B87050', church:'#C4855A', viewpoint:'#7A9AB8', village:'#C4855A', beach:'#6B9EB8', nature:'#4A7A4A', palace:'#B87050', market:'#C85A7A' };
-  grid.innerHTML = places.map(p => {
-    const col = catColors[p.category] || '#C4855A';
-    const tag = p.category ? p.category.toUpperCase() + (p.country ? ' · ' + p.country.toUpperCase() : '') : (p.country || '').toUpperCase();
-    return `<div onclick="loadFavItem('${esc(p.query||p.name.toLowerCase())}','${esc(p.id)}')" style="border-right:1px solid var(--ink);padding:20px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--paper-dark)'" onmouseout="this.style.background='transparent'">
-      <div style="height:100px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;background:var(--paper-dark)">
-        <svg width="70" height="80" viewBox="0 0 70 80" fill="none">
-          <rect width="70" height="80" fill="var(--paper-dark)"/>
-          <ellipse cx="35" cy="70" rx="30" ry="12" fill="${col}" opacity="0.6"/>
-          <rect x="22" y="32" width="26" height="34" fill="${col}" opacity="0.8"/>
-          <polygon points="35,12 22,32 48,32" fill="${col}"/>
-          <rect x="30" y="46" width="10" height="20" fill="#7A4A2A" opacity="0.7"/>
-        </svg>
+  grid.innerHTML = places.map((p, i) => {
+    const col = catColors[(p.category||'').toLowerCase()] || '#C4855A';
+    const cat = (p.category || '').toUpperCase();
+    const country = (p.country || '').toUpperCase();
+    const tag = [cat, country].filter(Boolean).join(' · ');
+    const borderRight = i < places.length - 1 ? 'border-right:1px solid var(--ink);' : '';
+    const imgHtml = p.image
+      ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:120px;object-fit:cover;display:block" onerror="this.style.display='none'">`
+      : `<div style="height:120px;display:flex;align-items:center;justify-content:center;background:var(--paper-dark)">
+          <svg width="70" height="80" viewBox="0 0 70 80" fill="none">
+            <ellipse cx="35" cy="70" rx="30" ry="12" fill="${col}" opacity="0.5"/>
+            <rect x="22" y="32" width="26" height="34" fill="${col}" opacity="0.75"/>
+            <polygon points="35,12 22,32 48,32" fill="${col}"/>
+            <rect x="30" y="46" width="10" height="20" fill="#7A4A2A" opacity="0.7"/>
+          </svg>
+        </div>`;
+    return `<div onclick="loadFavItem('${esc(p.query||p.name.toLowerCase())}','${esc(p.id)}')" style="${borderRight}padding:0;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+      ${imgHtml}
+      <div style="padding:16px 20px">
+        <p style="font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--rust);margin-bottom:4px;font-family:'Inconsolata',monospace">${esc(tag)}</p>
+        <p style="font-family:'Libre Baskerville',serif;font-size:14px;color:var(--ink);font-style:italic;line-height:1.2;margin-bottom:3px">${esc(p.name)}</p>
+        <p style="font-size:10px;color:var(--muted);letter-spacing:0.06em;margin-bottom:8px;font-family:'Inconsolata',monospace">${esc(p.city)}</p>
+        <p style="font-size:10px;color:var(--rust);font-family:'Inconsolata',monospace">♥ ${p.likes}</p>
       </div>
-      <p style="font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--rust);margin-bottom:4px;font-family:'Inconsolata',monospace">${esc(tag)}</p>
-      <p style="font-family:'Libre Baskerville',serif;font-size:14px;color:var(--ink);font-style:italic;line-height:1.2;margin-bottom:3px">${esc(p.name)}</p>
-      <p style="font-size:10px;color:var(--muted);letter-spacing:0.06em;margin-bottom:8px;font-family:'Inconsolata',monospace">${esc(p.city)}</p>
-      <p style="font-size:10px;color:var(--rust);font-family:'Inconsolata',monospace">♥ ${p.likes}</p>
     </div>`;
   }).join('');
 
