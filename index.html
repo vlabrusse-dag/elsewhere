@@ -59,6 +59,7 @@
     font-weight: 400;
     min-height: 100vh;
     overflow-x: hidden;
+    padding-top: 57px;
   }
 
   /* NOISE TEXTURE OVERLAY */
@@ -1177,11 +1178,11 @@
 <!-- SVG Compass rose background -->
 <div id="hero">
 
-  <!-- ── HERO: 2 colonnes ── -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--ink)">
+  <!-- ── GRILLE PRINCIPALE : hero gauche + panneau droit ── -->
+  <div id="main-grid" style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--ink);min-height:480px">
 
-    <!-- Gauche : texte + recherche -->
-    <div style="padding:44px 36px;border-right:1px solid var(--ink)">
+    <!-- GAUCHE : texte + recherche (fixe) -->
+    <div style="padding:44px 36px;border-right:1px solid var(--ink);display:flex;flex-direction:column">
       <p class="hero-eyebrow" id="txt-eyebrow">Slow travel · Lieux cachés · Anti-overtourism</p>
       <h1 id="txt-h1">The road<br/><em>less travelled</em></h1>
       <p class="hero-sub" id="txt-sub">Enter a famous landmark. Discover a hidden gem nearby — just as beautiful, without the crowds.</p>
@@ -1200,7 +1201,7 @@
         <button class="example-chip" data-place="Big Ben">Big Ben</button>
       </div>
 
-      <button class="filters-toggle" id="filters-toggle" onclick="toggleFilters()">
+      <button class="filters-toggle" id="filters-toggle" onclick="toggleFilters()" style="align-self:flex-start;margin-top:16px">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
         <span id="txt-filters-btn">Advanced filters</span>
         <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
@@ -1246,98 +1247,85 @@
       </div>
     </div>
 
-    <!-- Droite : illustration naive -->
-    <div style="background:var(--paper-dark);display:flex;align-items:center;justify-content:center;min-height:420px;overflow:hidden" id="hero-illustration">
-      <svg width="100%" height="100%" viewBox="0 0 400 480" fill="none" preserveAspectRatio="xMidYMid slice" style="max-width:100%;max-height:100%">
-        <rect width="400" height="480" fill="#EDE8DC"/>
-        <!-- Sun -->
-        <circle cx="320" cy="70" r="38" fill="#F2C94C" opacity="0.85"/>
-        <line x1="320" y1="20" x2="320" y2="10" stroke="#F2C94C" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="362" y1="32" x2="370" y2="24" stroke="#F2C94C" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="374" y1="70" x2="384" y2="70" stroke="#F2C94C" stroke-width="2.5" stroke-linecap="round"/>
-        <!-- Birds -->
-        <path d="M60 110 Q67 103 74 110" stroke="#999" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        <path d="M85 92 Q92 85 100 92" stroke="#999" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        <!-- Hills -->
-        <ellipse cx="200" cy="410" rx="250" ry="100" fill="#6B9E6B"/>
-        <ellipse cx="80" cy="430" rx="150" ry="85" fill="#4A7A4A"/>
-        <ellipse cx="340" cy="435" rx="130" ry="80" fill="#5A8A5A"/>
-        <!-- Church -->
-        <rect x="130" y="220" width="120" height="140" fill="#C4855A"/>
-        <polygon points="190,140 130,220 250,220" fill="#B87050"/>
-        <!-- Cross -->
-        <rect x="184" y="158" width="12" height="40" fill="#FAF6EE" opacity="0.4"/>
-        <rect x="176" y="170" width="28" height="8" fill="#FAF6EE" opacity="0.4"/>
-        <!-- Door -->
-        <rect x="166" y="310" width="48" height="50" rx="24" fill="#7A4A2A"/>
-        <!-- Windows -->
-        <rect x="140" y="248" width="24" height="30" rx="12" fill="#F2C94C" opacity="0.7"/>
-        <rect x="216" y="248" width="24" height="30" rx="12" fill="#F2C94C" opacity="0.7"/>
-        <!-- Trees left -->
-        <rect x="60" y="290" width="12" height="65" fill="#4A3020"/>
-        <circle cx="66" cy="272" r="32" fill="#3A6A3A"/>
-        <!-- Trees right -->
-        <rect x="300" y="300" width="12" height="58" fill="#4A3020"/>
-        <circle cx="306" cy="284" r="26" fill="#4A7A4A"/>
-        <!-- Small tree right -->
-        <rect x="340" y="320" width="9" height="45" fill="#4A3020"/>
-        <circle cx="344" cy="306" r="20" fill="#3A6A3A"/>
-        <!-- Flowers -->
-        <circle cx="110" cy="380" r="6" fill="#C85A7A"/>
-        <circle cx="260" cy="376" r="5" fill="#F2C94C"/>
-        <circle cx="295" cy="382" r="6" fill="#C85A7A"/>
-        <circle cx="155" cy="385" r="4" fill="#F2C94C"/>
-        <circle cx="230" cy="379" r="5" fill="#C85A7A"/>
-      </svg>
+    <!-- DROITE : illustration (par défaut) ou résultats (après recherche) -->
+    <div id="right-panel" style="position:relative;overflow-y:auto">
+
+      <!-- Illustration naive — visible par défaut -->
+      <div id="hero-illustration" style="background:var(--paper-dark);display:flex;align-items:center;justify-content:center;height:100%;min-height:480px">
+        <svg width="100%" height="100%" viewBox="0 0 400 480" fill="none" preserveAspectRatio="xMidYMid meet">
+          <rect width="400" height="480" fill="#EDE8DC"/>
+          <circle cx="320" cy="70" r="38" fill="#F2C94C" opacity="0.85"/>
+          <line x1="320" y1="20" x2="320" y2="10" stroke="#F2C94C" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="362" y1="32" x2="370" y2="24" stroke="#F2C94C" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="374" y1="70" x2="384" y2="70" stroke="#F2C94C" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M60 110 Q67 103 74 110" stroke="#999" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M85 92 Q92 85 100 92" stroke="#999" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="200" cy="410" rx="250" ry="100" fill="#6B9E6B"/>
+          <ellipse cx="80" cy="430" rx="150" ry="85" fill="#4A7A4A"/>
+          <ellipse cx="340" cy="435" rx="130" ry="80" fill="#5A8A5A"/>
+          <rect x="130" y="220" width="120" height="140" fill="#C4855A"/>
+          <polygon points="190,140 130,220 250,220" fill="#B87050"/>
+          <rect x="184" y="158" width="12" height="40" fill="#FAF6EE" opacity="0.4"/>
+          <rect x="176" y="170" width="28" height="8" fill="#FAF6EE" opacity="0.4"/>
+          <rect x="166" y="310" width="48" height="50" rx="24" fill="#7A4A2A"/>
+          <rect x="140" y="248" width="24" height="30" rx="12" fill="#F2C94C" opacity="0.7"/>
+          <rect x="216" y="248" width="24" height="30" rx="12" fill="#F2C94C" opacity="0.7"/>
+          <rect x="60" y="290" width="12" height="65" fill="#4A3020"/>
+          <circle cx="66" cy="272" r="32" fill="#3A6A3A"/>
+          <rect x="300" y="300" width="12" height="58" fill="#4A3020"/>
+          <circle cx="306" cy="284" r="26" fill="#4A7A4A"/>
+          <rect x="340" y="320" width="9" height="45" fill="#4A3020"/>
+          <circle cx="344" cy="306" r="20" fill="#3A6A3A"/>
+          <circle cx="110" cy="380" r="6" fill="#C85A7A"/>
+          <circle cx="260" cy="376" r="5" fill="#F2C94C"/>
+          <circle cx="295" cy="382" r="6" fill="#C85A7A"/>
+          <circle cx="155" cy="385" r="4" fill="#F2C94C"/>
+        </svg>
+      </div>
+
+      <!-- Résultats — cachés par défaut, remplacent l'illustration -->
+      <div id="results-inner" style="display:none;padding:32px 32px;height:100%;overflow-y:auto"></div>
+
     </div>
   </div>
 
-  <!-- ── LIEU DU JOUR : style tampon ── -->
-  <div class="home-sections" id="home-sections">
-
-    <div id="dotd-big" style="display:none;border-bottom:1px solid var(--ink)">
-      <div style="display:flex">
-        <!-- Colonne tampon date -->
-        <div style="width:90px;border-right:1px solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;gap:6px;flex-shrink:0">
-          <span style="font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);font-family:'Inconsolata',monospace" id="dotd-stamp-label">Lieu du jour</span>
-          <div style="text-align:center">
-            <div style="font-family:'Libre Baskerville',serif;font-size:26px;font-weight:700;color:var(--rust);line-height:1" id="dotd-stamp-day"></div>
-            <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-family:'Inconsolata',monospace" id="dotd-stamp-month"></div>
-          </div>
-        </div>
-        <!-- Contenu principal -->
-        <div style="flex:1;padding:20px 28px">
-          <p style="font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--rust);margin-bottom:8px;font-family:'Inconsolata',monospace" id="dotd-big-label"></p>
-          <p style="font-family:'Libre Baskerville',serif;font-size:22px;font-style:italic;color:var(--ink);margin-bottom:4px" id="dotd-big-name"></p>
-          <p style="font-size:11px;color:var(--muted);letter-spacing:0.06em;margin-bottom:10px;font-family:'Inconsolata',monospace" id="dotd-big-city"></p>
-          <p style="font-size:12px;color:var(--muted);line-height:1.65;font-family:'Inconsolata',monospace;max-width:520px" id="dotd-big-why"></p>
-        </div>
-        <!-- Bouton droite -->
-        <div style="width:140px;border-left:1px solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:var(--paper-dark);flex-shrink:0;cursor:pointer" onclick="handleDotdClick()">
-          <button id="dotd-big-btn" style="border:1px solid var(--ink);background:none;font-family:'Libre Baskerville',serif;font-size:12px;font-style:italic;padding:8px 14px;cursor:pointer;color:var(--ink);text-align:center;width:100%;margin-bottom:10px"></button>
-          <p style="font-size:10px;color:var(--muted);text-align:center;font-family:'Inconsolata',monospace">♥ <span id="dotd-likes-count">0</span> voyageurs</p>
+  <!-- ── LIEU DU JOUR ── -->
+  <div id="dotd-big" style="display:none;border-bottom:1px solid var(--ink)">
+    <div style="display:flex">
+      <div style="width:90px;border-right:1px solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;gap:6px;flex-shrink:0">
+        <span style="font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);font-family:'Inconsolata',monospace" id="dotd-stamp-label">Lieu du jour</span>
+        <div style="text-align:center">
+          <div style="font-family:'Libre Baskerville',serif;font-size:26px;font-weight:700;color:var(--rust);line-height:1" id="dotd-stamp-day"></div>
+          <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-family:'Inconsolata',monospace" id="dotd-stamp-month"></div>
         </div>
       </div>
-    </div>
-
-    <!-- ── PÉPITES DE LA COMMUNAUTÉ ── -->
-    <div id="community-section" style="display:none">
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 28px;border-bottom:1px solid var(--ink)">
-        <span style="font-family:'Libre Baskerville',serif;font-size:14px;font-style:italic;color:var(--ink)" id="community-title"></span>
-        <div style="flex:1;height:0.5px;background:var(--border)"></div>
-        <span id="community-count" style="font-size:10px;color:var(--muted);letter-spacing:0.08em;font-family:'Inconsolata',monospace"></span>
+      <div style="flex:1;padding:20px 28px">
+        <p style="font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--rust);margin-bottom:8px;font-family:'Inconsolata',monospace" id="dotd-big-label"></p>
+        <p style="font-family:'Libre Baskerville',serif;font-size:22px;font-style:italic;color:var(--ink);margin-bottom:4px" id="dotd-big-name"></p>
+        <p style="font-size:11px;color:var(--muted);letter-spacing:0.06em;margin-bottom:10px;font-family:'Inconsolata',monospace" id="dotd-big-city"></p>
+        <p style="font-size:12px;color:var(--muted);line-height:1.65;font-family:'Inconsolata',monospace;max-width:520px" id="dotd-big-why"></p>
       </div>
-      <div id="community-grid" style="display:grid;grid-template-columns:repeat(3,1fr)"></div>
+      <div style="width:140px;border-left:1px solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:var(--paper-dark);flex-shrink:0;cursor:pointer" onclick="handleDotdClick()">
+        <button id="dotd-big-btn" style="border:1px solid var(--ink);background:none;font-family:'Libre Baskerville',serif;font-size:12px;font-style:italic;padding:8px 14px;cursor:pointer;color:var(--ink);text-align:center;width:100%;margin-bottom:10px"></button>
+        <p style="font-size:10px;color:var(--muted);text-align:center;font-family:'Inconsolata',monospace">♥ <span id="dotd-likes-count">0</span> voyageurs</p>
+      </div>
     </div>
-
   </div>
+
+  <!-- ── PÉPITES DE LA COMMUNAUTÉ ── -->
+  <div id="community-section" style="display:none">
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 28px;border-bottom:1px solid var(--ink)">
+      <span style="font-family:'Libre Baskerville',serif;font-size:14px;font-style:italic;color:var(--ink)" id="community-title"></span>
+      <div style="flex:1;height:0.5px;background:var(--border)"></div>
+      <span id="community-count" style="font-size:10px;color:var(--muted);letter-spacing:0.08em;font-family:'Inconsolata',monospace"></span>
+    </div>
+    <div id="community-grid" style="display:grid;grid-template-columns:repeat(3,1fr)"></div>
+  </div>
+
+  <!-- hidden refs for dotd internal use -->
+  <div style="display:none" id="dotd-wrap"><p id="dotd-label"></p><p id="dotd-name"></p><p id="dotd-city"></p><div id="dotd-img-wrap"></div></div>
 
 </div>
-<!-- RESULTS -->
-<section id="results">
-  <div id="results-inner"></div>
-</section>
-
 <footer>
   <span id="txt-footer">Elsewhere — Discover the road less travelled. Fighting overtourism, one hidden gem at a time.</span>
   <div class="footer-season">
@@ -1352,7 +1340,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.3.1</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.3.2</span>
 </footer>
 
 <!-- ACTIVITY FEED PANEL -->
@@ -3204,15 +3192,15 @@ async function handleSearch() {
   const query = input.value.trim();
   if (!query) { input.focus(); return; }
 
-  const resultsEl = document.getElementById('results');
+  const resultsEl = document.getElementById('results-inner');
   const inner = document.getElementById('results-inner');
 
-  resultsEl.style.display = 'block';
+  // Show results panel, hide illustration
+  const illus = document.getElementById('hero-illustration');
+  const inner2 = document.getElementById('results-inner');
+  if (illus) illus.style.display = 'none';
+  if (inner2) inner2.style.display = 'block';
   inner.innerHTML = `<div class="loading-wrap"><div class="loader"></div><p class="loading-txt">${t('loading')}</p></div>`;
-  // Hide homepage visual sections when showing results
-  const homeSections = document.getElementById('home-sections');
-  if (homeSections) homeSections.style.display = 'none';
-  window.scrollTo({ top: document.getElementById('hero').offsetHeight - 80, behavior: 'smooth' });
 
   btn.disabled = true;
 
@@ -3548,11 +3536,12 @@ async function handleSurprise() {
 
   document.getElementById('place-input').value = randomQuery;
 
-  const resultsEl = document.getElementById('results');
+  const resultsEl = document.getElementById('results-inner');
   const inner = document.getElementById('results-inner');
-  resultsEl.style.display = 'block';
+  const illus3 = document.getElementById('hero-illustration');
+  if (illus3) illus3.style.display = 'none';
+  inner.style.display = 'block';
   inner.innerHTML = `<div class="loading-wrap"><div class="loader"></div><p class="loading-txt">${t('surpriseLoading') || 'Finding a hidden gem…'}</p></div>`;
-  window.scrollTo({ top: document.getElementById('hero').offsetHeight - 80, behavior: 'smooth' });
 
   try {
     const fetched = await fetchSuggestion(randomQuery);
@@ -3752,12 +3741,10 @@ function renderResults(query, main, sbOthers) {
     </div>`;
 
   // Scroll to results card after render
+  // Scroll right panel to top
   setTimeout(() => {
-    const el = document.getElementById('results');
-    if (el) {
-      const top = el.getBoundingClientRect().top + window.pageYOffset - 20;
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
+    const rp = document.getElementById('right-panel');
+    if (rp) rp.scrollTop = 0;
   }, 150);
 
   // Mark as discovered by current user if first like
