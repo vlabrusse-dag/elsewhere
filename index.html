@@ -7,29 +7,29 @@
 <meta name="description" content="Enter a famous tourist spot. We suggest a hidden gem nearby." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inconsolata:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --ink: #1C1C1C;
-    --paper: #FAF6EE;
-    --paper-dark: #EDE8DC;
-    --sage: #6B9E6B;
-    --sage-light: #A8C8A8;
-    --rust: #C85A7A;
-    --muted: #888070;
-    --border: rgba(28,28,28,0.15);
-    --radius: 2px;
-    --radius-lg: 3px;
+    --ink: #1a1a18;
+    --paper: #f5f2eb;
+    --paper-dark: #ede9df;
+    --sage: #7a9e87;
+    --sage-light: #b8d4c0;
+    --rust: #b85c3a;
+    --muted: #8a8578;
+    --border: rgba(26,26,24,0.12);
+    --radius: 4px;
+    --radius-lg: 10px;
     /* Seasonal overrides */
-    --season-paper: #FAF6EE;
-    --season-paper-dark: #EDE8DC;
-    --season-accent: #6B9E6B;
-    --season-accent-light: #A8C8A8;
-    --season-ink: #1C1C1C;
-    --season-muted: #888070;
-    --season-badge-bg: #1C1C1C;
-    --season-badge-text: #FAF6EE;
-    --season-like: #C85A7A;
+    --season-paper: #f5f2eb;
+    --season-paper-dark: #ede9df;
+    --season-accent: #7a9e87;
+    --season-accent-light: #b8d4c0;
+    --season-ink: #1a1a18;
+    --season-muted: #8a8578;
+    --season-badge-bg: #7a9e87;
+    --season-badge-text: #fff;
+    --season-like: #b85c3a;
   }
 
   /* Apply seasonal vars */
@@ -39,12 +39,12 @@
   }
   .logo span { color: var(--season-accent) !important; }
   .card-badge { background: var(--season-badge-bg) !important; color: var(--season-badge-text) !important; }
-  .search-field:focus { border-color: var(--season-accent) !important; }
+  .search-field:focus { border-color: var(--season-accent) !important; box-shadow: 0 4px 30px rgba(0,0,0,0.08) !important; }
   .search-btn:hover { background: var(--season-accent) !important; }
   .crowd-dot.on { background: var(--season-accent) !important; }
   .card-chip { background: var(--season-paper-dark) !important; }
   .like-btn.liked { background: var(--season-like) !important; border-color: var(--season-like) !important; }
-  .example-chip:hover { border-color: var(--season-accent) !important; color: var(--season-accent) !important; }
+  .example-chip:hover { border-color: var(--season-accent) !important; color: var(--season-accent) !important; background: rgba(0,0,0,0.03) !important; }
   .hero-eyebrow { color: var(--season-accent) !important; }
   h1 em { color: var(--season-accent) !important; }
 
@@ -55,11 +55,10 @@
   body {
     background: var(--paper);
     color: var(--ink);
-    font-family: 'Inconsolata', monospace;
-    font-weight: 400;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
     min-height: 100vh;
     overflow-x: hidden;
-    padding-top: 57px;
   }
 
   /* NOISE TEXTURE OVERLAY */
@@ -81,33 +80,34 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 2rem;
-    background: var(--paper);
-    border-bottom: 1px solid var(--ink);
-    gap: 12px;
+    padding: 1.25rem 2.5rem;
+    background: rgba(245,242,235,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
   }
 
+  header { gap: 12px; }
   .header-user { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; }
   .fav-nav-btn {
     display: flex; align-items: center; gap: 6px;
-    background: none; border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 2px; padding: 4px 12px;
-    font-family: 'Inconsolata', monospace; font-size: 11px;
-    color: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.15s;
-    letter-spacing: 0.08em;
+    background: none; border: 0.5px solid var(--border);
+    border-radius: 50px; padding: 5px 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 11px;
+    color: var(--muted); cursor: pointer; transition: all 0.2s;
   }
-  .fav-nav-btn:hover { border-color: var(--paper); color: var(--paper); }
+  .fav-nav-btn:hover { border-color: var(--rust); color: var(--rust); }
   .fav-nav-btn svg { width: 12px; height: 12px; fill: var(--rust); stroke: var(--rust); }
 
   .logo {
-    font-family: 'Libre Baskerville', serif;
-    font-size: 20px;
-    font-weight: 400;
-    letter-spacing: 0.05em;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
     color: var(--ink);
     text-decoration: none;
   }
-  .logo span { color: var(--rust); }
+  .logo span { color: var(--sage); }
 
   .lang-selector {
     display: flex;
@@ -241,8 +241,8 @@
     transition: background 0.2s, transform 0.15s;
     white-space: nowrap;
   }
-  .search-btn:hover { background: var(--rust); }
-  .search-btn:active { opacity: 0.85; }
+  .search-btn:hover { background: var(--sage); }
+  .search-btn:active { transform: scale(0.97); }
   .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .examples {
@@ -500,8 +500,8 @@
   .footer-season:hover { opacity: 1; }
   .sb-season-name {
     font-size: 10px; color: var(--muted);
-    font-family: 'Inconsolata', monospace; font-weight: 400;
-    letter-spacing: 0.1em; white-space: nowrap;
+    font-family: 'DM Sans', sans-serif; font-weight: 400;
+    letter-spacing: 0.06em; white-space: nowrap;
     text-transform: uppercase;
   }
   .sb-track-outer {
@@ -552,26 +552,26 @@
   /* FILTERS PANEL */
   .filters-toggle {
     display: flex; align-items: center; gap: 7px;
-    background: none; border: 1px solid var(--border);
-    border-radius: 2px; padding: 6px 14px;
-    font-family: 'Inconsolata', monospace; font-size: 11px;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--muted); cursor: pointer;
-    transition: all 0.15s; margin-top: 14px;
-    align-self: center;
+    background: var(--paper-dark); border: 0.5px solid var(--border);
+    border-radius: 50px; padding: 8px 18px;
+    font-family: 'DM Sans', sans-serif; font-size: 11px;
+    color: var(--muted); cursor: pointer; letter-spacing: 0.04em;
+    transition: all 0.2s; margin-top: 14px;
+    align-self: center; font-weight: 400;
   }
-  .filters-toggle:hover { border-color: var(--ink); color: var(--ink); }
-  .filters-toggle.active { border-color: var(--ink); color: var(--ink); background: var(--paper-dark); }
-  .filters-toggle .arrow { width: 10px; height: 10px; transition: transform 0.2s; flex-shrink: 0; }
-  .filters-toggle .icon { width: 12px; height: 12px; flex-shrink: 0; }
+  .filters-toggle:hover { border-color: var(--sage); color: var(--sage); background: rgba(0,0,0,0.04); }
+  .filters-toggle.active { border-color: var(--sage); color: var(--sage); background: rgba(0,0,0,0.04); }
+  .filters-toggle .arrow { width: 11px; height: 11px; transition: transform 0.25s; flex-shrink: 0; }
+  .filters-toggle .icon { width: 13px; height: 13px; flex-shrink: 0; }
   .filters-toggle.active .arrow { transform: rotate(180deg); }
 
   .filters-panel {
     width: 100%; max-width: 560px; align-self: center;
-    background: var(--paper-dark); border: 1px solid var(--ink);
-    border-radius: 2px; padding: 1.25rem 1.5rem;
+    background: #fff; border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1.25rem 1.5rem;
     margin-top: 8px; display: none;
     animation: rise 0.2s ease both;
+    box-shadow: 0 4px 24px rgba(26,26,24,0.06);
   }
   .filters-panel.open { display: block; }
 
@@ -757,17 +757,16 @@
   /* USER BUTTON in header */
   .user-btn {
     display: flex; align-items: center; gap: 6px;
-    background: none; border: 1px solid var(--ink);
-    border-radius: 2px; padding: 6px 16px;
-    font-family: 'Inconsolata', monospace; font-size: 11px;
-    letter-spacing: 0.06em;
-    color: var(--ink); cursor: pointer; transition: all 0.2s;
+    background: var(--ink); border: none;
+    border-radius: 50px; padding: 7px 16px;
+    font-family: 'DM Sans', sans-serif; font-size: 11px;
+    color: var(--paper); cursor: pointer; transition: all 0.2s;
     white-space: nowrap;
   }
-  .user-btn:hover { background: var(--ink); color: var(--paper); }
-  .user-btn svg { width: 13px; height: 13px; stroke: var(--ink); }
-  .user-btn.signed-in { background: var(--ink); color: var(--paper); }
-  .user-btn.signed-in svg { stroke: var(--paper); }
+  .user-btn:hover { background: var(--sage); }
+  .user-btn svg { width: 13px; height: 13px; stroke: var(--paper); }
+  .user-btn.signed-in { background: var(--sage); }
+  .user-btn.signed-in svg { stroke: #fff; }
 
   /* FAVORITES PANEL */
   .favorites-panel {
@@ -835,27 +834,26 @@
 
   /* SURPRISE BUTTON */
   .surprise-btn {
-    background: none; border: 1px dashed var(--muted);
-    border-radius: 2px; padding: 6px 16px;
-    font-family: 'Libre Baskerville', serif; font-size: 13px;
+    background: none; border: 0.5px dashed var(--border);
+    border-radius: 50px; padding: 7px 16px;
+    font-family: 'Cormorant Garamond', serif; font-size: 13px;
     font-style: italic; color: var(--muted); cursor: pointer;
-    transition: all 0.15s; margin-top: 8px; align-self: center;
-    white-space: nowrap; letter-spacing: 0.02em;
+    transition: all 0.2s; margin-top: 8px; align-self: center;
+    white-space: nowrap;
   }
-  .surprise-btn:hover { border-color: var(--ink); color: var(--ink); border-style: solid; }
+  .surprise-btn:hover { border-color: var(--sage); color: var(--sage); border-style: solid; }
   .surprise-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   /* ANOTHER SUGGESTION BUTTON */
   .another-btn {
     display: flex; align-items: center; gap: 8px;
-    background: none; border: 1.5px dashed var(--muted);
-    border-radius: 0; padding: 8px 20px;
-    font-family: 'Libre Baskerville', serif; font-size: 13px;
-    font-style: italic;
-    color: var(--muted); cursor: pointer; transition: all 0.15s;
+    background: none; border: 0.5px solid var(--border);
+    border-radius: 50px; padding: 8px 18px;
+    font-family: 'DM Sans', sans-serif; font-size: 12px;
+    color: var(--muted); cursor: pointer; transition: all 0.2s;
     margin: 0 auto 1.5rem; width: fit-content;
   }
-  .another-btn:hover { border-color: var(--ink); color: var(--ink); border-style: solid; }
+  .another-btn:hover { border-color: var(--sage); color: var(--sage); }
   .another-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .another-btn svg { width: 13px; height: 13px; transition: transform 0.4s; }
   .another-btn:hover svg { transform: rotate(180deg); }
@@ -864,40 +862,38 @@
   .share-wrap { display: flex; align-items: center; gap: 6px; }
   .share-btn {
     display: flex; align-items: center; justify-content: center;
-    width: 32px; height: 32px; border-radius: 0;
-    border: 1.5px solid var(--border); background: none;
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 0.5px solid var(--border); background: none;
     cursor: pointer; transition: all 0.15s; color: var(--muted);
     text-decoration: none;
   }
-  .share-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .share-btn:hover { border-color: var(--sage); color: var(--sage); background: rgba(0,0,0,0.03); }
   .share-btn svg { width: 14px; height: 14px; }
-  .share-btn.copy-btn { font-size: 10px; width: auto; padding: 0 10px; border-radius: 0; gap: 5px; letter-spacing: 0.08em; font-family: 'Inconsolata', monospace; text-transform: uppercase; }
+  .share-btn.copy-btn { font-size: 11px; width: auto; padding: 0 10px; border-radius: 50px; gap: 5px; }
   .share-btn.copy-btn.success { border-color: var(--sage); color: var(--sage); }
 
   /* HOMEPAGE VISUAL */
+  .home-sections { display: none; }
+  .home-sections.visible { display: block; }
 
 
   /* Big DOTD */
   .dotd-big {
-    max-width: 720px; margin: 0 auto 2rem;
+    max-width: 720px; margin: 0 auto 3rem;
     padding: 0 1.5rem; position: relative; z-index: 1;
   }
   .dotd-big-label {
-    font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 10px;
-    display: flex; align-items: center; gap: 10px;
-    font-family: 'Inconsolata', monospace;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--sage); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
   }
-  .dotd-big-label::before, .dotd-big-label::after {
-    content: ''; display: block; height: 0.5px; background: var(--border); flex: 1;
-  }
+  .dotd-big-label::before { content: ''; display: block; width: 24px; height: 0.5px; background: var(--sage); }
   .dotd-big-card {
-    border-radius: 0; overflow: hidden; cursor: pointer;
-    position: relative; aspect-ratio: 16/7; background: var(--ink);
-    border: 2px solid var(--ink);
-    transition: opacity 0.2s;
+    border-radius: 12px; overflow: hidden; cursor: pointer;
+    position: relative; aspect-ratio: 16/7; background: var(--paper-dark);
+    box-shadow: 0 8px 40px rgba(26,26,24,0.12);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-  .dotd-big-card:hover { opacity: 0.92; }
+  .dotd-big-card:hover { transform: translateY(-2px); box-shadow: 0 12px 50px rgba(26,26,24,0.18); }
   .dotd-big-img {
     width: 100%; height: 100%; object-fit: cover;
     transition: transform 0.6s ease;
@@ -916,13 +912,13 @@
   .dotd-big-city { font-size: 13px; color: rgba(255,255,255,0.75); margin-bottom: 14px; }
   .dotd-big-btn {
     display: inline-flex; align-items: center; gap: 8px;
-    background: var(--rust); border: none; border-radius: 0;
-    padding: 8px 20px; font-family: 'Inconsolata', monospace;
-    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: #fff; cursor: pointer;
-    transition: opacity 0.15s; width: fit-content;
+    background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+    border: 0.5px solid rgba(255,255,255,0.3); border-radius: 50px;
+    padding: 8px 18px; font-family: 'DM Sans', sans-serif;
+    font-size: 12px; color: #fff; cursor: pointer;
+    transition: background 0.2s; width: fit-content;
   }
-  .dotd-big-btn:hover { opacity: 0.85; }
+  .dotd-big-btn:hover { background: rgba(255,255,255,0.25); }
 
   /* Community grid */
   .community-section {
@@ -934,8 +930,8 @@
     margin-bottom: 16px;
   }
   .community-title {
-    font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--muted); font-family: 'Inconsolata', monospace;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted);
   }
   .community-line { flex: 1; height: 0.5px; background: var(--border); }
   .community-grid {
@@ -943,12 +939,11 @@
   }
   @media (max-width: 600px) { .community-grid { grid-template-columns: repeat(2, 1fr); } }
   .community-card {
-    border-radius: 0; overflow: hidden; cursor: pointer;
+    border-radius: var(--radius-lg); overflow: hidden; cursor: pointer;
     position: relative; aspect-ratio: 3/4; background: var(--paper-dark);
-    border: 1.5px solid var(--ink);
-    transition: opacity 0.15s;
+    transition: transform 0.25s ease;
   }
-  .community-card:hover { opacity: 0.85; }
+  .community-card:hover { transform: translateY(-3px); }
   .community-card-img { width: 100%; height: 100%; object-fit: cover; }
   .community-card-overlay {
     position: absolute; inset: 0;
@@ -979,14 +974,13 @@
   .visit-btns { display: flex; gap: 8px; padding-top: 10px; border-top: 0.5px solid var(--border); }
   .visit-btn {
     flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-    background: none; border: 1.5px solid var(--border); border-radius: 0;
-    padding: 7px 10px; font-family: 'Inconsolata', monospace; font-size: 10px;
-    letter-spacing: 0.08em; text-transform: uppercase;
+    background: none; border: 0.5px solid var(--border); border-radius: 50px;
+    padding: 7px 10px; font-family: 'DM Sans', sans-serif; font-size: 11px;
     color: var(--muted); cursor: pointer; transition: all 0.15s;
   }
-  .visit-btn:hover { border-color: var(--ink); color: var(--ink); }
-  .visit-btn.visited { border-color: var(--sage); color: var(--sage); background: rgba(107,158,107,0.08); }
-  .visit-btn.overcrowded { border-color: var(--rust); color: var(--rust); background: rgba(200,90,122,0.08); }
+  .visit-btn:hover { border-color: var(--sage); color: var(--sage); }
+  .visit-btn.visited { background: rgba(122,158,135,0.1); border-color: var(--sage); color: var(--sage); }
+  .visit-btn.overcrowded { background: rgba(184,92,58,0.08); border-color: var(--rust); color: var(--rust); }
 
   /* Discovered by */
   .discovered-by {
@@ -1081,37 +1075,38 @@
 
   /* Dark mode — element-specific overrides that can't be done via CSS vars */
   body.mode-unexplored header {
-    background: #0C0C0A !important;
-    border-color: rgba(232,224,208,0.12) !important;
+    background: rgba(13,13,11,0.92) !important;
   }
   body.mode-unexplored .search-field {
-    background: #1A1A18 !important;
-    border-color: rgba(232,224,208,0.2) !important;
-    color: #E8E0D0 !important;
+    background: #171714 !important;
+    border-color: rgba(222,218,208,0.15) !important;
+    color: #dedad0 !important;
   }
-  body.mode-unexplored .search-wrap { border-color: rgba(232,224,208,0.2) !important; }
-  body.mode-unexplored .search-field::placeholder { color: #4A3A60 !important; }
-  body.mode-unexplored .search-btn { background: #1A1A18 !important; color: #6A5A80 !important; border-color: rgba(232,224,208,0.2) !important; }
-  body.mode-unexplored .search-btn:hover { background: #6A4A8A !important; color: #E8E0D0 !important; }
+  body.mode-unexplored .search-field::placeholder { color: #3a3830 !important; }
+  body.mode-unexplored .search-btn { background: #1e1e1a !important; color: #8a8878 !important; }
+  body.mode-unexplored .search-btn:hover { background: #4a6e4a !important; color: #fff !important; }
   body.mode-unexplored .main-card,
   body.mode-unexplored .also-card,
-  body.mode-unexplored .filters-panel { background: #141412 !important; border-color: rgba(232,224,208,0.15) !important; }
-  body.mode-unexplored .info-cell { background: #1A1A18 !important; }
+  body.mode-unexplored .filters-panel { background: #131310 !important; border-color: rgba(222,218,208,0.08) !important; }
+  body.mode-unexplored .info-cell,
   body.mode-unexplored .card-chip,
-  body.mode-unexplored .filters-toggle { border-color: rgba(232,224,208,0.12) !important; color: #6A5A80 !important; }
-  body.mode-unexplored .radius-opt { border-color: rgba(232,224,208,0.12) !important; }
-  body.mode-unexplored .radius-opt.selected { border-color: #6A4A8A !important; }
+  body.mode-unexplored .filters-toggle { background: #1a1a16 !important; border-color: rgba(222,218,208,0.12) !important; }
+  body.mode-unexplored .radius-opt { border-color: rgba(222,218,208,0.1) !important; }
+  body.mode-unexplored .radius-opt.selected { border-color: #4a6e4a !important; background: rgba(74,110,74,0.1) !important; }
   body.mode-unexplored .rarity-track { background: #252520 !important; }
-  body.mode-unexplored .example-chip { border-color: rgba(232,224,208,0.12) !important; color: #4A3A60 !important; background: none !important; }
-  body.mode-unexplored .lang-btn { color: #4A3A60 !important; }
-  body.mode-unexplored .lang-btn.active { color: #E8E0D0 !important; }
+  body.mode-unexplored .example-chip { border-color: rgba(222,218,208,0.1) !important; color: #5a5850 !important; }
+  body.mode-unexplored .card-why,
+  body.mode-unexplored .card-location,
+  body.mode-unexplored .also-loc,
+  body.mode-unexplored .sb-season-name { color: #5a5850 !important; }
+  body.mode-unexplored .lang-btn { color: #5a5850 !important; }
+  body.mode-unexplored .lang-btn.active { color: #dedad0 !important; background: #1a1a16 !important; }
 
-  /* Starfield overlay */
+  /* Fog overlay */
   body.mode-unexplored::after {
     content: '';
     position: fixed; inset: 0;
-    background: radial-gradient(ellipse at 30% 20%, rgba(106,74,138,0.08) 0%, transparent 60%),
-                radial-gradient(ellipse at 70% 80%, rgba(196,168,130,0.05) 0%, transparent 50%);
+    background: radial-gradient(ellipse at 50% 0%, rgba(74,110,74,0.06) 0%, transparent 65%);
     pointer-events: none; z-index: 0;
   }
 
@@ -1176,156 +1171,137 @@
 </header>
 
 <!-- SVG Compass rose background -->
-<div id="hero">
+<div class="hero" id="hero">
+  <svg class="compass-bg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="95" stroke="#1a1a18" stroke-width="0.5"/>
+    <circle cx="100" cy="100" r="70" stroke="#1a1a18" stroke-width="0.3"/>
+    <circle cx="100" cy="100" r="45" stroke="#1a1a18" stroke-width="0.3"/>
+    <circle cx="100" cy="100" r="4" fill="#1a1a18"/>
+    <line x1="100" y1="5" x2="100" y2="195" stroke="#1a1a18" stroke-width="0.3"/>
+    <line x1="5" y1="100" x2="195" y2="100" stroke="#1a1a18" stroke-width="0.3"/>
+    <line x1="29" y1="29" x2="171" y2="171" stroke="#1a1a18" stroke-width="0.2"/>
+    <line x1="171" y1="29" x2="29" y2="171" stroke="#1a1a18" stroke-width="0.2"/>
+    <polygon points="100,8 104,32 100,28 96,32" fill="#1a1a18"/>
+    <polygon points="100,192 104,168 100,172 96,168" fill="#1a1a18" opacity="0.4"/>
+    <polygon points="8,100 32,96 28,100 32,104" fill="#1a1a18" opacity="0.4"/>
+    <polygon points="192,100 168,96 172,100 168,104" fill="#1a1a18" opacity="0.4"/>
+    <text x="100" y="18" text-anchor="middle" font-size="7" fill="#1a1a18" font-family="serif">N</text>
+    <text x="100" y="188" text-anchor="middle" font-size="5" fill="#1a1a18" font-family="serif" opacity="0.5">S</text>
+    <text x="185" y="103" text-anchor="middle" font-size="5" fill="#1a1a18" font-family="serif" opacity="0.5">E</text>
+    <text x="15" y="103" text-anchor="middle" font-size="5" fill="#1a1a18" font-family="serif" opacity="0.5">W</text>
+  </svg>
 
-  <!-- ── GRILLE PRINCIPALE : hero gauche + panneau droit ── -->
-  <div id="main-grid" style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--ink);min-height:480px">
+  <p class="hero-eyebrow" id="txt-eyebrow">Slow travel · Hidden gems</p>
+  <h1 id="txt-h1">The road<br/><em>less travelled</em></h1>
+  <p class="hero-sub" id="txt-sub">Enter a famous landmark. Discover a hidden gem nearby — just as beautiful, without the crowds.</p>
 
-    <!-- GAUCHE : texte + recherche (fixe) -->
-    <div style="padding:44px 36px;border-right:1px solid var(--ink);display:flex;flex-direction:column">
-      <p class="hero-eyebrow" id="txt-eyebrow">Slow travel · Lieux cachés · Anti-overtourism</p>
-      <h1 id="txt-h1">The road<br/><em>less travelled</em></h1>
-      <p class="hero-sub" id="txt-sub">Enter a famous landmark. Discover a hidden gem nearby — just as beautiful, without the crowds.</p>
+  <div class="search-wrap">
+    <input
+      type="text"
+      id="place-input"
+      class="search-field"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button class="search-btn" id="search-btn" >
+      <span id="txt-btn">Discover →</span>
+    </button>
+  </div>
+  <button class="surprise-btn" id="surprise-btn" onclick="handleSurprise()"></button>
 
-      <div class="search-wrap">
-        <input type="text" id="place-input" class="search-field" autocomplete="off" spellcheck="false"/>
-        <button class="search-btn" id="search-btn"><span id="txt-btn">Discover →</span></button>
-      </div>
-      <button class="surprise-btn" id="surprise-btn" onclick="handleSurprise()"></button>
-
-      <div class="examples" id="examples-row" style="margin-top:14px;justify-content:flex-start">
-        <button class="example-chip" data-place="Eiffel Tower">Eiffel Tower</button>
-        <button class="example-chip" data-place="Colosseum">Colosseum</button>
-        <button class="example-chip" data-place="Sagrada Família">Sagrada Família</button>
-        <button class="example-chip" data-place="Trevi Fountain">Trevi Fountain</button>
-        <button class="example-chip" data-place="Big Ben">Big Ben</button>
-      </div>
-
-      <button class="filters-toggle" id="filters-toggle" onclick="toggleFilters()" style="align-self:flex-start;margin-top:16px">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
-        <span id="txt-filters-btn">Advanced filters</span>
-        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-
-      <div class="filters-panel" id="filters-panel">
-        <div class="filter-row">
-          <span class="filter-label" id="txt-radius-label">Search radius</span>
-          <div class="radius-opts">
-            <div class="radius-opt" id="radius-near" onclick="setRadius('near')">
-              <span class="radius-opt-icon">🏛</span>
-              <span class="radius-opt-text">
-                <span class="radius-opt-name" id="txt-radius-near-name">Close</span>
-                <span class="radius-opt-desc" id="txt-radius-near-desc">Same city · ≤ 5km</span>
-              </span>
-              <span class="radius-opt-check"></span>
-            </div>
-            <div class="radius-opt selected" id="radius-region" onclick="setRadius('region')">
-              <span class="radius-opt-icon">🗺</span>
-              <span class="radius-opt-text">
-                <span class="radius-opt-name" id="txt-radius-region-name">Region</span>
-                <span class="radius-opt-desc" id="txt-radius-region-desc">Nearby cities · ≤ 50km</span>
-              </span>
-              <span class="radius-opt-check"></span>
-            </div>
-          </div>
-        </div>
-        <div class="filter-row">
-          <span class="filter-label" id="txt-rarity-label">Rarity level</span>
-          <div class="rarity-wrap">
-            <div class="rarity-track" id="rarity-track" onclick="handleRarityClick(event)">
-              <div class="rarity-fill" id="rarity-fill" style="width:33%"></div>
-              <div class="rarity-thumb" id="rarity-thumb" style="left:33%"></div>
-            </div>
-            <div class="rarity-labels">
-              <span class="rarity-lbl" id="rl-0" onclick="setRarity(0)"></span>
-              <span class="rarity-lbl active" id="rl-1" onclick="setRarity(1)"></span>
-              <span class="rarity-lbl" id="rl-2" onclick="setRarity(2)"></span>
-              <span class="rarity-lbl rarity-lbl-mystery" id="rl-3" onclick="setRarity(3)"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- DROITE : illustration (par défaut) ou résultats (après recherche) -->
-    <div id="right-panel" style="position:relative;overflow-y:auto">
-
-      <!-- Illustration naive — visible par défaut -->
-      <div id="hero-illustration" style="background:var(--paper-dark);display:flex;align-items:center;justify-content:center;height:100%;min-height:480px">
-        <svg width="100%" height="100%" viewBox="0 0 400 480" fill="none" preserveAspectRatio="xMidYMid meet">
-          <rect width="400" height="480" fill="#EDE8DC"/>
-          <circle cx="320" cy="70" r="38" fill="#F2C94C" opacity="0.85"/>
-          <line x1="320" y1="20" x2="320" y2="10" stroke="#F2C94C" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="362" y1="32" x2="370" y2="24" stroke="#F2C94C" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="374" y1="70" x2="384" y2="70" stroke="#F2C94C" stroke-width="2.5" stroke-linecap="round"/>
-          <path d="M60 110 Q67 103 74 110" stroke="#999" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          <path d="M85 92 Q92 85 100 92" stroke="#999" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          <ellipse cx="200" cy="410" rx="250" ry="100" fill="#6B9E6B"/>
-          <ellipse cx="80" cy="430" rx="150" ry="85" fill="#4A7A4A"/>
-          <ellipse cx="340" cy="435" rx="130" ry="80" fill="#5A8A5A"/>
-          <rect x="130" y="220" width="120" height="140" fill="#C4855A"/>
-          <polygon points="190,140 130,220 250,220" fill="#B87050"/>
-          <rect x="184" y="158" width="12" height="40" fill="#FAF6EE" opacity="0.4"/>
-          <rect x="176" y="170" width="28" height="8" fill="#FAF6EE" opacity="0.4"/>
-          <rect x="166" y="310" width="48" height="50" rx="24" fill="#7A4A2A"/>
-          <rect x="140" y="248" width="24" height="30" rx="12" fill="#F2C94C" opacity="0.7"/>
-          <rect x="216" y="248" width="24" height="30" rx="12" fill="#F2C94C" opacity="0.7"/>
-          <rect x="60" y="290" width="12" height="65" fill="#4A3020"/>
-          <circle cx="66" cy="272" r="32" fill="#3A6A3A"/>
-          <rect x="300" y="300" width="12" height="58" fill="#4A3020"/>
-          <circle cx="306" cy="284" r="26" fill="#4A7A4A"/>
-          <rect x="340" y="320" width="9" height="45" fill="#4A3020"/>
-          <circle cx="344" cy="306" r="20" fill="#3A6A3A"/>
-          <circle cx="110" cy="380" r="6" fill="#C85A7A"/>
-          <circle cx="260" cy="376" r="5" fill="#F2C94C"/>
-          <circle cx="295" cy="382" r="6" fill="#C85A7A"/>
-          <circle cx="155" cy="385" r="4" fill="#F2C94C"/>
-        </svg>
-      </div>
-
-      <!-- Résultats — cachés par défaut, remplacent l'illustration -->
-      <div id="results-inner" style="display:none;padding:32px 32px;height:100%;overflow-y:auto"></div>
-
-    </div>
+  <div class="examples" id="examples-row">
+    <button class="example-chip" data-place="Eiffel Tower">Eiffel Tower</button>
+    <button class="example-chip" data-place="Colosseum">Colosseum</button>
+    <button class="example-chip" data-place="Sagrada Família">Sagrada Família</button>
+    <button class="example-chip" data-place="Trevi Fountain">Trevi Fountain</button>
+    <button class="example-chip" data-place="Big Ben">Big Ben</button>
   </div>
 
-  <!-- ── LIEU DU JOUR ── -->
-  <div id="dotd-big" style="display:none;border-bottom:1px solid var(--ink)">
-    <div style="display:flex">
-      <div style="width:90px;border-right:1px solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;gap:6px;flex-shrink:0">
-        <span style="font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);font-family:'Inconsolata',monospace" id="dotd-stamp-label">Lieu du jour</span>
-        <div style="text-align:center">
-          <div style="font-family:'Libre Baskerville',serif;font-size:26px;font-weight:700;color:var(--rust);line-height:1" id="dotd-stamp-day"></div>
-          <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-family:'Inconsolata',monospace" id="dotd-stamp-month"></div>
+  <button class="filters-toggle" id="filters-toggle" onclick="toggleFilters()">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+    <span id="txt-filters-btn">Advanced filters</span>
+    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+
+  <div class="filters-panel" id="filters-panel">
+    <div class="filter-row">
+      <span class="filter-label" id="txt-radius-label">Search radius</span>
+      <div class="radius-opts">
+        <div class="radius-opt" id="radius-near" onclick="setRadius('near')">
+          <span class="radius-opt-icon">🏛</span>
+          <span class="radius-opt-text">
+            <span class="radius-opt-name" id="txt-radius-near-name">Close</span>
+            <span class="radius-opt-desc" id="txt-radius-near-desc">Same city · ≤ 5km</span>
+          </span>
+          <span class="radius-opt-check"></span>
+        </div>
+        <div class="radius-opt selected" id="radius-region" onclick="setRadius('region')">
+          <span class="radius-opt-icon">🗺</span>
+          <span class="radius-opt-text">
+            <span class="radius-opt-name" id="txt-radius-region-name">Region</span>
+            <span class="radius-opt-desc" id="txt-radius-region-desc">Nearby cities · ≤ 50km</span>
+          </span>
+          <span class="radius-opt-check"></span>
         </div>
       </div>
-      <div style="flex:1;padding:20px 28px">
-        <p style="font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--rust);margin-bottom:8px;font-family:'Inconsolata',monospace" id="dotd-big-label"></p>
-        <p style="font-family:'Libre Baskerville',serif;font-size:22px;font-style:italic;color:var(--ink);margin-bottom:4px" id="dotd-big-name"></p>
-        <p style="font-size:11px;color:var(--muted);letter-spacing:0.06em;margin-bottom:10px;font-family:'Inconsolata',monospace" id="dotd-big-city"></p>
-        <p style="font-size:12px;color:var(--muted);line-height:1.65;font-family:'Inconsolata',monospace;max-width:520px" id="dotd-big-why"></p>
+    </div>
+
+    <div class="filter-row">
+      <span class="filter-label" id="txt-rarity-label">Rarity level</span>
+      <div class="rarity-wrap">
+        <div class="rarity-track" id="rarity-track" onclick="handleRarityClick(event)">
+          <div class="rarity-fill" id="rarity-fill" style="width:33%"></div>
+          <div class="rarity-thumb" id="rarity-thumb" style="left:33%"></div>
+        </div>
+        <div class="rarity-labels">
+          <span class="rarity-lbl" id="rl-0" onclick="setRarity(0)"></span>
+          <span class="rarity-lbl active" id="rl-1" onclick="setRarity(1)"></span>
+          <span class="rarity-lbl" id="rl-2" onclick="setRarity(2)"></span>
+          <span class="rarity-lbl rarity-lbl-mystery" id="rl-3" onclick="setRarity(3)"></span>
+        </div>
       </div>
-      <div style="width:140px;border-left:1px solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:var(--paper-dark);flex-shrink:0;cursor:pointer" onclick="handleDotdClick()">
-        <button id="dotd-big-btn" style="border:1px solid var(--ink);background:none;font-family:'Libre Baskerville',serif;font-size:12px;font-style:italic;padding:8px 14px;cursor:pointer;color:var(--ink);text-align:center;width:100%;margin-bottom:10px"></button>
-        <p style="font-size:10px;color:var(--muted);text-align:center;font-family:'Inconsolata',monospace">♥ <span id="dotd-likes-count">0</span> voyageurs</p>
+    </div>
+  </div>
+</div>
+
+<!-- HOMEPAGE VISUAL SECTIONS -->
+<div class="home-sections" id="home-sections">
+
+  <!-- Big place of day -->
+  <div class="dotd-big" id="dotd-big" style="display:none">
+    <p class="dotd-big-label" id="dotd-big-label"></p>
+    <div class="dotd-big-card" onclick="handleDotdClick()">
+      <img class="dotd-big-img" id="dotd-big-img" src="" alt="" onerror="this.closest('.dotd-big').style.display='none'">
+      <div class="dotd-big-overlay">
+        <p class="dotd-big-name" id="dotd-big-name"></p>
+        <p class="dotd-big-city" id="dotd-big-city"></p>
+        <button class="dotd-big-btn" id="dotd-big-btn">→</button>
       </div>
     </div>
   </div>
 
-  <!-- ── PÉPITES DE LA COMMUNAUTÉ ── -->
-  <div id="community-section" style="display:none">
-    <div style="display:flex;align-items:center;gap:12px;padding:12px 28px;border-bottom:1px solid var(--ink)">
-      <span style="font-family:'Libre Baskerville',serif;font-size:14px;font-style:italic;color:var(--ink)" id="community-title"></span>
-      <div style="flex:1;height:0.5px;background:var(--border)"></div>
-      <span id="community-count" style="font-size:10px;color:var(--muted);letter-spacing:0.08em;font-family:'Inconsolata',monospace"></span>
+  <!-- Community top picks -->
+  <div class="community-section" id="community-section" style="display:none">
+    <div class="community-header">
+      <span class="community-title" id="community-title"></span>
+      <div class="community-line"></div>
     </div>
-    <div id="community-grid" style="display:grid;grid-template-columns:repeat(3,1fr)"></div>
+    <div class="community-grid" id="community-grid"></div>
   </div>
-
-  <!-- hidden refs for dotd internal use -->
-  <div style="display:none" id="dotd-wrap"><p id="dotd-label"></p><p id="dotd-name"></p><p id="dotd-city"></p><div id="dotd-img-wrap"></div></div>
 
 </div>
+
+<!-- Keep small dotd-wrap hidden (used internally) -->
+<div id="dotd-wrap" style="display:none">
+  <p id="dotd-label"></p><p id="dotd-name"></p><p id="dotd-city"></p>
+  <div id="dotd-img-wrap"></div>
+</div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div id="results-inner"></div>
+</section>
+
 <footer>
   <span id="txt-footer">Elsewhere — Discover the road less travelled. Fighting overtourism, one hidden gem at a time.</span>
   <div class="footer-season">
@@ -1340,7 +1316,7 @@
       <button class="sb-hbtn" id="h-s" onclick="setHemisphere(false)">S</button>
     </div>
   </div>
-  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.3.3</span>
+  <span style="display:block;margin-top:6px;font-size:10px;opacity:0.3;letter-spacing:0.08em;">v5.1.5</span>
 </footer>
 
 <!-- ACTIVITY FEED PANEL -->
@@ -2800,30 +2776,18 @@ document.getElementById('lang-selector').addEventListener('click', e => {
 
 // ── SEASONAL THEMES ──────────────────────────────────────────────────────────
 const SEASONS = [
-  // Jan — Hiver blanc
-  { paper:'#EEF0F5', paperDark:'#E0E4EE', accent:'#3A4A6A', accentLight:'#7A9AB8', muted:'#6A7888', badgeBg:'#1C1C1C', badgeText:'#EEF0F5', like:'#8B2E4A', ink:'#1C2A3A' },
-  // Fév — Hiver tardif
-  { paper:'#F0EEF5', paperDark:'#E4E0F0', accent:'#4A3A6A', accentLight:'#9A8AB8', muted:'#6A6880', badgeBg:'#1C1C1C', badgeText:'#F0EEF5', like:'#A84A7A', ink:'#2A1A4A' },
-  // Mar — Éveil
-  { paper:'#F2F5EE', paperDark:'#E4EEE0', accent:'#3A5A2A', accentLight:'#8AB878', muted:'#5A7050', badgeBg:'#1C1C1C', badgeText:'#F2F5EE', like:'#C85A7A', ink:'#1A3A10' },
-  // Avr — Printemps
-  { paper:'#FAF0F4', paperDark:'#F0E0EA', accent:'#8A3A5A', accentLight:'#D490A8', muted:'#785868', badgeBg:'#1C1C1C', badgeText:'#FAF0F4', like:'#6A9E5A', ink:'#5A1A3A' },
-  // Mai — Plein printemps
-  { paper:'#F4F8EE', paperDark:'#E6F0DA', accent:'#2A5A1A', accentLight:'#7AB85A', muted:'#507040', badgeBg:'#1C1C1C', badgeText:'#F4F8EE', like:'#C85A7A', ink:'#0A3A00' },
-  // Juin — Pré-été (base Direction C)
-  { paper:'#FAF6EE', paperDark:'#EDE8DC', accent:'#6B9E6B', accentLight:'#A8C8A8', muted:'#888070', badgeBg:'#1C1C1C', badgeText:'#FAF6EE', like:'#C85A7A', ink:'#1C1C1C' },
-  // Juil — Été
-  { paper:'#FAF4E4', paperDark:'#F0E8CC', accent:'#8A5A10', accentLight:'#D4A840', muted:'#806840', badgeBg:'#1C1C1C', badgeText:'#FAF4E4', like:'#C4853A', ink:'#4A2A00' },
-  // Août — Canicule
-  { paper:'#FAF0E0', paperDark:'#F0E4C8', accent:'#9A4A10', accentLight:'#E8A060', muted:'#886040', badgeBg:'#1C1C1C', badgeText:'#FAF0E0', like:'#D4603A', ink:'#5A2000' },
-  // Sep — Début automne
-  { paper:'#F8F0E4', paperDark:'#EEE4D0', accent:'#8A4A20', accentLight:'#D4903A', muted:'#806050', badgeBg:'#1C1C1C', badgeText:'#F8F0E4', like:'#9A3A28', ink:'#4A2010' },
-  // Oct — Automne
-  { paper:'#F5EEE0', paperDark:'#EAE0CC', accent:'#7A3A18', accentLight:'#C47840', muted:'#785840', badgeBg:'#1C1C1C', badgeText:'#F5EEE0', like:'#9A3A28', ink:'#3A1808' },
-  // Nov — Fin automne
-  { paper:'#F0EAE0', paperDark:'#E4D8C8', accent:'#5A3A20', accentLight:'#A07850', muted:'#705040', badgeBg:'#1C1C1C', badgeText:'#F0EAE0', like:'#8A3030', ink:'#2A1808' },
-  // Déc — Hiver
-  { paper:'#EEF0F8', paperDark:'#E0E4F0', accent:'#2A3A6A', accentLight:'#7A8AB8', muted:'#6A7090', badgeBg:'#1C1C1C', badgeText:'#EEF0F8', like:'#8B2E4A', ink:'#0A1A4A' },
+  { paper:'#f0f3f7', paperDark:'#e2e8f0', accent:'#5b7fa6', accentLight:'#a8c0d8', muted:'#7a8898', badgeBg:'#5b7fa6', badgeText:'#fff', like:'#8b4a6b', ink:'#1a1f2e' },
+  { paper:'#f1f0f5', paperDark:'#e4e2ee', accent:'#7b6fa8', accentLight:'#b8b0d4', muted:'#8a8598', badgeBg:'#7b6fa8', badgeText:'#fff', like:'#a05070', ink:'#1e1a2a' },
+  { paper:'#f3f5f0', paperDark:'#e6ebe0', accent:'#6a9470', accentLight:'#aecab2', muted:'#7a8a78', badgeBg:'#6a9470', badgeText:'#fff', like:'#c07040', ink:'#1a221a' },
+  { paper:'#faf3f3', paperDark:'#f0e6e6', accent:'#b07898', accentLight:'#d4b0c4', muted:'#8a7880', badgeBg:'#b07898', badgeText:'#fff', like:'#d47060', ink:'#221a1e' },
+  { paper:'#f4f7f0', paperDark:'#e8ede0', accent:'#5a9050', accentLight:'#9ec494', muted:'#728070', badgeBg:'#5a9050', badgeText:'#fff', like:'#c05840', ink:'#182018' },
+  { paper:'#faf7ec', paperDark:'#f0ebda', accent:'#8a9c50', accentLight:'#c0cc90', muted:'#8a8870', badgeBg:'#8a9c50', badgeText:'#fff', like:'#c06840', ink:'#201e10' },
+  { paper:'#faf5ec', paperDark:'#f0e8d8', accent:'#c08040', accentLight:'#dab888', muted:'#8a8070', badgeBg:'#c08040', badgeText:'#fff', like:'#b84030', ink:'#241a10' },
+  { paper:'#faf2e8', paperDark:'#f0e4d0', accent:'#c06838', accentLight:'#daa882', muted:'#8a7868', badgeBg:'#c06838', badgeText:'#fff', like:'#903030', ink:'#281810' },
+  { paper:'#f8f3ec', paperDark:'#ede4d8', accent:'#b87840', accentLight:'#d8b488', muted:'#887868', badgeBg:'#b87840', badgeText:'#fff', like:'#984838', ink:'#22180e' },
+  { paper:'#f7f0ea', paperDark:'#eae0d2', accent:'#a05838', accentLight:'#c89878', muted:'#887060', badgeBg:'#a05838', badgeText:'#fff', like:'#802838', ink:'#201410' },
+  { paper:'#f2efea', paperDark:'#e4e0d8', accent:'#7a7058', accentLight:'#b0a890', muted:'#807870', badgeBg:'#7a7058', badgeText:'#fff', like:'#804048', ink:'#1c1a16' },
+  { paper:'#f0f2f5', paperDark:'#e2e6ec', accent:'#4a6a8a', accentLight:'#8aaac4', muted:'#788090', badgeBg:'#4a6a8a', badgeText:'#fff', like:'#804868', ink:'#161c24' },
 ];
 
 // Season bar month labels per language
@@ -3007,23 +2971,23 @@ function applyRarityMode() {
     const root = document.documentElement;
     // Override ALL variables inline so they take priority over seasonal theme
     const dark = {
-      '--paper':              '#0C0C0A',
-      '--paper-dark':         '#1A1A18',
-      '--ink':                '#E8E0D0',
-      '--muted':              '#6A5A80',
-      '--border':             'rgba(232,224,208,0.12)',
-      '--sage':               '#6A4A8A',
-      '--sage-light':         '#9A7AB8',
-      '--rust':               '#C4A882',
-      '--season-paper':       '#0C0C0A',
-      '--season-paper-dark':  '#1A1A18',
-      '--season-accent':      '#6A4A8A',
-      '--season-accent-light':'#9A7AB8',
-      '--season-muted':       '#6A5A80',
-      '--season-badge-bg':    '#6A4A8A',
-      '--season-badge-text':  '#E8E0D0',
-      '--season-like':        '#C4A882',
-      '--season-ink':         '#E8E0D0',
+      '--paper':              '#0d0d0b',
+      '--paper-dark':         '#171714',
+      '--ink':                '#dedad0',
+      '--muted':              '#5a5850',
+      '--border':             'rgba(222,218,208,0.1)',
+      '--sage':               '#4a6e4a',
+      '--sage-light':         '#6a8e6a',
+      '--rust':               '#7a3a28',
+      '--season-paper':       '#0d0d0b',
+      '--season-paper-dark':  '#171714',
+      '--season-accent':      '#4a6e4a',
+      '--season-accent-light':'#6a8e6a',
+      '--season-muted':       '#5a5850',
+      '--season-badge-bg':    '#4a6e4a',
+      '--season-badge-text':  '#fff',
+      '--season-like':        '#7a3a28',
+      '--season-ink':         '#dedad0',
     };
     for (const [k, v] of Object.entries(dark)) {
       root.style.setProperty(k, v);
@@ -3192,15 +3156,15 @@ async function handleSearch() {
   const query = input.value.trim();
   if (!query) { input.focus(); return; }
 
-  const resultsEl = document.getElementById('results-inner');
+  const resultsEl = document.getElementById('results');
   const inner = document.getElementById('results-inner');
 
-  // Show results panel, hide illustration
-  const illus = document.getElementById('hero-illustration');
-  const inner2 = document.getElementById('results-inner');
-  if (illus) illus.style.display = 'none';
-  if (inner2) inner2.style.display = 'block';
+  resultsEl.style.display = 'block';
   inner.innerHTML = `<div class="loading-wrap"><div class="loader"></div><p class="loading-txt">${t('loading')}</p></div>`;
+  // Hide homepage visual sections when showing results
+  const homeSections = document.getElementById('home-sections');
+  if (homeSections) homeSections.classList.remove('visible');
+  window.scrollTo({ top: document.getElementById('hero').offsetHeight - 80, behavior: 'smooth' });
 
   btn.disabled = true;
 
@@ -3411,32 +3375,29 @@ async function loadPlaceOfDay() {
   if (name) name.textContent = dotd.name;
   if (city) city.textContent = dotd.city;
 
-  // Populate stamp dotd
+  // Populate big visual card
   const bigWrap = document.getElementById('dotd-big');
   const bigLabel = document.getElementById('dotd-big-label');
   const bigName = document.getElementById('dotd-big-name');
   const bigCity = document.getElementById('dotd-big-city');
-  const bigWhy = document.getElementById('dotd-big-why');
+  const bigImg = document.getElementById('dotd-big-img');
   const bigBtn = document.getElementById('dotd-big-btn');
-  const stampDay = document.getElementById('dotd-stamp-day');
-  const stampMonth = document.getElementById('dotd-stamp-month');
 
-  if (bigLabel) bigLabel.textContent = t('dotdBig') || 'Pépite du jour';
+  if (bigLabel) bigLabel.textContent = t('dotdBig') || 'Place of the day';
   if (bigName) bigName.textContent = dotd.name;
-  if (bigCity) bigCity.textContent = (dotd.city || '') + (dotd.country ? ' · ' + dotd.country : '');
-  if (bigWhy) bigWhy.textContent = dotd.why || '';
-  if (bigBtn) bigBtn.textContent = (t('discoverPlace') || 'Découvrir ce lieu') + ' →';
+  if (bigCity) bigCity.textContent = dotd.city + (dotd.country ? ' · ' + dotd.country : '');
+  if (bigBtn) bigBtn.textContent = (t('discoverPlace') || 'Discover this place') + ' →';
 
-  // Stamp date
-  const nowD = new Date();
-  if (stampDay) stampDay.textContent = nowD.getDate();
-  if (stampMonth) {
-    const mNames = MONTH_FULL_BAR[currentLang] || MONTH_FULL_BAR['en'];
-    stampMonth.textContent = (mNames[nowD.getMonth()] || '').toUpperCase();
+  if (dotd.image && bigImg) {
+    bigImg.src = dotd.image;
+    bigImg.alt = dotd.name;
+    if (bigWrap) bigWrap.style.display = 'block';
+
   }
 
-  // Always show dotd block
-  if (bigWrap) bigWrap.style.display = 'block';
+  // Show homepage sections
+  const homeSections = document.getElementById('home-sections');
+  if (homeSections) homeSections.classList.add('visible');
 
   window._dotd = dotd;
 }
@@ -3450,44 +3411,26 @@ async function loadCommunityGrid() {
   if (title) title.textContent = t('communityTop') || 'Top discoveries by the community';
 
   const res = await fetch(
-    SB_URL + '/rest/v1/suggestions?likes=gt.0&order=likes.desc&limit=6&select=id,name,city,country,image,query,likes,category',
+    SB_URL + '/rest/v1/suggestions?likes=gt.0&order=likes.desc&limit=6&select=id,name,city,image,query,likes',
     { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
   ).catch(() => null);
   if (!res || !res.ok) return;
   const places = await res.json();
   if (!places.length) return;
 
-  const catColors = { museum:'#7A9E6B', garden:'#4A9A6A', castle:'#B87050', church:'#C4855A', viewpoint:'#7A9AB8', village:'#C4855A', beach:'#6B9EB8', nature:'#4A7A4A', palace:'#B87050', market:'#C85A7A' };
-  grid.innerHTML = places.map((p, i) => {
-    const col = catColors[(p.category||'').toLowerCase()] || '#C4855A';
-    const cat = (p.category || '').toUpperCase();
-    const country = (p.country || '').toUpperCase();
-    const tag = [cat, country].filter(Boolean).join(' · ');
-    const borderRight = i < places.length - 1 ? 'border-right:1px solid var(--ink);' : '';
-    const imgHtml = p.image
-      ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:120px;object-fit:cover;display:block" onerror="this.style.display='none'">`
-      : `<div style="height:120px;display:flex;align-items:center;justify-content:center;background:var(--paper-dark)">
-          <svg width="70" height="80" viewBox="0 0 70 80" fill="none">
-            <ellipse cx="35" cy="70" rx="30" ry="12" fill="${col}" opacity="0.5"/>
-            <rect x="22" y="32" width="26" height="34" fill="${col}" opacity="0.75"/>
-            <polygon points="35,12 22,32 48,32" fill="${col}"/>
-            <rect x="30" y="46" width="10" height="20" fill="#7A4A2A" opacity="0.7"/>
-          </svg>
-        </div>`;
-    return `<div onclick="loadFavItem('${esc(p.query||p.name.toLowerCase())}','${esc(p.id)}')" style="${borderRight}padding:0;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
-      ${imgHtml}
-      <div style="padding:16px 20px">
-        <p style="font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--rust);margin-bottom:4px;font-family:'Inconsolata',monospace">${esc(tag)}</p>
-        <p style="font-family:'Libre Baskerville',serif;font-size:14px;color:var(--ink);font-style:italic;line-height:1.2;margin-bottom:3px">${esc(p.name)}</p>
-        <p style="font-size:10px;color:var(--muted);letter-spacing:0.06em;margin-bottom:8px;font-family:'Inconsolata',monospace">${esc(p.city)}</p>
-        <p style="font-size:10px;color:var(--rust);font-family:'Inconsolata',monospace">♥ ${p.likes}</p>
+  grid.innerHTML = places.map(p => `
+    <div class="community-card" onclick="loadFavItem('${esc(p.query||p.name.toLowerCase())}','${esc(p.id)}')">
+      ${p.image
+        ? `<img class="community-card-img" src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="this.closest('.community-card').style.display='none'">`
+        : `<div class="community-card-img" style="background:var(--paper-dark)"></div>`}
+      <div class="community-card-overlay">
+        <p class="community-card-name">${esc(p.name)}</p>
+        <p class="community-card-city">${esc(p.city)}</p>
       </div>
-    </div>`;
-  }).join('');
+      <div class="community-card-likes">♥ ${p.likes}</div>
+    </div>`).join('');
 
   if (section) section.style.display = 'block';
-  const countEl = document.getElementById('community-count');
-  if (countEl) countEl.textContent = places.length + ' lieux';
 }
 
 function handleDotdClick() {
@@ -3546,12 +3489,11 @@ async function handleSurprise() {
 
   document.getElementById('place-input').value = randomQuery;
 
-  const resultsEl = document.getElementById('results-inner');
+  const resultsEl = document.getElementById('results');
   const inner = document.getElementById('results-inner');
-  const illus3 = document.getElementById('hero-illustration');
-  if (illus3) illus3.style.display = 'none';
-  inner.style.display = 'block';
+  resultsEl.style.display = 'block';
   inner.innerHTML = `<div class="loading-wrap"><div class="loader"></div><p class="loading-txt">${t('surpriseLoading') || 'Finding a hidden gem…'}</p></div>`;
+  window.scrollTo({ top: document.getElementById('hero').offsetHeight - 80, behavior: 'smooth' });
 
   try {
     const fetched = await fetchSuggestion(randomQuery);
@@ -3751,10 +3693,12 @@ function renderResults(query, main, sbOthers) {
     </div>`;
 
   // Scroll to results card after render
-  // Scroll right panel to top
   setTimeout(() => {
-    const rp = document.getElementById('right-panel');
-    if (rp) rp.scrollTop = 0;
+    const el = document.getElementById('results');
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.pageYOffset - 20;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
   }, 150);
 
   // Mark as discovered by current user if first like
